@@ -1,0 +1,47 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <%- include('../layout/user/layout') %>
+    <style>
+        .body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #CFE6F9;
+        }
+        .card {
+            width: 400px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+    </style>
+<!-- </head>
+<body> -->
+    <%- include('../partials/user-header')%>
+    <div class="body">
+    <div class="card">
+        <h3 class="card-title">OTP Verification</h3>
+        <p class="card-subtitle mb-2 text-muted">Please enter the OTP sent to your email.</p>
+        <form action="/user/verifyEmail" method="post">
+        <input type="text" class="form-control mb-3"  name="otp" placeholder="Enter OTP">
+        <button class="btn btn-primary btn-block" type="submit">Verify</button>
+    </form>
+        <% if(error){ %>
+            <p style="color: red;"><%= error %></p>
+      <%  } %>
+        <p class="mt-3">Didn't receive the email? <a href="/user/resendOtp" class="card-link">Resend Email</a></p>
+    </div>
+</div>
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

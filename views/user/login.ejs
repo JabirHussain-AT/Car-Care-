@@ -1,0 +1,104 @@
+<%- include('../layout/user/layout') %>
+    <link rel="stylesheet" href="/stylesheet/user-login.css">
+<%- include('../partials/user-header') %> 
+    <div class="container-fluid banner-login">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Login</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1 layer of login -->
+    <div class="container-fluid main-layer">
+        <div class="row justify-content-center align-items-center" style="height: auto;">
+            <div class="col-md-5  rounded signup signup-form">
+                <!-- Content for the left column -->
+                <div class="p-3">
+                    <h2>Log in</h2>
+                    <p style="font-size: small;">Don't you have an account? <a href="user/signup"><u>Sign IN</u></a></p>
+                    <div class="container-fluid">
+                        <div class="row justify-content-center" style="height: 100%;">
+                            <div class="col-md-6 ml-5 pl-4">
+                                <form class="form">
+                                    <div class="form-group ">
+                                        <label for="email pl-5">User name orEmail</label>
+                                        <div class="input-group">
+                                            <input type="email" name="email" class="form-control pr-5" id="email"
+                                                placeholder="Enter your email or username">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword"> Password</label>
+                                        <input type="password" class="form-control" name="password"id="Password"
+                                            placeholder="Enter new password">
+                                    </div>
+                                   
+                                    <!-- tick -->
+                                    <div class="container">
+                                        <div class="row" style="height: auto;">
+                                            <div class="col-md-12">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="subscribeCheckbox">
+                                                    <label style="font-size: 0.6rem;" class="form-check-label"
+                                                        for="subscribeCheckbox">
+                                                        Remember me
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class=" mt-3  btn btn-primary btn-lg">     Log In   </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 ">
+                <!-- Content for the right column -->
+                <div class="img login">
+                    <img src="/assets/spare.png" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- 2nd layer -->
+<div class="container-fluid mt-0 sl">
+    <div class="row" style="height: 100%;">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+            <div class="card cd-sl">
+                <!-- <img src="image1.jpg" class="card-img-top" alt="Image 1"> -->
+                <div class="card-body mt-5">
+                    <h4 class="card-title">Free Delivery</h4>
+                    <p class="card-text text-secondary">Card 1 Subtitle</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+            <div class="card cd-sl">
+                <!-- <img src="image2.jpg" class="card-img-top" alt="Image 2"> -->
+                <div class="card-body mt-5">
+                    <h4 class="card-title">14 Days Return</h4>
+                    <p class="card-text text-secondary">For all oders over $50, consectetur adipim scing elit.</p>
+                </div>
+            </div>
+        </div>
+        <!-- card 3 -->
+        <div class="col-md-4">
+            <div class="card cd-sl">
+                <!-- <img src="image3.jpg" class="card-img-top" alt="Image 3"> -->
+                <div class="card-body mt-5">
+                    <h4 class="card-title">Secure Payment</h4>
+                    <p class="card-text text-secondary">100% secure payment, consectetur adipim scing elit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('../partials/user-footer') %> 

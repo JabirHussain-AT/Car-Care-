@@ -1,0 +1,134 @@
+<%- include('../layout/user/layout') %>
+    <link rel="stylesheet" href="/stylesheet/user-signup.css">
+
+    <%- include('../partials/user-header') %>
+        <!-- 1 st div layer -->
+        <div class="container-fluid main-layer">
+            <div class="row justify-content-center align-items-center" style="height: auto;">
+                <div class="col-md-3.5  rounded signup signup-form">
+                    <!-- Content for the left column -->
+                    <div class="p-3">
+                        <h2>Register</h2>
+                        <p style="font-size: small;">Already have an account? <a href="user/login"><u>LOG IN</u></a></p>
+                        <div class="container-fluid">
+                            <div class="row justify-content-center" style="height: 100%;">
+                                <div class="col-md-6 ml-5 pl-4">
+                                    <form action="/user/verifyEmail" method="get" style="margin-left: -9vw;">
+                                        <div class="form-group">
+                                            <label for="email pl-5">Email</label>
+                                            <div class="input-group">
+                                                <input style="width:124%" type="email" name="email" required
+                                                    class="form-control " id="email"
+                                                    placeholder="Enter your email" value="<%=locals.email%>">
+                                                <!-- <div class="input-group-append">
+                                            <a href="#" class="btn btn-danger">Verify Email</a>
+                                        </div> -->
+                                            </div>
+                                            <button class="btn btn-primary btn-sm mt-4" id="verifyButton"
+                                                type="submit">verify
+                                                Email</button>
+                                        </div>
+                                    </form>
+                                    <form class="form" action="/user/signup" method="post">
+                                        <div class="form-group ">
+
+
+                                            <div id="verificationResult"></div>
+
+                                            <!-- <a  href="verify2mail" id="verifyLink" class="text-danger v-email rounded-pill-sm">Verify
+                                                    Email</a> -->
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newPassword">New Password</label>
+                                            <input type="password" name="Password" required class="form-control"
+                                                id="newPassword" placeholder="Enter new password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmPassword">Confirm Password</label>
+                                            <input type="password" name="confirmPassword" required class="form-control"
+                                                id="confirmPassword" placeholder="Confirm new password">
+                                        </div>
+                                        <% if(locals.message.error){ %>
+                                            <p style="color: red; font-size: 10px ;">
+                                                <%= message.error %>
+                                            </p>
+                                            <% } %>
+                                                <!-- tick -->
+                                                <div class="container">
+                                                    <div class="row" style="height: auto;">
+                                                        <div class="col-md-12">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" required type="checkbox"
+                                                                    id="subscribeCheckbox">
+                                                                <label style="font-size: 0.6rem;"
+                                                                    class="form-check-label" for="subscribeCheckbox">
+                                                                    I am agreeying all the terms and conditions by clicking create account Button
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit"
+                                                    class=" mt-3 ml-0 rounded-pill btn btn-color">Create an
+                                                    account</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 ">
+                    <!-- Content for the right column -->
+                    <div class="">
+                        <img src="/assets/tools.png" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <script  src="https://code.jquery.com/jquery-3.6.0.min.js">
+            // $(document).ready(function () {
+            //     $("#verifyLink").click(function (e) {
+            //         e.preventDefault(); // Prevent the default anchor tag behavior
+        
+            //         // Get the email value from the input box
+            //         var email = $("#email").val();
+        
+            //         // Make an AJAX POST request to the server
+            //         $.ajax({
+            //             type: "POST",
+            //             url: '/user/verifyEmail', // Replace with your server endpoint
+            //             data: { email: email }, // Send the email as a query parameter
+            //             success: function (response) {
+            //                 // Handle the response from the server
+            //                 $("#verificationResult").html("Response from server: " + response);
+            //             },
+            //             error: function (error) {
+            //                 console.error("Error:", error);
+            //             }
+            //         });
+            //     });
+        
+                // Add a click event listener to the custom button
+                $("#verifyButton").click(function () {
+                    // Get the email value from the input box
+                    var email = $("#email").val();
+                    console.log(email);
+                    // Make an AJAX request to the server using the email value
+                    $.ajax({
+                        type: "POST",
+                        url: '/user/verifyEmail', // Replace with your custom server endpoint
+                        data: { email: email }, // Send the email as a parameter
+                        success: function (response) {
+                            // Handle the response from the server
+                            console.log("Response from custom endpoint:", response);
+                        },
+                        error: function (error) {
+                            console.error("Error:", error);
+                        }
+                    });
+                });
+            });
+        </script> -->
+        <%- include('../partials/user-footer') %>

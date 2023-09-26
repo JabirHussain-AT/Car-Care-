@@ -1,0 +1,88 @@
+.banner-login {
+    background-image: url('/assets/bg-1\ login.jpg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    color: #fff; /* Text color */
+    padding: 100px 0;
+}
+body{
+    overflow-x: hidden;
+}
+.banner h1 {
+    font-size: 2rem; /* Adjust the font size as needed */
+}
+/* first layer */
+.main-layer{
+    height: 100vh;
+    width: 100vw;
+    background-color:#CFE6F9;
+}
+.signup{
+ height: 60vh;
+ width: 80vw;
+ margin-top: 10vh;
+ background:transparent
+}
+.signup-form{
+    height: 68vh;
+    width: auto;
+    background-color: rgb(255, 255, 255);
+    margin-right: 10vh;
+}
+.form{
+    padding-right: -10vw;
+    margin-left: -9vw;
+}
+.v-email{
+    margin-left: 15vw;
+}
+.main-layer {
+    background-color:#CFE6F9;
+    height: 100vh;
+}
+
+.signup-form {
+    background-color: #ffffff;
+}
+
+.signup {
+    margin-top: 20px;
+}
+
+.v-email {
+    margin-left: 16vw;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .main-layer {
+        height: auto;
+    }
+    .signup-form{
+        margin-left: 9vw;
+        height: 100%;
+    }
+}
+.img-login{
+   width: 60%;
+   height: 100%;
+}
+.sl{
+    width: 100vw;
+    height: 100%;
+    font-weight: 400;
+    background-color:#f3e7e7;
+}
+.cd-sl{
+    
+    background: transparent;
+    border:hidden ;
+}
+
+@media (max-width: 768px) {
+    .cd-sl{
+        margin-left: 10%;
+        border-bottom:0.5px solid black;
+
+    }
+}

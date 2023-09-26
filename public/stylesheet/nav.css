@@ -1,0 +1,17 @@
+.logo{
+    width: 80px;
+    height: 45px;
+}
+.nav{
+    background-color: rgb(255, 255, 255);
+    color: black;
+    font-weight: 500;
+    height: 8.5vh;
+}
+.space{
+
+    padding-right: 2.6vw;
+}
+.space_i{
+    padding-left: 1vw;
+}

@@ -1,0 +1,76 @@
+body{
+   overflow-x: hidden; 
+}
+.logo{
+    width: 80px;
+    height: 45px;
+}
+.nav{
+    background-color: rgb(255, 255, 255);
+    color: black;
+    font-weight: 500;
+    height: 8.5vh;
+}
+.space{
+
+    padding-right: 2.6vw;
+}
+.space_i{
+    padding-left: 1vw;
+}
+.main-layer{
+    height: 100vh;
+    width: 100vw;
+    background-color:#CFE6F9;
+}
+.signup{
+ height: 60vh;
+ width: 80vw;
+ margin-top: 10vh;
+ background:transparent
+}
+.signup-form{
+    height: 88vh;
+    width: auto;
+    background-color: rgb(255, 255, 255);
+    margin-right: 10vh;
+}
+.form{
+    padding-right: -10vw;
+    margin-left: -9vw;
+}
+.v-email{
+    margin-left: 15vw;
+}
+.main-layer {
+    background-color:#CFE6F9;
+    height: 100vh;
+}
+
+.signup-form {
+    background-color: #ffffff;
+}
+
+.signup {
+    margin-top: 20px;
+}
+
+.v-email {
+    margin-left: 16vw;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .main-layer {
+        height: auto;
+    }
+    .signup-form{
+        margin-left: 9vw;
+        height: 100%;
+    }
+}
+.btn-color{
+    background-color: #1D31E7;
+    color: white;
+    
+}
