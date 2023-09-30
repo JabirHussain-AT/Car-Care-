@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<style>
+    /* Custom CSS for highlighting the "Users" menu item */
+    .active {
+        background-color: lightgreen;
+    }
+    
+   
+    .active-status {
+        color: green;
+    }
+
+    .inactive-status {
+        color: red;
+    }
+</style>
+
+</style>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <!-- Profile Section -->
+                <div class="text-center mt-3">
+                    <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="80">
+                    <h4 class="mt-2">John Doe</h4>
+                    <p>Position</p>
+                </div>
+                <!-- Navigation Links -->
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-box"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-list"></i> Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#"><i class="fas fa-users"></i>Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-images"></i> Banners</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-tags"></i> Coupons</a>
+                    </li>
+                </ul>
+                <!-- Logout Button -->
+                <div class="mt-auto">
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- <div class="col-lg-3 col-md-4 col-sm-12 bg-dark text-white">
+                             Left sidebar content goes here -->
+                            <!-- Sidebar Content -->
+                        </div>
+                        
+                            <!-- Admin form -->
+                            <div class="bg-light p-4 mt-4">
+                                <h2>Add Admin</h2>
+                                <form action="/admin/addAdmin" method="post">
+                                    <div class="mb-3">
+                                        <label for="admin-Name" class="form-label">Name:</label>
+                                        <input type="text" class="form-control" id="admin-name" name="Name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="admin-email" class="form-label">Email:</label>
+                                        <input type="email" class="form-control" id="admin-email" name="Email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="admin-password" class="form-label">Password:</label>
+                                        <input type="password" class="form-control" id="admin-password" name="Password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="admin-password" class="form-label">Confirm Password:</label>
+                                        <input type="password" class="form-control" id="admin-password" name="ConfirmPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Add Admin</button>
+                                    <% if(message.error){ %>
+                                        <p style="color: red; font-size: 10px ;">
+                                            <%= message.error %>
+                                        </p>
+                                        <% } %>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </main>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS and jQuery (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

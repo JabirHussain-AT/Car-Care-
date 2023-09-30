@@ -10,10 +10,13 @@
                     <div class="p-3">
                         <h2>Register</h2>
                         <p style="font-size: small;">Already have an account? <a href="user/login"><u>LOG IN</u></a></p>
+                        <% if (message) { %>
+                            <p style="color: red; font-size: medium; font-family: 'Times New Roman', Times, serif;"><%= message.exists %></p>
+                     <%   } %>
                         <div class="container-fluid">
                             <div class="row justify-content-center" style="height: 100%;">
                                 <div class="col-md-6 ml-5 pl-4">
-                                    <form action="/user/verifyEmail" method="get" style="margin-left: -9vw;">
+                                    <form action="/verifyEmail" method="get" style="margin-left: -9vw;">
                                         <div class="form-group">
                                             <label for="email pl-5">Email</label>
                                             <div class="input-group">
@@ -29,7 +32,7 @@
                                                 Email</button>
                                         </div>
                                     </form>
-                                    <form class="form" action="/user/signup" method="post">
+                                    <form class="form" action="/signup" method="post">
                                         <div class="form-group ">
 
 
@@ -54,6 +57,11 @@
                                                 <%= message.error %>
                                             </p>
                                             <% } %>
+                                            <% if(locals.message.banned){ %>
+                                                <p style="color: red; font-size: 10px ;">
+                                                    <%= message.banned %>
+                                                </p>
+                                                <% } %>
                                                 <!-- tick -->
                                                 <div class="container">
                                                     <div class="row" style="height: auto;">

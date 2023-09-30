@@ -3,36 +3,26 @@
     <div class="container-fluid" style="background-color:#c2bfbf;">
         <div class="row">
             <!-- Product Images -->
-            
+             <% if(product) { %>
             <!-- Cover Image -->
             <div class=" col-sm-4  d-flex">
                 <div class="product-images  col-sm-4" style="padding: 2.4vw;">
-                    <img src="/assets/disk.PNG" alt="Product Image 1" class="img-thumbnail mb-2 ">
-                    <img src="/assets/disk.PNG" alt="Product Image 2" class="img-thumbnail mb-2">
-                    <img src="/assets/disk.PNG" alt="Product Image 3" class="img-thumbnail mb-2">
+                    <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" class="img-thumbnail mb-2" >
+                    <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2" class="img-thumbnail mb-2" >
+                    <img src="/uploads/<%= product.images[2] %>" alt="Product Image 3" class="img-thumbnail mb-2">
                 </div>
-                <div class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
-                    <img src="/assets/disk.PNG" alt="Cover Image" class="img-fluid "  style="border: 1px solid black;" >
+                <div  class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
+                    <img src="/uploads/<%= product.images[0] %>" id="selectedImage"  alt="Cover Image" class="img-fluid "  style="border: 1px solid black;" >
                 </div>
             
             </div>
             <!-- Product Info -->
             <div class=" col-sm-8 col-md-6">
                 <div class="product-info icons">
-                    <h2>Brake Pads</h2>
-                    <p style="color: black; font-size: large;">Rs 43425.00</p>
+                    <h2><%= product.ProductName %></h2>
+                    <h5 style="color: rgb(223, 15, 15); font-size: large;">Rs <%= product.Price %> /-</h5>
                     <!-- <p>Price:<span class="text-decoration-line-through">6000/-</span> 4995/-</p> -->
-                    <p>Description: Fastrack White Dial Analog with Date Watch for Guys> start
-                        > nodemon app.js
-                        
-                        [nodemon] 3.0.1
-                        [nodemon] to restart at any time, enter `rs`
-                        [nodemon] watching path(s): *.*
-                        [nodemon] watching extensions: js,mjs,cjs,json
-                        [nodemon] starting `node app.js`
-                        D:\E_COMMERCE_project
-                        server started at PORT 3001 </p>
-                </div>
+                    <p><%= product.Description %></p>
 
                 <!-- Color Variants -->
                 <h4>Size Chart:</h4>
@@ -47,7 +37,6 @@
                         </label>
                     </div>
                 </div>
-
                 <!-- Product Actions -->
                 <div class="product-actions">
                     <div class="counter">
@@ -86,6 +75,8 @@
                 </div>
                    
             </div>
+            
+            </div>
             <div class="container-fluid" style="margin-top: 15vh;padding-top: 5vh; background: #ffff;">
                 <div class="row text-center">
                     <div class="col-md-4">
@@ -112,6 +103,6 @@
                             also help in improving mud snow and wet qualities.</p>
                     </div>
                 </div>
-            </div>
+            <% } %>
     </div>
 <%- include('../partials/user-footer')%>

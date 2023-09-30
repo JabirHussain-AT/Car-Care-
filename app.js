@@ -35,7 +35,7 @@ app.use(session({
 const adminRouter = require('./router/adminRouter')
 const userRouter = require('./router/userRouter');
 
-app.use('/user', userRouter)
+app.use('/', userRouter)
 app.use('/admin', adminRouter)
 
 
