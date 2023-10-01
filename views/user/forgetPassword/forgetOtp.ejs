@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+
+        p {
+            margin-top: 10px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-right: 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+    <title>OTP Verification</title>
+</head>
+<body>
+
+<div class="card">
+    <h2>OTP Verification</h2>
+    <p>We have sent a one-time password to your email.</p>
+  <form action="/forgetOtp" method="post"></form>
+    <input type="text"class="ml-1" name="otp" placeholder="Enter OTP" maxlength="4" pattern="\d{4}" required />
+
+    <button type="submit" class="submit-btn">Submit</button>
+</div>
+
+</body>
+</html>

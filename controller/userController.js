@@ -382,6 +382,33 @@ getSignup: (req, res) => {
             req.flash('error', "password not matching")
             res.redirect('user/signup') 
         }
+    },
+    forgetPass : (req,res)=>{
+        res.render('user/forgetPassword/forgetPassword',{ message: req.flash(), email: req.session.email })
+    },
+    postForgetPass :async (req,res)=>{
+       try{
+
+        const email=await Users.findOne({Email:req.body.email})
+        if(email)
+        {  
+            req.session.forgetPassEmail
+            res.redirect('/forgetOtp')
+            
+        }else{
+            req.flash("Nouser","No Existing Account")
+            redirect('/forgetPass')
+        }
+       }catch(error){
+
+       }
+        
+    },
+    forgetOtp : (req,res)=>{
+                res.render('user/forgetPassword/forgetOtp')
+    }
+    postforgetOtp : (req,res)=>{
+        
     }
 }
 

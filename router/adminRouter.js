@@ -3,6 +3,7 @@ const router = express.Router()
 const adminController = require('../controller/adminController')
 const auth = require('../middlewares/userAuth.js')
 const upload = require('../middlewares/upload.js')
+const userController = require('../controller/userController')
 
 
 //admin users 
@@ -23,4 +24,6 @@ router.post('/editProduct/:id',upload.array('images',3),adminController.postEdit
 
 router.get('/productView',adminController.getProductview)
 router.get('/productView/:id',adminController.postProductview)
+
+
 module.exports = router

@@ -23,6 +23,9 @@ router.post('/login',userController.postLogin)
  router.get('/logout',userController.logout)
 router.get('/shop',userController.shop)
 
-
+router.get('/forgetPass',userController.forgetPass)
+router.post('/forgetPass',userController.postForgetPass)
+router.get('/forgetOtp',userController.forgetOtp)
+router.post('/forgetOtp',userController.forgetOtp)
 
 module.exports = router

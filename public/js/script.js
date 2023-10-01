@@ -50,4 +50,5 @@ $(document).ready(function(){
         var selectedImageSrc = $(this).attr("src")
         $("#selectedImage").attr("src",selectedImageSrc);
     })
+    
 })

@@ -5,19 +5,32 @@
             <!-- Product Images -->
              <% if(product) { %>
             <!-- Cover Image -->
-            <div class=" col-sm-4  d-flex">
-                <div class="product-images  col-sm-4" style="padding: 2.4vw;">
-                    <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" class="img-thumbnail mb-2" >
-                    <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2" class="img-thumbnail mb-2" >
-                    <img src="/uploads/<%= product.images[2] %>" alt="Product Image 3" class="img-thumbnail mb-2">
+            <div class=" col-sm-4  d-flex exzoom" id="exzoom" >          
+                <div class="product-images  col-sm-4 " style="padding: 2.4vw;">
+                    <!-- <ul class="exzoom_img_ul"> -->
+                        <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" class="img-thumbnail mb-2" >
+                        <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2" class="img-thumbnail mb-2" >
+                        <img src="/uploads/<%= product.images[2] %>" alt="Product Image 3" class="img-thumbnail mb-2">
+                    <!-- </ul> -->
+                   
                 </div>
-                <div  class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
-                    <img src="/uploads/<%= product.images[0] %>" id="selectedImage"  alt="Cover Image" class="img-fluid "  style="border: 1px solid black;" >
+               <div  class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
+                <div class="exzoom_img_box">
+                 <ul class="exzoom_img_ul">
+                     <li><img src="/uploads/<%= product.images[0] %>"  id="selectedImage"  alt="Cover Image" class="  img-fluid  "  style="border: 1px solid black;" ></li></ul></div>
                 </div>
-            
-            </div>
+            </div> 
+         
+             <!-- <a href="https://www.jqueryscript.net/tags.php?/Thumbnail/">Thumbnail</a> Nav-->
+  <!-- <div class="exzoom_nav"></div> -->
+  <!-- Nav Buttons -->
+  <!-- <p class="exzoom_btn">
+      <a href="javascript:void(0);" class="exzoom_prev_btn"> < </a>
+      <a href="javascript:void(0);" class="exzoom_next_btn"> > </a>
+  </p> -->
+ 
             <!-- Product Info -->
-            <div class=" col-sm-8 col-md-6">
+            <div class=" col-sm-8 col-md-6>
                 <div class="product-info icons">
                     <h2><%= product.ProductName %></h2>
                     <h5 style="color: rgb(223, 15, 15); font-size: large;">Rs <%= product.Price %> /-</h5>
