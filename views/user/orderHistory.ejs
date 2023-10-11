@@ -1,0 +1,94 @@
+<%- include('../layout/user/layout') %>
+<link rel="stylesheet" href="/stylesheet/user-cart.css">
+<%- include('../partials/user-header') %>
+<style>
+    body{
+        background-color: rgb(233, 227, 227);
+    }
+.progress-bar.order-placed {
+    background-color: #007bff;
+}
+
+.progress-bar.shipped {
+    background-color: #ffc107;
+}
+
+.progress-bar.delivered {
+    background-color: #28a745;
+}
+
+.progress-bar.rejected {
+    background-color: #dc3545;
+}
+</style>
+
+<div class="container-fluid banner">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h1>Order History</h1>
+    </div>
+  </div>
+</div>
+
+<% if (orderHistory && orderHistory.length > 0) { %>
+  <% orderHistory.forEach((order) => { %>
+    <div class="container my-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h4 class="card-title">Order ID: <%= order._id %></h4>
+            <p>Payment Method: <%= order.PaymentMethord %></p>
+          </div>
+          <p>Ordered Date: <%= order.OrderedDate %></p>
+          <% if(order.Status === "Delivered") { %>
+            <p>Delivered Date: <%= order.DeliveredDate %></p>
+            <p>Return Policy End At : <%= order.LastReturnDate %></p>
+           <% } else {%> 
+          <p>Expected Delivery Date: <%= order.ExpectedDeliveryDate %></p>
+          <% } %>
+          <% if (order.Status === 'Delivered') { %>
+            <p class="text-success">Order Status: <%= order.Status %></p>
+          <% } else if (order.Status === 'Shipped') { %>
+            <p class="text-warning">Order Status: <%= order.Status %></p>
+          <% } else if (order.Status === 'Order placed') { %>
+            <p class="text-primary">Order Status: <%= order.Status %></p>
+          <% } else if (order.Status === 'Rejected' || order.Status === 'Cancelled') { %>
+            <p class="text-danger">Order Status: <%= order.Status %></p>
+          <% } %>
+          <div class="progress">
+            <div class="progress-bar
+                <% if (order.Status.toLowerCase() === 'order placed') { %> order-placed <% } %>
+                <% if (order.Status.toLowerCase() === 'shipped') { %> shipped <% } %>
+                <% if (order.Status.toLowerCase() === 'delivered') { %> delivered <% } %>
+                <% if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> rejected <% } %>"
+                role="progressbar" aria-valuenow="<%=
+                order.Status.toLowerCase() === 'order placed' ? 10 :  /* 10% for " order placed" */
+                order.Status.toLowerCase() === 'shipped' ? 50 :
+                order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>"
+                aria-valuemin="0" aria-valuemax="100" style="width: <%= order.Status.toLowerCase() === 'order placed' ? 10 :
+                order.Status.toLowerCase() === 'shipped' ? 50 :
+                order.Status.toLowerCase() === 'delivered' ? 100 :
+                order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>%;">
+                <%= order.Status.toLowerCase() === 'order placed' ? '10%' :
+                order.Status.toLowerCase() === 'shipped' ? '50%' :
+                order.Status.toLowerCase() === 'delivered' ? '100%' :
+                order.Status.toLowerCase() === 'rejected' ? '0%' : '' %>
+            </div>
+        </div>
+
+          <div class="d-flex justify-content-end mt-2">
+            <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
+         <% if(order.Status === 'Order placed') { %>
+            <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel Order</button></a>
+            <% } else if(order.Status === 'Delivered') { %>
+                <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Return</button></a>
+                <% } %>
+                
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }); %>
+<% } else { %>
+  <p class="container">No order history available.</p>
+<% } %>

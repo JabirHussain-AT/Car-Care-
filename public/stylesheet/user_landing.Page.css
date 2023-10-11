@@ -199,3 +199,24 @@ width: 100vw;
 .follow-button:hover {
     background-color: rgba(255, 255, 255, 0.9);
 }
+@media (max-width: 790px){
+  .m-div{
+    justify-content: center;
+    align-items: center;
+    margin-left: 15vw;
+  }
+  .m-div p{
+    font-size: xx-large;
+  }
+  .p1{
+ font-size: 180px;
+ margin-left: 4vw;
+  }
+  .p2{
+
+  }
+  .p3{
+   
+    margin-left: 10vw;
+  }
+    }

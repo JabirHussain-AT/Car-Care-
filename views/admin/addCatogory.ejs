@@ -1,0 +1,72 @@
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header') %>
+
+<div class="container-fluid">
+    <div class="row  border-start">
+        <main class="px-md-4 icons " style="margin-left: 18%;width: 80%; margin-top: 6%;">
+            <div class="row d-flex justify-content-between">
+                <div class="col-md-8">
+                    <h1 class="mt-5">Add Category</h1>
+                    <br>
+                    <form action="/admin/addCategory" method="post" enctype="multipart/form-data" class="bg-white">
+                        <div class="form-group">
+                            <% if(message.Category){ %>
+                                <div class="alert alert-danger" role="alert">
+                                   <%= message.Category %>
+                                  </div>
+                           <% } %>
+                            <label for="CategoryName">Category Name:</label>
+                            <input
+                                type="text"
+                                name="Name"
+                                class="form-control bg-light"
+                                id="productName"
+                                placeholder="Enter Category Name"
+                                required
+                            />
+                        </div><br>
+
+                       <div class="border p-3 mb-3 bg-light "> <!-- Added bg-light and text-center classes -->
+                            <h3>Media</h3>
+                            <div class="form-group text-center ">
+                                <label for="productImage">Drag and drop or click to upload an image:</label>
+                                <br><br><br><br>
+                                <input
+                                    type="file"
+                                    name="Images"
+                                    class="form-control-file"
+                                    id="productImage"
+                                    accept="image/*"
+                                    multiple
+                                    style="display: none;"
+                                    required
+                                />
+                            </div> 
+                            <!-- uploaded images -->
+                             <div class="row">
+                                <div class="col-md-4">
+                                    <div class="uploaded-image">
+                                        <img src="" alt="Uploaded Image 1" id="uploadedImage1" class="img-fluid" data-index="1">
+                                        <button class="btn btn-danger btn-sm delete-image" style="display: none;" data-index="1">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+              <br>
+                     
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary ms-3">Add Product</button>
+                </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/script.js"></script>
+
+</html>

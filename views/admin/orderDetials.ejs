@@ -1,0 +1,152 @@
+<%- include('../layout/admin/layout') %>
+  <link rel="stylesheet" href="/stylesheet/adminOrdertable.css">
+  <%- include('../partials/admin-header-checking') %>
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">Order History</h2>
+
+      <% if(order.length> 0) { %>
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Sr No</th>
+              <th scope="col">Order ID</th>
+              <th scope="col">Customer ID</th>
+              <th scope="col">Ordered Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Payment Method</th>
+              <th scope="col">Payment Status</th>
+              <th scope="col">Total</th>
+              <th scope="col">Actions</th> <!-- Added column for actions -->
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let i=0; i < order.length; i++) { %>
+              <tr>
+                <td>
+                  <%= i+1 %>
+                </td>
+                <td>
+                  <%= order[i]._id %>
+                </td>
+                <td>
+                  <%= order[i].UserId %>
+                </td>
+                <td>
+                  <%= order[i].OrderedDate %>
+                </td>
+                <td>
+                  <!-- Displaying the current status dynamically -->
+                  <% const currentStatus=order[i].Status || 'Order Placed' ; %>
+                  <% if (order[i].Status === 'Cancelled') { %>
+                    <!-- Displaying the canceled status if the order is cancelled -->
+                    <span class="text-danger p-2" style="background-color:aliceblue; border-radius:  10px;">Cancelled Order</span>
+                  <% } else { %>
+                    <!-- Displaying the dropdown for other statuses -->
+                    <select class="form-select" id="statusSelect<%= i %>"
+                      onchange="changeOrderStatus('<%= order[i]._id %>', <%= i %> )">
+                      <option value="Order Placed" <%=currentStatus==='Order Placed' ? 'selected' : '' %>>Order Placed</option>
+                      <option value="Shipped" <%=currentStatus==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                      <option value="Delivered" <%=currentStatus==='Delivered' ? 'selected' : '' %>>Delivered</option>
+                      <option value="Rejected" <%=currentStatus==='Rejected' ? 'selected' : '' %>>Rejected</option>
+                    </select>
+                  <% } %>
+
+
+                </td>
+                <td>
+                  <%= order[i].PaymentMethord %>
+                </td>
+                <td>
+                  <%= order[i].PaymentStatus %>
+                </td>
+                <td>
+                  <%= order[i].TotalAmount %>
+                </td>
+                <!-- Adding a view detail link -->
+                <td>
+                  <a href="/admin/order/details/<%= order[i]._id %>" class="btn btn-info btn-sm">
+                    View Details
+                  </a>
+                </td>
+              </tr>
+              <% } %>
+          </tbody>
+        </table>
+        <% } else { %>
+          <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">No Orders Yet</h5>
+              <p class="card-text">There are currently no orders available.</p>
+            </div>
+          </div>
+          <% } %>
+            <!-- //pagination -->
+            <% if (order.length> 0) { %>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <p>Showing <%= (currentPage - 1) * perPage + 1 %>-
+                    <%= currentPage * perPage %> results from <%= totalCount %>
+                </p>
+                <ul class="pagination">
+                  <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                    <% } %>
+                </ul>
+              </div>
+              <% } else { %>
+                <p>No results found.</p>
+                <% } %>
+    </div>
+    <script>
+      function changeOrderStatus(orderId, index) {
+        const statusSelect = document.getElementById(`statusSelect${index}`);
+        const newStatus = statusSelect.value;
+        location.reload()
+      
+        // Assuming you have backend routes for updating order status and payment status
+        fetch(`/admin/order/update-status/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: newStatus }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Order status updated:', data);
+      
+          // Check if the new status is "Delivered"
+          if (newStatus.toLowerCase() === 'delivered') {
+            location.reload()
+            // Fetch and update payment status
+            fetch(`/admin/order/update-payment-status/${orderId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ paymentStatus: 'paid' }),
+            })
+            .then(paymentResponse => paymentResponse.json())
+            .then(paymentData => {
+              console.log('Payment status updated:', paymentData);
+              // Update the UI or display a confirmation message
+              const paymentStatusCell = document.getElementById(`paymentStatus${index}`);
+              paymentStatusCell.textContent = 'paid';
+            })
+            .catch(paymentError => {
+              console.error('Error updating payment status:', paymentError);
+              // Handle error
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error updating order status:', error);
+          // Handle error
+        });
+      }
+      </script>
+      
+    <%- include('../partials/user-footer') %>

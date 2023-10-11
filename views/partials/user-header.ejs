@@ -4,57 +4,96 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light nav container-fluid">
-        <div class="container ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light container-fluid">
+        <div class="container">
             <!-- Logo (left side) -->
             <a class="navbar-brand" href="#">
                 <img class="logo" src="/assets/car_care_logo-removebg-preview.png" alt="Helloo">
             </a>
 
+            <!-- Navbar Toggler for small screens -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
             <!-- Navigation links (middle) -->
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item space ">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item space">
-                    <a class="nav-link" href="/user/shop">Shop</a>
-                </li>
-                <li class="nav-item space">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item space">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-                <li class="nav-item space">
-                    <a class="nav-link" href="#">Category</a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item space">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item space">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item space">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item space">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item space">
+
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Category
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                               
+                                <li>
+                                    <a class="dropdown-item" href="/category/6525960187c1164ba5b3ee44">
+                                        <img src="/assets/tyre.png" alt="Category 1" class="category-image" style="width: 45px; padding-right: 10px;">
+                                       Tyres
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/category/6525961d87c1164ba5b3ee4a">
+                                        <img src="/assets/sshell_oil-removebg-preview.png" alt="Category 2" class="category-image" style="width: 45px; padding-right: 10px;">
+                                       Lubricants
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/category/65264c92706867c2090f31b2 ">
+                                        <img src="/assets/headlight cool white.webp" alt="Category 2" class="category-image" style="width: 45px; padding-right: 10px;">
+                                      Headlights
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/category/65264ca1706867c2090f31b7">
+                                        <img src="/assets/disk-removebg-preview.png" alt="Category 2" class="category-image" style="width: 45px; padding-right: 10px;">
+                                      Brakes
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <div class="navbar-nav ms-auto ">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle text-decoration-none text-dark" id="usernameLink"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user pt-3"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="usernameLink">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout" id="logoutLink">Logout</a></li>
+                        </ul>
+                    </div>
+                    <li class="nav-item space_i">
+                        <a class="nav-link" href="#"><i class=" text-secondary fa fa-search"></i></a>
+                    </li>
+                    <li class="nav-item space_i">
+                        <a class="nav-link" href="#"><i class=" text-secondary fa fa-heart"></i></a>
+                    </li>
+                    <li class="nav-item space_i">
+                        <a class="nav-link" href="/cart"><i class=" text-secondary fa fa-shopping-cart"></i></a>
+                    </li>
+                </div>
+            </div>
 
             <!-- Icon options (right corner) -->
-            <!-- <ul class="navbar-nav"> -->
-                <!-- <li class="nav-item space_i">
-                <a class="nav-link" href="/login"><i class="fa fa-user"></i></a>
-            </li> -->
-                <div class="space_i dropdown text-secondary">
-                    <a class="nav-link dropdown-toggle text-decoration-none text-secondary" id="usernameLink" data-bs-toggle="dropdown" aria-expanded="false"><i
-                            class="fa fa-user text-secondary "></i></a>
-                    <ul class="dropdown-menu text-secondary" aria-labelledby="usernameLink">
-                        <!-- <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider"> -->
-                        </li>
-                        <li><a class="dropdown-item" href="/logout" id="logoutLink">Logout</a></li>
-                    </ul>
-                </div>
-                <li class="nav-item space_i">
-                    <a class="nav-link" href="#"><i class=" text-secondary fa fa-search"></i></a>
-                </li>
-                <li class="nav-item space_i">
-                    <a class="nav-link" href="#"><i class=" text-secondary fa fa-heart"></i></a>
-                </li>
-                <li class="nav-item space_i">
-                    <a class="nav-link" href="#"><i class=" text-secondary fa fa-shopping-cart"></i></a>
-                </li>
-            <!-- </ul> -->
+           
         </div>
     </nav>
+</body>

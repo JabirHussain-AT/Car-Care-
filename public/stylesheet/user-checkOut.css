@@ -1,0 +1,98 @@
+.address-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .address-line {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .address-value {
+    margin-bottom: 10px;
+  }
+
+  .card {
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 20px;
+  }
+body{
+   background-color:rgb(36, 47, 69);
+}
+  .card-title {
+    color: #007bff;
+  }
+  .main{
+     margin-top: 10vh;
+  }
+  .address-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .address-line {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .address-value {
+    margin-bottom: 10px;
+  }
+
+  .card {
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    color: #007bff;
+  }
+
+  .confirm-order-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+  } .address-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .address-line {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .address-value {
+    margin-bottom: 10px;
+  }
+
+  .card {
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    color: #007bff;
+  }
+
+  .back-to-shop-btn {
+    background-color: #58718c;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }

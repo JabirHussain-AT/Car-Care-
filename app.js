@@ -21,7 +21,9 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(flash())
 
-const maxAge = 3 * 24 * 60 * 1000
+
+
+const maxAge = 30 * 240 * 600 * 1000
 const SECRET = process.env.SECRET || "HIII"
 
 
@@ -38,6 +40,20 @@ const userRouter = require('./router/userRouter');
 app.use('/', userRouter)
 app.use('/admin', adminRouter)
 
+app.use((err, req, res, next) => {
+  // Log the error for debugging purposes
+  console.error("error in the error handling middleware");
+throw err
+  // Send an appropriate response to the client
+  res.status(500).send('Something went wrong!');
+});
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next()
+})
+app.use("*", (req,res) => {
+  res.render('errorpage')
+})
 
 const PORT = process.env.PORT
 

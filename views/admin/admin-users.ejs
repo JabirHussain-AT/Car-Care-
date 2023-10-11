@@ -46,10 +46,10 @@
                         <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-box"></i> Products</a>
+                        <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-list"></i> Categories</a>
+                        <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
@@ -124,9 +124,11 @@
 
 
                                         <td>
-                                            <a href="/admin/users/<%= users[i]._id %>" class="btn btn-sm btn-info">Edit
-                                                -Ban/Unban</a>
-
+                                            <%if(users[i].Status==="Active") {%>
+                                            <a href="/admin/users/<%= users[i]._id %>" onclick="return confirm('Are you sure want to block the user')" class="btn btn-sm btn-success">Block</a>
+                                            <% } else { %>
+                                                <a href="/admin/users/<%= users[i]._id %>" class="btn btn-sm btn-danger">Unblock</a>
+                                                <% } %>
                                         </td>
                                     </tr>
                                     <% } } %>

@@ -1,0 +1,66 @@
+.banner {
+    background-image: url('/assets/bg-1\ login.jpg');
+    background-size: auto; /* Replace with your image URL */
+    opacity: 0.7;
+    /* filter: blur(5px);
+    -webkit-filter: blur(5px); */
+    background-size: contain;
+    background-position: center;
+    color: #000000; /* Text color */
+    padding: 100px 0;
+}
+body{
+    overflow-x: hidden;
+    background-color: rgb(255, 255, 255);
+    /* background:linear-gradient(#fff,#CFE1ED); */
+}
+th{
+    background-color: hsl(49, 100%, 93%);
+    
+}
+.table-img{
+    width:3vw;
+    height:7vh;
+}
+.card-cart{
+    background-color:  hsl(49, 100%, 93%);;
+    border:none;
+    /* margin-top: 16vh; */
+}
+.coupon-card-box{
+    background-color: hsl(49, 100%, 93%);; ;
+}
+.coupon-bg{
+    width: 100%;
+}
+.transparent-input {
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    width: 12vw;
+    font-size: inherit;
+    text-align: right; /* Align the text to the right */
+  }
+.head{
+width: 100%;
+height: 8vh;
+margin-bottom: 5vh;
+padding-left: 5vh;
+padding-right: 5vh;
+padding-top: 2vh;
+background-color: hsl(49, 100%, 93%);; ;
+}
+.head p{
+    font-weight: 600;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+@media (max-width: 768px) {
+    .table-img{
+        width:100%;
+        height:100%;
+    }
+    .table{
+        width: 100vw;
+    }
+    
+}

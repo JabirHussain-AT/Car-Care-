@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<style>
+    /* Custom CSS for highlighting the "Users" menu item */
+    .active {
+        background-color: lightgreen;
+    }
+    .active-status {
+        color: green;
+    }
+
+    .inactive-status {
+        color: red;
+    }
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <!-- Profile Section -->
+                <div class="text-center mt-3">
+                    <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="80">
+                    <h4 class="mt-2">John Doe</h4>
+                    <p>Position</p>
+                </div>
+                <!-- Navigation Links -->
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link" href="/admin/users"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-images"></i> Banners</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-tags"></i> Coupons</a>
+                    </li>
+                </ul>
+                <!-- Logout Button -->
+                <div class="mt-auto">
+                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div class="container" style="margin-left: 10%; width: 82%; margin-top: 6%;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2>CATEGORY LIST</h2>
+                        <a href="/admin/addCategory"><button class="btn btn-primary" id="addProduct">Add Category</button></a>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                     
+                        <table class="table table-bordered table-shadow mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Categories</th>
+                                    <th>Visibility</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% Categories.forEach(Category => { %>
+                                    <tr>
+                                      <td><%= Category.Name %></td>
+                                      <td class="<%= Category.Display === 'Active' ? 'active-status' : 'inactive-status' %>"><%= Category.Display %></td>
+                                      <td>
+                                        <a href="/admin/editCategory/<%= Category._id %>" class="btn btn-dark  btn-sm">Edit</a>
+                                       
+                                        <%if(Category.Display === "Active") {%>
+                                            <a href="/admin/viewCategory/<%=Category._id %>" class="pl-3 pr-3 mt-1 btn btn-warning btn-sm">Hide</a>
+                                            <% } else { %>
+                                                <a href="/admin/viewCategory/<%=Category._id %>" class="pl-3 pr-3 mt-1 btn btn-warning btn-sm">Visible</a>
+                                                <% } %>
+                                      </td>
+                                    </tr>
+                                  <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- * perPage -->
+                
+                    <% if (Categories.length > 0) { %>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <p>Showing <%= (currentPage - 1) * perPage + 1 %>-
+                              <%= currentPage * perPage  %> results from <%= totalCount %></p>
+                            <ul class="pagination">
+                              <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                              <% } %>
+                            </ul>
+                          </div>
+                          <% } else { %>
+                            <p>No results found.</p>
+                          <% } %>
+                    </div>
+    <!-- Include Bootstrap JS and jQuery (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

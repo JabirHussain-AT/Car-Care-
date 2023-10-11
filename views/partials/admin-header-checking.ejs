@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"></script>
+  <style>
+    body {
+      background-color: #343a40;
+      color: #fff;
+    }
+
+    #sidebar {
+      display: none; /* Initially hide the sidebar */
+      position: fixed;
+      height: 100vh;
+      width: 250px;
+      background-color: #212529;
+      padding-top: 20px;
+    }
+
+    #sidebar a {
+      padding: 8px;
+      text-decoration: none;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="btn btn-light" type="button" onclick="toggleSidebar()"><img src="/assets/car_care_logo-removebg-preview.png" style="width: 60px;" alt=""></button>
+
+    <div id="sidebar">
+      <div class="text-center">
+      <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="40"> 
+        <h4 class="mt-2">John Doe</h4>
+        <p>Position</p> 
+      </div>
+      <!-- Navigation Links -->
+       <!-- Navigation Links -->
+       <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="/admin/users"><i class="fas fa-users"></i> Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-images"></i> Banners</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-tags"></i> Coupons</a>
+        </li>
+    </ul>
+    <!-- Logout Button -->
+    <div class="mt-auto">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+    
+    </div>
+  </header>
+
+  <script>
+    function toggleSidebar() {
+      var sidebar = document.getElementById('sidebar');
+      sidebar.style.display = (sidebar.style.display === 'none' || sidebar.style.display === '') ? 'block' : 'none';
+    }
+  </script>
+
+

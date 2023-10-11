@@ -2,110 +2,81 @@ const Users = require('../models/userSchema')
 const OTP = require('../models/otpSchema')
 const Admin = require('../models/adminSchema')
 const Products = require('../models/productSchema')
+const Category = require('../models/categorySchema')
+const Orders = require('../models/orderSchema')
+const Cart = require('../models/cartSchema')
 const bcrypt = require('bcrypt')
 const { log } = require('handlebars')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const moment = require('moment')
+const mongoose = require('mongoose')
 require('dotenv').config()
 const otpFunctions = require('../utilty/otpFunctions')
-const Product = require('../models/productSchema')
+const { Mongoose } = require('../config/dbconnection')
+const { getDefaultHighWaterMark } = require('nodemailer/lib/xoauth2')
+
 
 
 
 module.exports = {
     landingPage: (req, res) => {
-        res.render('user/landingPage')
+        try{
+            const user = req.session.user
+            res.render('user/landingPage')
+        }
+        catch(err)
+        {
+            throw err
+        }
+       
+    },
+    home :async (req,res)=>{
+        const category = await Category.find()
+        const user = req.session.user
+        res.render('user/home',{user:user,})
+    },
+    profile :async (req,res)=>{
+        const userid = req.session.user.user
+        const user = await Users.findOne({_id:userid})
+        res.render("user/profile",{user:user,message:req.flash()})
+    },
+    postProfile : async (req,res)=>{
+        try{
+            const { MobNo, Name } = req.body;
+            // console.log(req.body)
+            const userid = req.session.user.user
+            const updatedUser = await Users.findByIdAndUpdate(
+                userid,
+                { $set: { MobNo, Name } },
+                { new: true }
+            );
+            req.flash("profileUpdated","successfully updated ")
+            res.redirect('/profile')
+        }catch(err)
+        {
+            console.log("err in the post profile")
+            throw err
+        }
     },
     getproduct :async (req,res)=>{
         console.log(req.params.id);
         const _id = req.params.id
         const product = await Products.findOne({_id})
-        console.log(product);
-        res.render('user/productPage',{product:product})
+       
+        const user = req.session.user
+        res.render('user/productPage',{product:product,user:user})
     },
     login: (req, res) => {
-        res.render('user/login',{message:req.flash()})
+        const user = req.session.user
+        res.render('user/login',{message:req.flash(),user})
     },
     logout:(req,res)=>{
         req.session.user = false;
     res.clearCookie("userJwt");
     res.redirect("/login");
     },
-    // verifyEmail: (req, res) => {
-    //     const email = req.query.email
-    //     console.log(req.query.email);
-    //     req.session.email=req.query.email
-    //     // create reusable transporter object using the default SMTP transport
-    //     const transporter = nodemailer.createTransport({
-    //         port: 465,               // true for 465, false for other ports
-    //         host: "smtp.gmail.com",
-    //         auth: {
-    //             user: 'carcareecom@gmail.com',
-    //             pass: 'cwaw orvq waai jdla'
-    //         },
-    //         secure: true,
-    //     });
-    //     //hashOTP
-    //     const hashOTP = async (data,saltRounds=10)=>{
-    //         try{
-    //             const hashedData = await bcrypt.hash(data,saltRounds);
-    //             return hashedData;
-
-    //         }catch(error)
-    //         {
-    //          throw error
-    //         }
-    //     }
-    //     //generate OTP
-    //     const generateOTP = async ()=>{
-    //         try{
-    //             return(otp = `${Math.floor(1000 + Math.random()*9000)}`)
-    //         }catch(error){
-    //              throw Error
-    //         }
-
-    //     }
-
-    //     const save = async ()=>{
-    //         try{
-    //             const hashedOTP = await hashOTP(generateOTP)
-    //             const newOTP = await OTP ({
-    //                 email ,
-    //                 otp : hashedOTP,
-    //                 createdAt : Date.now(),
-    //                 expiresAt : Date.now()+3600* +duration,
-
-    //             })
-    //             const  createdOTPRecord =await newOTP.save();
-    //             return createdOTPRecord;
-    //         }catch(error)
-    //         {
-    //             throw error
-    //         }
-
-    //     }
-
-
-    //     //mail data
-    //     const message="OTP IS THIS";
-    //     const mailData = { 
-    //         from: 'carcareecom@gmail.com',  // sender address
-    //         to: email,  // list of receivers
-    //         subject: 'OTP FROM CAR CARE',
-    //          text: `<p>${message}</p> <p style="color:tomato; font-size:25px;letter-spacing:2px;><b>${generateOTP}</b></p><p>
-    //          This Code <b>expires in ${duration} hour(s)</b>.</p>`,
-    //     }
-
-    //     //sending mail
-    //     transporter.sendMail(mailData, (error, info) => {
-    //         if (error) {
-    //             return console.log(error)
-    //         }
-    //         console.log('successs');
-    //     })
-    //      res.render('user/emilverification')
-
-    // },
+   
     verifyEmail: async (req, res) => {
         try {
            
@@ -128,57 +99,7 @@ module.exports = {
             throw Errorr
         }
 
-        // Create reusable transporter object using the default SMTP transport
-
-        // Hash OTP
-        // const hashOTP = async (data, saltRounds = 10) => {
-        //     try {
-        //         const hashedData = await bcrypt.hash(data, saltRounds);
-        //         return hashedData;
-        //     } catch (error) {
-        //         throw error;
-        //     }
-        // }
-
-        // Define the 'generateOTP' function
-
-        // const hashedOTP = await hashOTP(await generateOTP());
-
-        // Create a new OTP record
-        // let otpToBeSent=generateOTP()
-        //     const duration = 1; // Set the OTP expiration duration in hours
-        //     const newOTP = new OTP({
-        //         email: email,
-        //         otp: otpToBeSent,
-        //         createdAt: Date.now(),
-        //         expiresAt: Date.now() + duration * 3600 * 1000, // Convert hours to milliseconds
-        //     });
-
-        //     // Save the OTP record to the database
-        //     const createdOTPRecord = await newOTP.save();
-
-        //     // Mail data
-        //     const message = "OTP IS THIS";
-        //     const mailData = {
-        //         from: 'carcareecom@gmail.com',
-        //         to: email,
-        //         subject: 'OTP FROM CAR CARE',
-        //         html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} hour(s)</b>.</p>`,
-        //     }
-
-        //     // Sending mail
-        //     transporter.sendMail(mailData, (error, info) => {
-        //         if (error) {
-        //             return console.log(error);
-        //         }
-        //         console.log('Success');
-        //     });
-
-        //     res.render('user/emailverification',{error:req.session.error});
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).send("Error sending OTP");
-        // }
+        
     },
     otpAuth: async (req, res) => {
         try {
@@ -215,7 +136,7 @@ module.exports = {
                 req.session.error = "The OTP is invalid.";
                 console.log("INVALIIIIIIEDD");
                 req.flash('error', "OTP IS INVALID")
-                res.render('user/emailverification', { error: req.session.error });
+                res.render('user/emailverification', { error: req.session.error ,user:req.session.user});
             }
         } catch (error) {
             console.error(error);
@@ -240,69 +161,49 @@ module.exports = {
                 });
                 const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent)
 
-                // await OTP.updateOne({email: req.session.email},{  });
-                // await OTP.updateOne({email: req.session.email},{  });
 
 
-                // matchedOTPrecord.createdAt = 
-                // matchedOTPrecord.expiresAt = Date.now() + duration * 360 * 1000
-
-
-            }// Set the OTP expiration duration in hours
-            // const newOTP = new OTP({
-            //     email: email,
-            //     otp: otpToBeSent,
-            //     createdAt: Date.now(),
-            //     expiresAt: Date.now() + duration * 3600 * 1000, // Convert hours to milliseconds
-            // });
-
-            // Save the OTP record to the database
-            // const createdOTPRecord = await newOTP.save();
-
+            }
             // Mail data
         } catch (error) {
             throw error
             res.status(500).send("Error in resendOtp");
         }
     },
+    
 
     shop: async (req, res) => {
-        const products = await Products.find({Display : "Active"})
-        console.log(products);
-        res.render('user/shop',{products:products})
+        const user = req.session.user;
+        const category = await Category.find();
+        
+        let products;
+    
+        if (req.query.search) {
+            // If there's a search query, filter products based on it
+            products = await Products.find({
+                Display: "Active",
+                ProductName: { $regex: new RegExp(req.query.search, 'i') } // Case-insensitive search
+            });
+        } else {
+            // If no search query, fetch all products
+            products = await Products.find({ Display: "Active" });
+        }
+    
+        res.render('user/shop', { products, user, category });
+    },
+    categoryBased : async (req,res)=>{
+        const categoryId = req.params.id
+        const categories = await Category.findOne({_id:categoryId})
+        const user=req.session.user
+        const category = await Category.find()
+        const products = await Products.find({Display : "Active",Category:categories.Name})
+        console.log(category)
+        res.render('user/shop',{products:products,user:user,category:category})
     },
     postLogin: async (req, res) => {
         try {
             // const Email = req.body.email
-            const Password = req.body.password
-            // console.log(req.body);
-            if(req.body.password == process.env.SUPADM_PASS && req.body.email == process.env.SUPER_ADMIN)
-            {
-                res.redirect('/admin/addAdmin')
-            }
-            const adminOrnot =  await Admin.findOne({Email:req.body.email})
-            // console.log(adminOrnot);
-            if(adminOrnot)
-            {
-                const bcryptPass = await bcrypt.compare(req.body.password, adminOrnot.Password)
-                console.log(bcryptPass);
-                if (bcryptPass) {
-                    console.log('user is fine');
-                    const accessToken = jwt.sign({ user: adminOrnot._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
-                   res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 })
-                    console.log("ivde ethi ?")
-                    req.session.admin = adminOrnot._id
-                    const users = await Users.find()
-                    res.render('admin/admin-users', { users:users })
-                } else {
-                    
-                    req.flash("notMatching",' password not matching')
-                    res.redirect('/login')
-                } 
-            }else{
-
-           
-            const userData = await Users.findOne({ Email: req.body.email })
+         const userData = await Users.findOne({ Email: req.body.email })
             console.log(userData);
             if(userData.Status==='Active'){
             if (userData!==null) {
@@ -311,9 +212,9 @@ module.exports = {
                 console.log('user is fine');
                 const accessToken = jwt.sign({ user: userData._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
                 res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 })
-                console.log("ivde ethi ?")
-                req.session.user = userData._id
-                res.render('user/landingPage', { user: true })
+                req.session.user = userData.id
+                console.log(req.session.user);
+                res.render('user/home', { user: true })
             } else {
                 
                 req.flash("notMatching",' password not matching')
@@ -330,7 +231,7 @@ module.exports = {
                 req.flash('banned','you are Banned')
                 res.redirect('/login')
         }
-    }
+    
         }catch(error){
             req.flash("warning",' username or password not matching')
             res.redirect('/login')
@@ -343,8 +244,9 @@ module.exports = {
         
     
 getSignup: (req, res) => {
+    const user = req.session.user
     // const error = req.session.error
-    res.render('user/signup', { message: req.flash(), email: req.session.email })
+    res.render('user/signup', { message: req.flash(), email: req.session.email ,user:user})
 },
     postSignup: async (req, res) => {
         
@@ -352,24 +254,20 @@ getSignup: (req, res) => {
         if (req.body.Password === req.body.confirmPassword) {
 
             try {
-        //         const userStatus = await Users.findOne({Email:req.body.email})
-        // if(userStatus. == "Active" )
-        // {
+        //        
                 req.body.Password = bcrypt.hashSync(req.body.Password, 10)
                 const userData = await Users.create(req.body)
                 console.log(userData);
                 if (userData) {
                     const accessToken = jwt.sign({ user: userData._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
                     res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 })
-                    console.log("ivde ethi ?")
-                    res.render('user/landingPage', { user: true })
+                    
+                  req.session.user=userData._id
+                    res.render('user/home', { user: true })
                 } else {
                     console.log("anirudh");
                 }
-            // }else{
-            //     req.flash('banned','sorry you are banned by the admin')
-            //     res.redirect('/signup')
-            // }
+          
             } catch (error) {
                 console.log(error);
                 if (error.code === 11000) {
@@ -384,7 +282,7 @@ getSignup: (req, res) => {
         }
     },
     forgetPass : (req,res)=>{
-        res.render('user/forgetPassword/forgetPassword',{ message: req.flash(), email: req.session.email })
+        res.render('user/forgetPassword/forgetPassword',{ message: req.flash(), email: req.session.email,user:req.session.user })
     },
     postForgetPass :async (req,res)=>{
        try{
@@ -392,7 +290,7 @@ getSignup: (req, res) => {
         const email=await Users.findOne({Email:req.body.email})
         if(email)
         {  
-            req.session.forgetPassEmail
+            req.session.forgetPassEmail= email.Email
             res.redirect('/forgetOtp')
             
         }else{
@@ -404,11 +302,498 @@ getSignup: (req, res) => {
        }
         
     },
-    forgetOtp : (req,res)=>{
-                res.render('user/forgetPassword/forgetOtp')
+    forgetOtp : async(req,res)=>{
+        try{
+            const email = req.session.forgetPassEmail
+            otpToBeSent =otpFunctions.generateOTP()
+            console.log("fogotp")
+           req.session.otp =otpToBeSent
+           console.log(req.session.otp);
+            otpFunctions.forgetOtp(req,res,email,otpToBeSent)
+           
+        }
+        catch(error){
+         console.log("error in forgetotp" ,error);
+        }
+               
+    },
+    postforgetOtp :async (req,res)=>{
+      try{
+        const email = req.params.email
+            if(req.body.otp == req.session.otp)
+            {
+                res.redirect(`/setNewPass/${email}`)
+            }
+            else{
+                req.flash("forgetOtp","not valid")
+                res.redirect('/forgetOtp')
+            }
+      }catch(error)
+      {
+        throw error
+      }
+    },
+    setNewPass : (req,res)=>{
+        req.session.userEmail= req.params.email
+        res.render('user/forgetPassword/setNewPass',{message:req.flash(),email:req.session.userEmail})
+    },
+    postsetNewPass : async (req,res)=>{
+        try{
+           const newPass = req.body.newPass
+           const ConfirmPass = req.body.ConfirmPass
+           console.log(req.body);
+           console.log(req.session.userEmail)
+            if(newPass === ConfirmPass)
+            {
+                const Password = bcrypt.hashSync(req.body.newPass,10)
+                await Users.updateOne({Email:req.session.forgetPassEmail},{
+                    Password:Password,
+                })
+                res.redirect('/login')
+            }else
+            {
+                req.flash("notMatching","not matching password")
+                res.redirect('/setNewPass')
+            }
+        }catch(error){
+            throw error
+            console.log("error on setting new pass");
+        }
+    },
+    changePassword :async (req,res)=>{
+            const user = req.session.user.user
+            const User = await Users.findOne({_id:user})
+            console.log(req.body,"jabir")
+            const {oldPassword,newPassword,confirmPassword}= req.body
+            console.log(User.Password ,"osos")
+            if(newPassword === confirmPassword)
+            {
+                const bcryptPass = await bcrypt.compare(oldPassword,User.Password)
+                // console.log(bcryptPass)
+                if(bcryptPass)
+                    {
+                                // console.log("njnum varatee....")
+                            const Password = bcrypt.hashSync(newPassword,10)   
+                            await Users.updateOne({_id:user},{
+                                Password:Password,
+                            }) 
+                            req.flash('success',"Password Changed Successfully")
+                            res.redirect('/profile')
+                    }
+            //    console.log(User.Password)
+
+            }else
+            {
+                req.flash("nomatch","Entered Passwords Not Matching")
+                res.redirect('/profile')
+            }
+    },
+    cart : async(req,res)=>{
+        const user = req.session.user
+        userCart = await Cart.findOne({UserId:user.user}).populate('Products.ProductId')
+        res.render('user/cart',{user:user,userCart:userCart})
+    },
+    postCart : (req,res)=>{
+        req.session.totalAmount = req.body.hiddenTotalAmount
+        res.redirect('/checkOut')
+
+    },
+    addtoCart : async(req,res)=>{
+        try{
+        const product_id=req.params.id
+        console.log(product_id,'from act')
+      
+        const user = new mongoose.Types.ObjectId(req.session.user.user)
+      
+        console.log(user,"from anirudh")
+        console.log(user,"its from add to cart")
+       const cart = await Cart.findOne({UserId:user})
+      
+        if(cart)
+        {
+            console.log("saferr");
+            const userid = user.user
+
+           const existing = cart.Products.find((product)=>product.ProductId === (product_id))
+                if(existing) 
+               {
+            console.log("iam here")
+          
+            await Cart.findOneAndUpdate(
+                { "UserId": user, "Products.ProductId": product_id },
+                { $inc: { "Products.$.Quantity": 1 } }
+            );
+            
+        }else
+              
+               
+             
+                {
+                    cart.Products.push({
+                        ProductId:product_id,
+                        Quantity : 1
+                    })
+                    await cart.save()
+                }
+
+        }else
+        {
+            console.log("i am in cart else");
+            const quantity=1
+            await Cart.create({
+                TotalAmount:0,
+                UserId : user,
+                Products:[{ProductId:product_id,Quantity:quantity}]
+            })
+            
+        }
+        res.redirect('/cart')
+    }catch(error)
+    {
+        throw error
+        console.log("add to cart");
+        res.redirect('/cart')
     }
-    postforgetOtp : (req,res)=>{
+    },
+    deleteFromCart : async (req,res)=>{
+        const product_id = req.params.id
+        const user = req.session.user.user
+        const updatedCart = await Cart.findOneAndUpdate(
+            { UserId: user },
+            { $pull: { "Products": { ProductId: product_id } } },
+            { new: true }
+        );
+        console.log("delete : ",updatedCart)
+        res.redirect('/cart')
+    },
+    updatingQuantity: async (req,res)=>{
+        try {
+          const {productId,change} = req.body
+          
+          const userId = req.session.user.user;
+    
+          const userCart = await Cart.findOne({UserId: userId})
+          const product = await Products.findById(productId);
+          if(!userCart || !product){
+            return res.status(404).json({ error: 'Product or cart not found' });
+          }
+          const cartItem = userCart.Products.find(item => item.ProductId === (productId));
+          if(!cartItem){
+            return res.status(404).json({ error: 'Product or cart not found' });
+          }
+          const newQuantity = cartItem.Quantity + parseInt(change)
+          if (newQuantity <= 0) {
+            userCart.Product = userCart.Products.filter(item => !item.ProductId===(productId));
+        } else {
+            cartItem.Quantity = newQuantity;
+        }
+    
+        await userCart.save()
+        res.json({ message: 'Quantity updated successfully', newQuantity });
+    
+    
+        } catch (error) {
+          console.error('Error updating quantity:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+      },
+      orderDetials : (req,res)=>{
+        res.render('user/orderDetials')
+      },
+      addAddress :async (req,res)=>{
+          
+          try{
+              console.log("iam here in add address")
+              res.render('user/addAddress')
+            }catch(error){
+                throw error
+                console.log("error in the  addAddress Catch")
+            }
+            
+        },
+        checkout :async (req,res)=>{
+         
+            const userid=req.session.user.user
+          const userId = new mongoose.Types.ObjectId(userid)
+          try{
+            
+              const user =await Users.findOne({ _id: userId })
+            //   console.log("from checkout",user);
+              res.render('user/checkOut',{user:user})
+          }catch(error){
+                      throw error
+                      console.log("error in the  checkout catch")
+          }
+         
+        },
+      
+        postaddAddress : async (req,res)=>{
+            console.log(req.body)
+            const userid = req.session.user.user
+            
+            const userId = new mongoose.Types.ObjectId(userid)
+            // const user = await Users.findOne({_id:userId})
+            console.log(userId)
+            
+            const {Name, address, city,state, zip, mobileNumber } = req.body;
+            
+            const newAddress = {
+                Name,
+                address,
+                city,
+                state,
+                zip,
+                mobileNumber
+            }
+         try {
+             const user = await Users.findOne({ _id: userId });
+             
+            if (user) {
+              // Push the new address to the Address array
+              user.Address.push(newAddress);
+          
+              // Save the user document
+              await user.save();
+          
+              console.log('Address added successfully');
+              req.flash("added","Address added successfully")
+              res.redirect('/Address')
+            //   res.status(200).send('Address added successfully');
+            } else {
+              console.log('User not found');
+              res.status(404).send('User not found');
+            }
+          } catch (error) {
+            console.error('Error adding address:', error.message);
+
+            res.status(500).send('Internal Server Error');
+          }
+
+
+      },
+      editAddress :async(req,res)=>{
+          const userid = req.session.user.user
+          const User = await Users.findOne({_id:userid})
+        //   console.log(User.Address,"user is availabe in the editaddress")
+            res.render('user/editAddress',{user:User,message:req.flash()})
+      },
+      postEditAddress: async (req, res) => {
+        const addressId = req.params.addressId; // Use req.params.addressId to get the addressId from URL parameters
+        const userId = req.session.user.user;
+      
+        try {
+          const user = await Users.findOne({ _id: userId });
+      
+          if (user) {
+            const { Name, address, city, state, zip, mobileNumber } = req.body;
+      
+            // Find the index of the address in the Address array
+            const addressIndex = user.Address.findIndex((a) => a._id.toString() === addressId);
+      
+            if (addressIndex !== -1) {
+              // Update the fields of the existing address
+              user.Address[addressIndex].Name = Name;
+              user.Address[addressIndex].address = address;
+              user.Address[addressIndex].city = city;
+              user.Address[addressIndex].state = state;
+              user.Address[addressIndex].zip = zip;
+              user.Address[addressIndex].mobileNumber = mobileNumber;
+      
+              // Save the updated user document
+              await user.save();
+      
+              console.log('Address updated successfully');
+              req.flash("updated","Address updated successfully")
+              res.redirect('/Address')
+            //   res.status(200).send('Address updated successfully');
+            } else {
+              console.log('Address not found');
+              req.flash("notFound","Address not found")
+              res.redirect('/Address')
+            //   res.status(404).send('Address not found');
+            }
+          } else {
+            console.log('User not found');
+            // res.status(404).send('User not found');
+          }
+        } catch (error) {
+          console.error('Error updating address:', error.message);
+          res.status(500).send('Internal Server Error');
+        }
+      },
+      deleteAddress: async (req, res) => {
+        const addressID = req.params.id;
+        const userId = req.session.user.user;
+      
+        try {
+          const user = await Users.findOne({ _id: userId });
+      
+          if (user) {
+            // Use $pull to remove the address with the given addressID
+            user.Address.pull({ _id: addressID });
+      
+            // Save the updated user document
+            await user.save();
+      
+            console.log('Address deleted successfully');
+            // res.status(200).send('Address deleted successfully');
+            req.flash("deleted","Address deleted Successfully")
+            res.redirect('/Address')
+          } else {
+            console.log('User not found');
+        //     res.status(404).send('User not found');
+          }
+        } catch (error) {
+          console.error('Error deleting address:', error.message);
+          res.status(500).send('Internal Server Error');
+        }
+      },
+      
+
+    //   orderPlaced : (req,res)=>{
+    //     console.log("orderPlaced")
+    //   },
+      orderHistory :async (req,res)=>{
+        const order = await Orders.find()
+        console.log(order)
+        const momentFormattedDate = moment(""); 
+        res.render('user/orderHistory',{orderHistory:order})
+      },
+      orderDetialedView : async(req,res)=>{
+        try{
+            const orderId = req.params.id
+        const orderDetials  = await Orders.findOne({_id:orderId}).populate("Products.ProductId")
+        // console.log(orderDetials)
+      
+
+                res.render('user/orderDetialedView',{order:orderDetials})
+        }catch(err)
+        {
+            console.log(err,"err in the order detialedview");
+            throw err
+        }
+      },
+      orderSuccess : (req,res)=>{
+        res.render('user/orderSuccess')
+      },
+      cancelOrder : async (req,res)=>{
+        const orderId = req.params.id; // Assuming orderId is passed in the request parameters
+
+        try {
+          // Find the order by ID
+          console.log("Cancellll")
+          const order = await Orders.findById(orderId);
+      
+        //   if (!order) {
+        //     return res.status(404).json({ message: 'Order not found' });
+        //   }
+      
+          // Update order properties
+          order.Status = 'Cancelled';
+          order.PaymentStatus = 'Order Cancelled';
+      
+          // Save the updated order
+          const updatedOrder = await order.save();
+      
+          // Respond with the updated order
+        //   res.status(200).json(updatedOrder);
+            const orderItems = updatedOrder.Products.map(item => ({
+            productId: item.ProductId,
+            quantity: item.Quantity
+            }));
+
+              // Retrieve products based on the product IDs
+              const products = await Products.find({ _id: { $in: orderItems.map(item => item.productId) } });
+              //
+              for (const orderItem of orderItems) {
+                const product =  products.find(product => orderItem.productId.equals(product._id));
+                 if (product) {
+                     // Convert AvailableQuantity to a number if it's stored as a string
+                      const currentQuantity = parseFloat(product.AvailableQuantity);
+                    // Convert orderItem.quantity to a number if it's stored as a string
+                      const orderQuantity = parseFloat(orderItem.quantity);   
+                      product.AvailableQuantity = currentQuantity + orderQuantity;
+
+         // Update stock quantity in the database for this product
+                 await Products.updateOne({ _id: product._id }, { $set: { AvailableQuantity: product.AvailableQuantity } });
+                 console.log("quantity added")
+              }
+          }
+        //   console.log(orderItems,"blank")
         
-    }
+        res.redirect('/orderHistory')
+        } catch (error) {
+          console.error('Error cancelling order:in cancel order', error);
+          res.status(500).json({ message: 'Internal Server Error' });
+        }
+      
+      },
+      postCheckOut: async (req,res)=>{
+        
+        console.log("orderPlaced",req.body)
+        const userId = new mongoose.Types.ObjectId(req.session.user.user)
+        const ProductsInCart = await Cart.findOne({UserId:userId})
+        
+        try{
+            const selectedAddress = JSON.parse(req.body.selectedAddress);
+            const newOrder = {
+                UserId: userId,
+                Products: ProductsInCart.Products, // Assign the products directly
+                OrderedDate: moment(new Date()).format('llll'), // Set the order date to the current date
+                ExpectedDeliveryDate : moment().add(4, 'days').format('llll'),
+                ShippedAddress :{
+                    Name: selectedAddress.name,
+                    Address: selectedAddress.address,
+                    Pincode: selectedAddress.pincode,
+                    City : selectedAddress.city,
+                    State: selectedAddress.state,
+                    Mobile: selectedAddress.mobile,
+                },
+            //   ShippedAddress :selectedAddress,
+              PaymentMethord:req.body.paymentMethod,
+              TotalAmount : parseFloat(req.session.totalAmount.replace(/[^\d.]/g, ''))
+                // Add other properties as needed
+            }
+            const createdOrder = await Orders.create(newOrder);
+            console.log(createdOrder)
+            //we are making empty the cart 
+            await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
+
+            // const order = await Orders.findOne({UserId:userId})
+            // console.log(createdOrder.Products,"huehfuefuilwe")
+            const orderItems = createdOrder.Products.map(item => ({
+                productId: item.ProductId,
+                quantity: item.Quantity
+              }));
+              console.log(orderItems,"blank")
+              
+              // Retrieve products based on the product IDs
+            const products = await Products.find({ _id: { $in: orderItems.map(item => item.productId) } });
+              // Update stock quantities in the database
+            for (const orderItem of orderItems) {
+             const product =  products.find(product => orderItem.productId.equals(product._id));
+              if (product) {
+            product.AvailableQuantity -= orderItem.quantity;
+           // Update stock quantity in the database for this product
+              await Products.updateOne({ _id: product._id }, { $set: { AvailableQuantity: product.AvailableQuantity } });
+              const user = await Users.findOne({_id:req.session.user.user})
+              const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
+              const result = otpFunctions.sendMail(req, res, user.Email, content)
+            
+           }
+       }
+              res.redirect('/orderPlaced')
+         } // 
+
+         catch(error)
+        {
+            console.log("error in the catch of post checkOut")
+            throw error
+        }
+      }
+
+
+
+      
 }
 

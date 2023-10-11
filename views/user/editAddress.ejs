@@ -1,0 +1,160 @@
+<%- include('../layout/user/layout')%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+<%- include('../partials/user-header')%>
+
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="/addAddress" method="post">
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" name="Name"  id="fullName" placeholder="Enter your full name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" class="form-control" name="address" id="address" placeholder="Enter your address" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="pincode" class="form-label">Pincode</label>
+                    <input type="text" class="form-control" id="pincode" name="zip" placeholder="Enter your pincode" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter your state" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="mobileNumber" class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="mobileNumber" name="mobaileNumb" placeholder="Enter your mobile number" required>
+                  </div>
+                <button type="submit" class="btn btn-primary"  >Submit</button>
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- edit address -->
+ <!-- edit address -->
+<% user.Address.forEach(function(Address) { %>
+    <div class="modal fade" id="editAddressModal<%=Address._id%>" tabindex="-1" aria-labelledby="editAddressModalLabel<%=Address._id%>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editAddressModalLabel<%=Address._id%>">Edit Address</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/editAddress/<%=Address._id %>" method="post">
+              <div class="mb-3">
+                <label for="fullName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="Name" value="<%=Address.Name%>"  id="fullName<%=Address._id%>" placeholder="Enter your full name" required>
+              </div>
+              <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" name="address" value="<%=Address.address%>" id="address<%=Address._id%>" placeholder="Enter your address" required>
+              </div>
+              <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city<%=Address._id%>" name="city" value="<%=Address.city%>"  placeholder="Enter your city" required>
+              </div>
+              <div class="mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="pincode<%=Address._id%>" name="zip" value="<%=Address.zip%>" placeholder="Enter your pincode" required>
+              </div>
+              <div class="mb-3">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state<%=Address._id%>" name="state" value="<%=Address.state%>" placeholder="Enter your state" required>
+              </div>
+              <div class="mb-3">
+                <label for="mobileNumber" class="form-label">Mobile Number</label>
+                <input type="tel" class="form-control" id="mobileNumber<%=Address._id%>" name="mobileNumber" value="<%=Address.mobileNumber%>" placeholder="Enter your mobile number" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <%})%>
+  
+
+<div class="container">
+    <% if(message.updated ){ %>
+        <div class="alert alert-success" role="alert">
+            <%= message.updated %>
+          </div>
+          <% } %>
+          <% if(message.notFound ){ %>
+            <div class="alert alert-warning" role="alert">
+                <%= message.notFound %>
+              </div>
+              <% } %>
+              <% if(message.deleted ){ %>
+                <div class="alert alert-success" role="alert">
+                    <%= message.deleted %>
+                  </div>
+                  <% } %>
+                  <% if(message.added ){ %>
+                    <div class="alert alert-success" role="alert">
+                        <%= message.added %>
+                      </div>
+                      <% } %>
+    <h1 class="text-center tickerTimes">User Addresses</h1>
+    <%if(user.Address.length > 0){%>
+      <% user.Address.forEach(function(Address) { %>
+    <div class="row">  
+        <div class="col-md-6">
+            <div class="card text-bg-dark mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><%=Address.Name%></h5>
+                    <p class="card-text"><%=Address.address%></p>
+                    <p class="card-text"><%=Address.city%></p>
+                    <p class="card-text"><%=Address.zip%></p>
+                    <p class="card-text"><%=Address.state%></p>
+                    <p class="card-text"><%=Address.mobileNumber%></p>
+                    <button  class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editAddressModal<%=Address._id%>">
+                        <i class="fas fa-plus-circle"></i> Edit Address
+                       </button>
+                       <a href="/deleteAddress/<%= Address._id %>" class=" ml-5 btn btn-sm btn-secondary">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%})%>
+    <%}else{%>
+      <!-- <h1 class="text-center tickerTimes">User Addresses</h1> -->
+      <div class="row">
+          <div class="col-md-12">
+              <div class="card text-bg-dark">
+                  <div class="card-body icons text-center">
+                      <h7 style="font-family: Verdana, Geneva, Tahoma, sans-serif;">NO ADDRESS SAVED TILL YET</h1>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <%}%>
+
+
+    <button  class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+        <i class="fas fa-plus-circle"></i> Add Address
+       </button>
+</div>
+
+
+<%- include('../layout/user/footer') %>

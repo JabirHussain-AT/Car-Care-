@@ -1,0 +1,33 @@
+body {
+    background-color: #118cff;
+    color: #ffffff;
+  }
+
+  table {
+    background-color: #e8f1fa;
+    color: #fff;
+  }
+
+  th, td {
+    border: 1px solid #dee2e6;
+  }
+
+  th {
+    background-color: #212529;
+  }
+  /* adminOrdertable.css */
+
+.table-custom {
+  background-color: #f8f9fa; /* Set your desired background color */
+  color: #495057; /* Set your desired text color */
+  border-radius: 10px; /* Add rounded corners */
+}
+
+.table-custom th, .table-custom td {
+  border: 1px solid #dee2e6; /* Set border color */
+}
+
+.table-custom th {
+  background-color: #343a40; /* Set header background color */
+  color: #ffffff; /* Set header text color */
+}

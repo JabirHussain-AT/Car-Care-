@@ -63,10 +63,14 @@
 <div class="card">
     <h2>OTP Verification</h2>
     <p>We have sent a one-time password to your email.</p>
-  <form action="/forgetOtp" method="post"></form>
+  
+
+   
+  <form action="/forgetOtp/<%= userEmail %>" method="post">
     <input type="text"class="ml-1" name="otp" placeholder="Enter OTP" maxlength="4" pattern="\d{4}" required />
 
     <button type="submit" class="submit-btn">Submit</button>
+    </form>
 </div>
 
 </body>

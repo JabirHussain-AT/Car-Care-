@@ -1,12 +1,13 @@
 <%-include('../layout/user/layout')%>
+<link rel="stylesheet" href="/stylesheet/productPage.css">
 <%- include('../partials/user-header')%>
     <div class="container-fluid" style="background-color:#c2bfbf;">
         <div class="row">
             <!-- Product Images -->
              <% if(product) { %>
             <!-- Cover Image -->
-            <div class=" col-sm-4  d-flex exzoom" id="exzoom" >          
-                <div class="product-images  col-sm-4 " style="padding: 2.4vw;">
+            <div class=" col-sm-4  d-flex " >          
+                <div class="product-images  col-sm-4 side-img" style="padding: 2.4vw;">
                     <!-- <ul class="exzoom_img_ul"> -->
                         <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" class="img-thumbnail mb-2" >
                         <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2" class="img-thumbnail mb-2" >
@@ -15,9 +16,9 @@
                    
                 </div>
                <div  class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
-                <div class="exzoom_img_box">
-                 <ul class="exzoom_img_ul">
-                     <li><img src="/uploads/<%= product.images[0] %>"  id="selectedImage"  alt="Cover Image" class="  img-fluid  "  style="border: 1px solid black;" ></li></ul></div>
+                <div id="img-container">
+                
+                  <img src="/uploads/<%= product.images[0] %>"  id="selectedImage"  alt="Cover Image" class="  img-fluid  "  style="border: 1px solid black;" ></div>
                 </div>
             </div> 
          
@@ -30,8 +31,8 @@
   </p> -->
  
             <!-- Product Info -->
-            <div class=" col-sm-8 col-md-6>
-                <div class="product-info icons">
+            <div class=" col-sm-8 col-md-6">
+                <div class= "product-info icons">
                     <h2><%= product.ProductName %></h2>
                     <h5 style="color: rgb(223, 15, 15); font-size: large;">Rs <%= product.Price %> /-</h5>
                     <!-- <p>Price:<span class="text-decoration-line-through">6000/-</span> 4995/-</p> -->
@@ -55,18 +56,8 @@
                     <div class="counter">
                         <div class="container mt-5">
                             <div class="row">
-                                <div class="col-md-3 ">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-dark" id="minusBtn">-</button>
-                                        </div>
-                                        <input type="text" class="form-control text-center" id="count" value="0">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-dark" id="plusBtn">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="btn btn-dark ml-3">Add to Cart</button>
+                                
+                                <a href="/addToCart/<%= product._id %>"><button class="btn btn-dark ml-3">Add to Cart</button></a>
                                 <button class="btn btn-warning ml-3">Add to Wishlist</button> 
                             </div>
                         </div>

@@ -2,40 +2,47 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 module.exports = {
-    userTokenAuth: (req, res, next) => {
-        const token = req.cookies.userJwt
-        if (token) {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-                if (err) {
-                    res.redirect("/signup")
-                }
-                req.session.user = user;
-                next()
-            })
+    adminTokenAuth: async (req,res,next)=>{
+        try {
+            const token = req.cookies.adminJwt
+            if(token){
+                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err,admin)=>{
+                    if(err){
+                        res.redirect('/admin/login')
+                    }else{
+                        req.session.admin = admin
+                        next()
+                    }
+                })
+            }else{
+                req.session.admin = false
+                res.redirect('/admin/login')
+            }
+        } catch (error) {
+            console.log(error);
+            res.redirect('/admin/login')
         }
     },
-    
-    userExist: (req, res, next) => {
-        const token = req.cookies.userJwt;
-        if (token) {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-                if (err) {
-                    next();
-                }
-                else {
-                    res.redirect('/user/home')
-                }
-            })
-        }
-        else {
+
+    adminExist: (req, res, next) => {
+        try {
+            const token = req.cookies.adminJwt;
+            if (token) {
+                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+                    if (err) {
+                        next();
+                    }
+                    else {
+                        res.redirect('/admin/product')
+                    }
+                })
+            }
+            else {
+                next();
+            }
+        } catch (error) {
+        console.log(error);
             next();
         }
     },
-
 }
-
-
-
-
-
-

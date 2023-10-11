@@ -1,0 +1,166 @@
+<%- include('../layout/user/layout') %>
+<link rel="stylesheet" href="/stylesheet/user-checkOut.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+<%- include('../partials/user-header') %>
+
+<div class="container custom-container main">
+  <div class="row">
+    <!-- Left Column - Col-7 -->
+    <div class="col-md-7">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Saved Addresses</h5>
+          
+          <!-- Address Cards -->
+          <% if(user && user.Address && user.Address.length > 0) { %>
+            <% user.Address.forEach((address, index) => { %>
+              <div class="address-card row">
+                <div class="col-1">
+                  <input type="radio" name="address" id="<%= 'address' + (index + 1) %>" value="<%= address.address %>" data-name="<%= address.Name %>" data-address="<%= address.address %>" data-zip="<%= address.zip %>"  data-state="<%= address.state %>"  data-city="<%= address.city %>" data-mobile="<%= address.mobileNumber %>" <%= index === 0 ? 'checked' : '' %>>
+                </div>
+                <div class="col-5">
+                  <div class="address-line">Name :</div>
+                  <div class="address-line">Address :</div>
+                  <div class="address-line">City:</div>
+                  <div class="address-line">ZIP:</div>
+                  <div class="address-line">MOb No :</div>
+                 
+                </div>
+                <div class="col-6">
+                  <div class="address-value"><%= address.Name %></div>
+                  <div class="address-value"><%= address.address %></div>
+                  <div class="address-value"><%= address.city %></div>
+                  <div class="address-value"><%= address.state %></div>
+                  <div class="address-value"><%= address.zip %></div>
+                  <div class="address-value"><%= address.mobileNumber %></div>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
+          
+          <!-- Add more address cards... -->
+          
+          <!-- Add Address Link with Icon -->
+          <button  class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+            <i class="fas fa-plus-circle"></i> Add Address
+           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Col-5 -->
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Payment Methods</h5>
+          <form action="/orderPlaced" method="post">
+            <input type="hidden" required id="selectedAddress" name="selectedAddress" value="">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+              <label class="form-check-label" for="cod">
+                Cash on Delivery (COD)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="online" value="online">
+              <label class="form-check-label" for="online">
+                Online Payment
+              </label>
+            </div>
+            <div class=" justify-content-center">
+              <a href="/orderPlaced">
+                <button class="btn btn-success mt-4" type="submit">Confirm Order</button>
+              </a>
+              <button class="btn btn-secondary mt-4">Back to Shop</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ////////////////////hufdvdkjvd -->
+
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="card">
+          <div class="card-body">
+            <!-- <h2 class="card-title text-center">Add Address</h2>
+             -->
+            <form action="/addAddress" method="post">
+              <div class="mb-3">
+                <label for="firstName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="firstName" name="Name" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="State" class="form-label">State</label>
+                <input type="text" class="form-control" id="State" name="state" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="zip" class="form-label">Zip Code</label>
+                <input type="text" class="form-control" id="zip" name="zip" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="mobileNumber" class="form-label">Mobile Number</label>
+                <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" required>
+              </div>
+              
+              <button type="submit" class="btn btn-primary">Add Address</button>
+            </form>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const confirmOrderButton = document.querySelector('.btn-success');
+      confirmOrderButton.addEventListener('click', () => {
+        const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
+  
+        const fullAddressDetails = {
+          name: selectedAddressRadio ? selectedAddressRadio.dataset.name : '',
+          address: selectedAddressRadio ? selectedAddressRadio.dataset.address : '',
+          pincode: selectedAddressRadio ? selectedAddressRadio.dataset.zip : '',
+          city: selectedAddressRadio ? selectedAddressRadio.dataset.city : '',
+          state: selectedAddressRadio ? selectedAddressRadio.dataset.state : '',
+          // country: selectedAddressRadio ? selectedAddressRadio.dataset.: '',
+          mobile: selectedAddressRadio ? selectedAddressRadio.dataset.mobile : '',
+        };
+  
+        console.log('Selected Address:', fullAddressDetails);
+  
+        const selectedAddressInput = document.getElementById('selectedAddress');
+        selectedAddressInput.value = JSON.stringify(fullAddressDetails);
+  
+        document.getElementById('orderForm').submit();
+      });
+    });
+  </script>
+  

@@ -1,60 +1,84 @@
 <%- include('../layout/user/layout') %>
 <link rel="stylesheet" href="/stylesheet/user-shop.css">
 <%- include('../partials/user-header') %>
-    <div class="container-fluid banner">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1>Shop</h1>
-            </div>
+
+<div class="container-fluid banner">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>Shop</h1>
         </div>
     </div>
-    <!-- filter sortby -->
-    <!-- <div class="container-fluid filterdiv mt-3" >
-        <div class="row mt-3">
-          <div class="col-md-4 filter">
-            Filter content goes here
+</div>
 
-            <label for="filterInput ">Filter:</label>
-            <input type="text" id="filterInput" name="filterInput">
-            Add your filter options and content here
-          </div>
-      
-          <div class="col-md-8 sort">
-            Sort By content goes here
-            <div class="form-inline float-md-right">
-              <label class="mr-2" for="sortBySelect">Sort By:</label>
-              <select class="form-control" id="sortBySelect">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
-            </div>
+<!-- Search and Filter -->
+<div class="container-fluid search-section" style="height: 10vh; background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
+    <div class="row justify-content-between align-items-center" style="height: 100%;">
+        <div class="col-md-4 mt-1">
+            <!-- Small Search Bar -->
+            <div class="col-md-4 mt-1">
+              <form action="/shop" method="get">
+                  <div class="input-group" style="width: 20vw; ">
+                      <input type="text" class="form-control"  placeholder="Search" aria-label="Search" aria-describedby="searchButton" name="search">
+                      <button class="btn btn-primary" type="submit" id="searchButton">Go</button>
+                  </div>
+              </form>
           </div>
         </div>
-      </div> -->
-    <!-- cards -->
-   
-            <div class="container">
-                <div class="row">
-                    <% products.forEach(function(product) { %>
-                        <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/uploads/<%= product.images[0] %>" class="card-img-top" alt="">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= product.ProductName %></h5>
-                                    <p class="card-text">Price: $<%= product.Price %></p>
-                                    <!-- Add any additional product information here -->
-                                    <a href="/product/<%= product._id %>" class="btn btn-primary">View Details</a>
-                                </div>
-                            </div>
+        <div class="col-md-2 mt-3 mb-1">
+            <!-- Small Filter Dropdown for Categories -->
+            <% if (category && category.length > 0) { %>
+                <div class="form-group">
+                    <select class="form-control" id="categoryFilter">
+                        <option value="">Filter</option>
+                        <% category.forEach((categories) => { %>
+                            <option value="<%= categories._id %>"><%= categories.Name %></option>
+                        <% }) %>
+                        <option value="all">All Products</option>
+                    </select>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Cards -->
+<div class="container">
+    <div class="row mt-3">
+      <% if(products.length >0) { %>
+        <% products.forEach(function(product) { %>
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.ProductName %></h5>
+                        <p class="card-text">Price: $<%= product.Price %></p>
+                        <!-- Add any additional product information here -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/product/<%= product._id %>" class="btn btn-sm btn btn-warning">Add to Wishlist</a>
+                            <a href="/product/<%= product._id %>"><button class="btn-primary">View Details</button></a>
                         </div>
-                    <% }); %>
+                    </div>
                 </div>
             </div>
-        
+        <% }) }else { %>
+          <div class="col-12 text-center mt-5">
+            <img src="/assets/png-transparent-empty-cart-illustration-thumbnail-removebg-preview.png" alt="Empty Cart Image" style="max-width: 300px;">
+            <p class="text-muted mt-3">Oops! It seems there are no items that match the selected criteria.</p>
         </div>
+          <% } %>
     </div>
+</div>
 
+<!-- Include the necessary JavaScript to handle category selection -->
+<script>
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        const selectedCategoryId = this.value;
+        if (selectedCategoryId === 'all') {
+            window.location.href = '/shop';
+        } else if (selectedCategoryId) {
+            window.location.href = '/category/' + selectedCategoryId;
+        }
+    });
+</script>
 
-    
 <%- include('../partials/user-footer') %>

@@ -1,0 +1,18 @@
+
+      
+  
+      
+      .card {
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .card-title {
+        color: #007bff;
+      }
+      
+      .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+      }
+      

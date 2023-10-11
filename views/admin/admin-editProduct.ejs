@@ -1,5 +1,5 @@
 <%- include('../layout/admin/layout') %>
-<%- include('../partials/admin-header') %>
+<%- include('../partials/admin-header-checking') %>
 
 <div class="container-fluid">
     <div class="row  border-start">
@@ -86,23 +86,27 @@
                                 <br><br><br><br>
                             </div>
                             <!-- uploaded images -->
+                            <input type="hidden" name="existingImage1" value="<%=product.images[0]%>">
+                            <input type="hidden" name="existingImage2" value="<%=product.images[1]%>">
+                            <input type="hidden" name="existingImage3" value="<%=product.images[2]%>">
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
-                                        <img src="/uploads/<%=product.images[0]%>" alt="Uploaded Image 1" id="uploadedImage1" class="img-fluid" data-index="1">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="1">Delete</button>
+                                        <img src="/uploads/<%=product.images[0] %>" alt="Uploaded Image 1" id="uploadedImage1" class="img-fluid" data-index="1">
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="1">Change</button>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
                                         <img src="/uploads/<%=product.images[1]%>" alt="Uploaded Image 2" id="uploadedImage2" class="img-fluid" data-index="2">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="2">Delete</button>
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="2">Change</button>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
                                         <img src="/uploads/<%=product.images[2]%>" alt="Uploaded Image 3" id="uploadedImage3" class="img-fluid" data-index="3">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="3">Delete</button>
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="3">Change</button>
                                     </div>
                                 </div>
                             </div>

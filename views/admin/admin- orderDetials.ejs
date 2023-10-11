@@ -1,0 +1,91 @@
+<%- include('../layout/user/layout') %>
+<link rel="stylesheet" href="/stylesheet/orderDetials.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<%- include('../partials/user-header') %>
+<style>
+    .fixed-image {
+        width: 250px;
+        height: 250px;
+        object-fit: fill;
+    }
+
+    .progress-bar.order-placed {
+        background-color: #007bff;
+    }
+
+    .progress-bar.shipped {
+        background-color: #ffc107;
+    }
+
+    .progress-bar.delivered {
+        background-color: #28a745;
+    }
+
+    .progress-bar.rejected {
+        background-color: #dc3545;
+    }
+</style>
+
+<div class="container-fluid gradient-custom-2">
+    <div class="row justify-content-center align-items-center h-100">
+        <% if(order && order.Products.length > 0){ %>
+            <% order.Products.forEach((product, index)=> { %>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card" style="border-radius: 16px;">
+                        <div class="card-body">
+                            <h5 class="card-title">Order ID: <%= order._id %></h5>
+                            <p class="card-text">Placed On: <%= order.OrderedDate %></p>
+                            <img src="/uploads/<%=product.ProductId.images[0]%>"
+                                class="card-img-top fixed-image img-fluid pl-3 ml-5" alt="Product Image">
+                            <h6 class="card-subtitle mb-2 text-muted"><%= product.ProductId.ProductName %></h6>
+                            <p class="card-text">Quantity: <%= product.Quantity %></p>
+                            <p class="card-text">Price: ₹ <%= product.ProductId.DiscountAmount %> /-</p>
+                            <p class="card-text">Via: <%= order.PaymentMethord %></p>
+                            <p class="card-text">Payment Status:<span class="rounded-sm rounded-pill ml-3 pt-1 pb-1 pl-4 pr-4" style="background-color: #f4dbde;"><%=order.PaymentStatus%></span></p>
+
+                            <p class="card-text">Status: <%= order.Status %></p>
+                           <!-- Add shipping address information here -->
+                           <% if (order.ShippedAddress) { %>
+                            <h6 class="card-subtitle mb-2 text-muted">Shipping Address:</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Name:</strong> <%= order.ShippedAddress.Name %></li>
+                                <li><strong>Address:</strong> <%= order.ShippedAddress.Address %></li>
+                                <li><strong>Pincode:</strong> <%= order.ShippedAddress.Pincode %></li>
+                                <li><strong>State:</strong> <%= order.ShippedAddress.State %></li>
+                                <li><strong>Mobile:</strong> <%= order.ShippedAddress.Mobile %></li>
+                            </ul>
+                        <% }  %>
+
+
+                            <div class="progress">
+                                <div class="progress-bar
+                                    <% if (order.Status.toLowerCase() === 'order placed') { %> order-placed <% } %>
+                                    <% if (order.Status.toLowerCase() === 'shipped') { %> shipped <% } %>
+                                    <% if (order.Status.toLowerCase() === 'delivered') { %> delivered <% } %>
+                                    <% if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> rejected <% } %>"
+                                    role="progressbar" aria-valuenow="<%=
+                                    order.Status.toLowerCase() === 'order placed' ? 10 :  /* 10% for " order placed" */
+                                    order.Status.toLowerCase() === 'shipped' ? 50 :
+                                    order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>"
+                                    aria-valuemin="0" aria-valuemax="100" style="width: <%= order.Status.toLowerCase() === 'order placed' ? 10 :
+                                    order.Status.toLowerCase() === 'shipped' ? 50 :
+                                    order.Status.toLowerCase() === 'delivered' ? 100 :
+                                    order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>%;">
+                                    <%= order.Status.toLowerCase() === 'order placed' ? '10%' :
+                                    order.Status.toLowerCase() === 'shipped' ? '50%' :
+                                    order.Status.toLowerCase() === 'delivered' ? '100%' :
+                                    order.Status.toLowerCase() === 'rejected' ? '0%' : '' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/user-footer') %>
+
+
+

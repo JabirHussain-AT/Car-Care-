@@ -45,7 +45,7 @@ const ProductSchema = new Schema({
         type: String,
       },
       UpdatedOn: {
-        type: Date
+        type: String,
       },
       Display: {
         type: String,
