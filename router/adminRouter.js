@@ -3,6 +3,7 @@ const router = express.Router()
 const adminController = require('../controller/adminController')
 const upload = require('../middlewares/upload.js')
 const userController = require('../controller/userController')
+const bannerController = require('../controller/bannerController')
 const auth = require('../middlewares/adminAuth')
 
 
@@ -39,6 +40,11 @@ router.get('/orderDetials',auth.adminTokenAuth,adminController.orderTable)
 router.put('/order/update-status/:orderId',adminController.updateStatus)
 router.get('/order/details/:orderId',adminController.orderViewMore)
 
+router.get('/banner',auth.adminTokenAuth,bannerController.banner)
 
+router.get('/addBanner',auth.adminTokenAuth,bannerController.addBanner)
+router.post('/addBanner',auth.adminTokenAuth,upload.single('Image',1),bannerController.submitAddBanner)
+
+router.post('/activate-banner/:bannerID',auth.adminTokenAuth,bannerController.activateBanner)
 
 module.exports = router

@@ -53,7 +53,8 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Payment Methods</h5>
-          <form action="/orderPlaced" method="post">
+          <form id="payNow">
+          <!-- <form action="/checkOut" method="post"> -->
             <input type="hidden" required id="selectedAddress" name="selectedAddress" value="">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
@@ -68,10 +69,11 @@
               </label>
             </div>
             <div class=" justify-content-center">
-              <a href="/orderPlaced">
-                <button class="btn btn-success mt-4" type="submit">Confirm Order</button>
-              </a>
-              <button class="btn btn-secondary mt-4">Back to Shop</button>
+            
+                <button class="btn btn-success mt-4" id="rzp-button1" type="button">Confirm Order</button>
+      
+              <a href="/shop"><button class="btn btn-secondary mt-4">Back to Shop</button></a>
+              <!-- <button >Pay with Razorpay</button> -->
             </div>
           </form>
         </div>
@@ -137,30 +139,150 @@
       </div>
     </div>
   </div>
-  </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const confirmOrderButton = document.querySelector('.btn-success');
-      confirmOrderButton.addEventListener('click', () => {
-        const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
-  
-        const fullAddressDetails = {
-          name: selectedAddressRadio ? selectedAddressRadio.dataset.name : '',
-          address: selectedAddressRadio ? selectedAddressRadio.dataset.address : '',
-          pincode: selectedAddressRadio ? selectedAddressRadio.dataset.zip : '',
-          city: selectedAddressRadio ? selectedAddressRadio.dataset.city : '',
-          state: selectedAddressRadio ? selectedAddressRadio.dataset.state : '',
-          // country: selectedAddressRadio ? selectedAddressRadio.dataset.: '',
-          mobile: selectedAddressRadio ? selectedAddressRadio.dataset.mobile : '',
-        };
-  
-        console.log('Selected Address:', fullAddressDetails);
-  
-        const selectedAddressInput = document.getElementById('selectedAddress');
-        selectedAddressInput.value = JSON.stringify(fullAddressDetails);
-  
-        document.getElementById('orderForm').submit();
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- ... your existing HTML code ... -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const confirmOrderButton = document.querySelector('#rzp-button1');
+  confirmOrderButton.addEventListener('click', async () => {
+    const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
+
+    const fullAddressDetails = {
+      name: selectedAddressRadio ? selectedAddressRadio.dataset.name : '',
+      address: selectedAddressRadio ? selectedAddressRadio.dataset.address : '',
+      pincode: selectedAddressRadio ? selectedAddressRadio.dataset.zip : '',
+      city: selectedAddressRadio ? selectedAddressRadio.dataset.city : '',
+      state: selectedAddressRadio ? selectedAddressRadio.dataset.state : '',
+      mobile: selectedAddressRadio ? selectedAddressRadio.dataset.mobile : '',
+    };
+
+    
+    console.log('Selected Address:', fullAddressDetails);
+    console.log("hiiii indoooo")
+    try {
+      const response = await fetch('/checkOut', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedAddress: JSON.stringify(fullAddressDetails),
+          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+        }),
       });
+       if(response.cod===true){
+        location.href('/orderPlaced')
+       }
+      if (!response) {
+        throw new Error('Failed to create Razorpay order');
+      }
+        
+      const orderData = await response.json();
+      if(orderData.cod===true){
+        location.href = '/orderPlaced'
+       }
+      console.log(orderData.paymentDetials.response.amount,"hi this is the amount")
+      console.log('Razorpay Order Data:', orderData);
+
+      // Use orderData to configure the Razorpay options and initiate payment
+      var options = {
+        "key": "rzp_test_sVxmHMGOnZJCCm",
+        "amount": orderData.paymentDetials.response.amount,
+        "currency": orderData.currency,
+        "name": "Car Care",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": orderData.paymentDetials.response.order.id,
+        "handler": function (response) {
+          console.log(response,"rsponse in handler")
+          verifyPayment(response,orderData.paymentDetials.order)
+          
+         },
+        "prefill": {
+          "name": " safeer",
+          "email": "gaurav.kumar@example.com",
+          "contact": "9000090000",
+        },
+        "notes": {
+          "address": "Razorpay Corporate Office",
+        },
+        "theme": {
+          "color": "#3399cc",
+        },
+      };
+
+      var rzp1 = new Razorpay(options);
+      rzp1.on('payment.failed', function (response) {
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+      });
+
+      rzp1.open();
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+
+  // Prevent form submission and handle it with AJAX
+  const payNowForm = document.getElementById('payNow');
+  payNowForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(payNowForm);
+    const formObject = {};
+    formData.forEach((value, key) => {
+      formObject[key] = value;
     });
-  </script>
-  
+
+    try {
+      const ajaxResponse = await fetch('/checkOut', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formObject),
+      });
+
+      if (!ajaxResponse.ok) {
+        throw new Error('Failed to submit form data');
+      }
+
+      const responseData = await ajaxResponse.json();
+      console.log('Form Submission Response:', responseData);
+
+      // Handle the response as needed
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+  function verifyPayment(payment, order) {
+    console.log('now in verifyPayment')
+    $.ajax({
+      url:'/verify-payment',
+      data : {
+        payment,
+        order
+      },
+      method : "post",
+      success:(response)=>{
+        if(response.success){
+          // alert("Payment Successfull")
+          location.href = '/orderPlaced'
+        }else{
+          alert("Payment Failed")
+        }
+      }
+    })
+}
+
+});
+
+</script>

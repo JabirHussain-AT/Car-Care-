@@ -1,0 +1,63 @@
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header-checking') %>
+
+<div class="container-fluid">
+    <h2 class="mb-4">Add Banner</h2>
+    <form action="/admin/addBanner" method="post" enctype="multipart/form-data">
+        <!-- Banner Name Input -->
+        <div class="form-group">
+            <label for="bannerName">Banner Name:</label>
+            <input type="text" class="form-control" id="bannerName" name="bannerName" required>
+        </div>
+
+        <!-- Banner Images Input -->
+        <div class="form-group">
+            <label for="bannerImages">Banner Images:</label>
+            <input type="file" class="form-control-file" id="bannerImages" name="Image" accept="image/*" onchange="previewImage(this)">
+        </div>
+
+        <!-- Image Preview -->
+        <div class="form-group">
+            <label for="imagePreview">Image Preview:</label>
+            <img id="imagePreview" class="img-fluid" alt="Image Preview" style="max-height: 200px;">
+            <button type="button" class="btn btn-danger mt-2" id="deleteImageButton" style="display: none" onclick="deleteImage()">Delete Image</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Add Banner</button>
+    </form>
+</div>
+<!-- Bootstrap JS and Popper.js Scripts (needed for some Bootstrap features) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    function previewImage(input) {
+        var preview = document.getElementById('imagePreview');
+        var deleteButton = document.getElementById('deleteImageButton');
+        
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                deleteButton.style.display = 'inline'; // Show the delete button
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = '';
+            deleteButton.style.display = 'none'; // Hide the delete button
+        }
+    }
+
+    function deleteImage() {
+        var preview = document.getElementById('imagePreview');
+        var fileInput = document.getElementById('bannerImages');
+        var deleteButton = document.getElementById('deleteImageButton');
+        
+        preview.src = '';
+        fileInput.value = ''; // Reset the file input
+        deleteButton.style.display = 'none'; // Hide the delete button
+    }
+</script>
+</body>
+</html>

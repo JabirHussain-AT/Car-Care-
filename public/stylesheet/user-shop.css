@@ -11,7 +11,7 @@
 body{
     overflow-x: hidden;
     background-color: rgb(2, 2, 2);
-    background:linear-gradient(#fff,#CFE1ED);
+    background:linear-gradient(#fff,#609fca);
 }
 .product-cards {
     display: grid;
@@ -35,4 +35,10 @@ body{
 .filterdiv{
     background-color: blanchedalmond;
     background:linear-gradient(#00aeff,rgb(51, 176, 239));
+}
+
+@media (max-width: 769px){
+    .search-div{
+      height : 2
+    }
 }

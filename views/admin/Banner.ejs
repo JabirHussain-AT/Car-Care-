@@ -1,0 +1,60 @@
+<!-- views/admin/bannerPage.ejs -->
+
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header-checking') %>
+
+<div class="container-fluid">
+    <% if (message.BannerUpdated) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message.BannerUpdated %>
+        </div>
+          <% } %>
+          <% if (message.existing) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= message.existing %>
+            </div>
+              <% } %>
+  <h2 class="mb-4">Current Banner</h2>
+  <div class="mb-4">
+    <img src="/uploads/<%= currentBanner.Image%>" alt="Current Banner" class="img-fluid" style="max-height: 200px;">
+  </div>
+
+  <h2 class="mb-4">All Banners</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Banner Image</th>
+          <th>Banner Name</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% banners.forEach(banner => { %>
+          <tr>
+            <td><img src="/uploads/<%= banner.Image %>" alt="<%= banner.BannerName %>" class="img-fluid" style="max-height: 50px;"></td>
+            <td><%= banner.BannerName %></td>
+            <td><%= banner.Status %></td>
+            <td>
+              <form action="/admin/activate-banner/<%= banner._id %>" method="post">
+                <button type="submit" class="btn btn-primary">Activate</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <a href="/admin/addBanner" class="btn btn-primary">Add New Banner</a>
+    <!-- <a href="/admin/change-banner" class="btn btn-secondary">Change Current Banner</a> -->
+  </div>
+</div>
+
+<!-- Include Bootstrap and other scripts -->
+<!-- ... -->
+
+</body>
+</html>

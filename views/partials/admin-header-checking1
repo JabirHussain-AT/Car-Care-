@@ -1,0 +1,48 @@
+<div class="pos-f-t">
+  <div class="collapse" id="navbarToggleExternalContent">
+    <div class="bg-dark p-4">
+      <h4 class="text-white">Collapsed content</h4>
+      <span class="text-muted">Toggleable via the navbar brand.</span>
+    </div>
+  </div>
+  <nav class="navbar navbar-dark bg-dark">
+    <!-- Navigation Links -->
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="/admin/users"><i class="fas fa-users"></i> Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-images"></i> Banners</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fas fa-tags"></i> Coupons</a>
+        </li>
+    </ul>
+    <!-- Logout Button -->
+    <div class="mt-auto">
+        <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+</div>

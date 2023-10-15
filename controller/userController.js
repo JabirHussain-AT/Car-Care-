@@ -10,20 +10,25 @@ const { log } = require('handlebars')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const moment = require('moment')
+const Banner = require('../models/bannerSchema')
 const mongoose = require('mongoose')
 require('dotenv').config()
 const otpFunctions = require('../utilty/otpFunctions')
+const razorpay = require('../utilty/onlinePayment')
 const { Mongoose } = require('../config/dbconnection')
 const { getDefaultHighWaterMark } = require('nodemailer/lib/xoauth2')
+const onlinePayment = require('../utilty/onlinePayment')
 
 
 
 
 module.exports = {
-    landingPage: (req, res) => {
+    landingPage: async(req, res) => {
         try{
             const user = req.session.user
-            res.render('user/landingPage')
+            const banner = await Banner.findOne({Status:"Enabled"}) 
+            console.log(banner.kjvjxnvjvkfkv)
+            res.render('user/landingPage',{Banner:banner})
         }
         catch(err)
         {
@@ -654,8 +659,11 @@ getSignup: (req, res) => {
     //     console.log("orderPlaced")
     //   },
       orderHistory :async (req,res)=>{
-        const order = await Orders.find()
-        console.log(order)
+        const user = req.session.user.user
+        const userId = new mongoose.Types.ObjectId(user)
+
+        const order = await Orders.find({UserId:userId})
+        console.log(userId)
         const momentFormattedDate = moment(""); 
         res.render('user/orderHistory',{orderHistory:order})
       },
@@ -731,6 +739,8 @@ getSignup: (req, res) => {
       postCheckOut: async (req,res)=>{
         
         console.log("orderPlaced",req.body)
+        const { selectedAddress, paymentMethod } = req.body;
+        // console.log(paymentMethod,"karthik pp  here ")
         const userId = new mongoose.Types.ObjectId(req.session.user.user)
         const ProductsInCart = await Cart.findOne({UserId:userId})
         
@@ -750,7 +760,7 @@ getSignup: (req, res) => {
                     Mobile: selectedAddress.mobile,
                 },
             //   ShippedAddress :selectedAddress,
-              PaymentMethord:req.body.paymentMethod,
+              PaymentMethord:paymentMethod,
               TotalAmount : parseFloat(req.session.totalAmount.replace(/[^\d.]/g, ''))
                 // Add other properties as needed
             }
@@ -761,6 +771,7 @@ getSignup: (req, res) => {
 
             // const order = await Orders.findOne({UserId:userId})
             // console.log(createdOrder.Products,"huehfuefuilwe")
+            
             const orderItems = createdOrder.Products.map(item => ({
                 productId: item.ProductId,
                 quantity: item.Quantity
@@ -777,23 +788,32 @@ getSignup: (req, res) => {
            // Update stock quantity in the database for this product
               await Products.updateOne({ _id: product._id }, { $set: { AvailableQuantity: product.AvailableQuantity } });
               const user = await Users.findOne({_id:req.session.user.user})
-              const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
-              const result = otpFunctions.sendMail(req, res, user.Email, content)
-            
+              
+            }
+            if(req.body.paymentMethod === 'COD')
+           { 
+            const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
+            const result = otpFunctions.sendMail(req, res, user.Email, content)
+            res.json({cod:true})
+           }else if(req.body.paymentMethod === 'online'){
+            const amount = parseFloat(req.session.totalAmount.replace(/[^\d.]/g, ''))
+                    const response = await razorpay.onlinePayment(amount,createdOrder._id)
+                    let paymentDetials ={
+                        response : response,
+                        order : createdOrder,
+                        user : userId
+                    }
+                    res.json({paymentDetials})
            }
-       }
-              res.redirect('/orderPlaced')
-         } // 
-
+        }
+            //   res.redirect('/orderPlaced')
+          }
+        
          catch(error)
         {
             console.log("error in the catch of post checkOut")
             throw error
         }
-      }
-
-
-
-      
+    }
 }
 

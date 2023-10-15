@@ -47,9 +47,9 @@ throw err
   // Send an appropriate response to the client
   res.status(500).send('Something went wrong!');
 });
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-  next()
+
 })
 app.use("*", (req,res) => {
   res.render('errorpage')

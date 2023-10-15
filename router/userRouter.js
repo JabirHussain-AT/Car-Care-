@@ -3,6 +3,7 @@ const path = require('path')
 const router=express.Router()
 const userController = require('../controller/userController')
 const auth = require('../middlewares/userAuth.js')
+const paymentController= require('../controller/paymentController')
 
 //landing page
 router.get('/',auth.userTokenAuth,userController.landingPage)
@@ -61,7 +62,7 @@ router.get('/orderDetials',auth.userTokenAuth,userController.orderDetials)
 router.get('/category/:id',auth.userTokenAuth,userController.categoryBased)
 //CheckOut page
 router.get('/checkOut',auth.userTokenAuth,userController.checkout)
-router.post('/orderPlaced',auth.userTokenAuth,userController.postCheckOut)
+router.post('/checkOut',auth.userTokenAuth,userController.postCheckOut)
 
 //add address
 router.get('/addAddress',auth.userTokenAuth,userController.addAddress)
@@ -86,5 +87,8 @@ router.get('/order/:id',auth.userTokenAuth,userController.orderDetialedView)
 
 router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
 //profile
+
+router.post('/verify-payment',auth.userTokenAuth,paymentController.verifypayment)
+// router.post('/onlinePayment',auth.userTokenAuth,paymentController.OnlinePayment1)
 
 module.exports = router

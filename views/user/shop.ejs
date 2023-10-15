@@ -11,13 +11,13 @@
 </div>
 
 <!-- Search and Filter -->
-<div class="container-fluid search-section" style="height: 10vh; background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
-    <div class="row justify-content-between align-items-center" style="height: 100%;">
+<div class="container-fluid search-section col-12 search-div" style=" background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
+    <div class="row justify-content-between align-items-center main" style="height: 100%;">
         <div class="col-md-4 mt-1">
             <!-- Small Search Bar -->
-            <div class="col-md-4 mt-1">
+            <div class="col-md-8 mt-1">
               <form action="/shop" method="get">
-                  <div class="input-group" style="width: 20vw; ">
+                  <div class="input-group">
                       <input type="text" class="form-control"  placeholder="Search" aria-label="Search" aria-describedby="searchButton" name="search">
                       <button class="btn btn-primary" type="submit" id="searchButton">Go</button>
                   </div>
@@ -47,7 +47,7 @@
       <% if(products.length >0) { %>
         <% products.forEach(function(product) { %>
             <div class="col-md-3 mb-4">
-                <div class="card">
+                <div class="card" style="border: none;">
                     <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;" class="card-img-top" alt="">
                     <div class="card-body">
                         <h5 class="card-title"><%= product.ProductName %></h5>
