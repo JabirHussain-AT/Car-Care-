@@ -1,0 +1,66 @@
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header') %>
+
+<div class="container-fluid" style="background:linear-gradient(grey,white);">
+    <div class="row border-start">
+        <main class="px-md-4 icons" style="margin-left: 18%;width: 80%; margin-top: 6%;">
+            <div class="row d-flex justify-content-between">
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-center">
+                        <h1 class="mt-0">Add Coupon</h1>
+                    </div>
+                    <br>
+                    <form action="/admin/addCoupon" method="post" class="bg-white p-4 rounded shadow">
+                        <div class="mb-3">
+                            <% if(message.Coupon){ %>
+                                <div class="alert alert-danger" role="alert">
+                                   <%= message.Coupon %>
+                                  </div>
+                           <% } %>
+                            <label for="couponCode" class="form-label">Coupon Name:</label>
+                            <input type="text" id="couponName" name="CouponName" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="couponValue" class="form-label">Coupon Code:</label>
+                            <input type="text" id="CouponCode" name="CouponCode" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="couponValue" class="form-label">Coupon Value:</label>
+                            <input type="number" id="CouponValue" name="CouponValue" class="form-control" required>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="couponValue" class="form-label">Minimum Order Amount :</label>
+                            <input type="number" id="MinOrderAmount" name="MinOrderAmount" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="couponDate" class="form-label">Coupon Expiry Date:</label>
+                            <input type="date" id="CouponDate" name="CouponExpiryDate" class="form-control">
+                        </div>
+<!-- 
+                        <div class="mb-3">
+                            <label for="couponStatus" class="form-label">Coupon Status:</label>
+                            <select id="couponStatus" name="couponStatus" class="form-select" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div> -->
+
+                        <button type="submit" class="btn btn-primary">Submit Coupon</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Add your scripts here -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/script.js"></script>
+
+</html>

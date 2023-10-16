@@ -1,0 +1,66 @@
+<!-- views/admin/couponPage.ejs -->
+
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header-checking') %>
+
+<div class="container-fluid bg-secondery">
+    <% if (message.CouponUpdated) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message.CouponUpdated %>
+        </div>
+    <% } %>
+    <% if (message.existing) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= message.existing %>
+        </div>
+    <% } %>
+
+    <h2 class="mb-4 ml-1" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><u>Coupon Details</u></h2>
+    <div class="table-responsive">
+        <table class="table table-dark table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Coupon Name</th>
+                    <th scope="col">Created Date</th>
+                    <th scope="col">Expiry Date</th>
+                    <th scope="col">Coupon Code</th>
+                    <th scope="col">Coupon Value (%)</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Min Order Amount</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% coupons.forEach(coupon => { %>
+                    <tr>
+                        <td><%= coupon.CouponName %></td>
+                        <td><%= coupon.CouponCreatedDate %></td>
+                        <td><%= coupon.CouponExpiryDate %></td>
+                        <td><%= coupon.CouponCode %></td>
+                        <td><%= coupon.CouponValue %></td>
+                        <td><%= coupon.Status %></td>
+                        <td><%= coupon.MinOrderAmount %></td>
+                        <td>
+                            <form action="/admin/activate-coupon/<%= coupon._id %>" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-primary">Activate</button>
+                            </form>
+                            <form action="/admin/delete-coupon/<%= coupon._id %>" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <a href="/admin/addCoupon" class="btn btn-primary">Add New Coupon</a>
+    </div>
+</div>
+
+<!-- Include Bootstrap and other scripts -->
+<!-- ... -->
+
+</body>
+</html>

@@ -2,6 +2,7 @@ const express=require('express')
 const path = require('path')
 const router=express.Router()
 const userController = require('../controller/userController')
+const couponController = require('../controller/couponController')
 const auth = require('../middlewares/userAuth.js')
 const paymentController= require('../controller/paymentController')
 
@@ -90,5 +91,7 @@ router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
 
 router.post('/verify-payment',auth.userTokenAuth,paymentController.verifypayment)
 // router.post('/onlinePayment',auth.userTokenAuth,paymentController.OnlinePayment1)
+
+router.post('/validateCoupon',auth.userTokenAuth,couponController.validateCoupon) 
 
 module.exports = router

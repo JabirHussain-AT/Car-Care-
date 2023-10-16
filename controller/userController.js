@@ -792,6 +792,7 @@ getSignup: (req, res) => {
             }
             if(req.body.paymentMethod === 'COD')
            { 
+            const user  =  await Users.findOne({_id:req.session.user.user})
             const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
             const result = otpFunctions.sendMail(req, res, user.Email, content)
             res.json({cod:true})

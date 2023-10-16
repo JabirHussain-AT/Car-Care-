@@ -22,7 +22,21 @@
             <img id="imagePreview" class="img-fluid" alt="Image Preview" style="max-height: 200px;">
             <button type="button" class="btn btn-danger mt-2" id="deleteImageButton" style="display: none" onclick="deleteImage()">Delete Image</button>
         </div>
+        <!-- //carouselE -->
+        <div class="form-group">
+            <label for="carouselImage1">Carousel Image 1:</label>
+            <input type="file" class="form-control-file" id="carouselImage1" name="carouselImage1" accept="image/*" onchange="previewImage(this)">
+        </div>
 
+        <div class="form-group">
+            <label for="carouselImage2">Carousel Image 2:</label>
+            <input type="file" class="form-control-file" id="carouselImage2" name="carouselImage2" accept="image/*" onchange="previewImage(this)">
+        </div>
+
+        <div class="form-group">
+            <label for="carouselImage3">Carousel Image 3:</label>
+            <input type="file" class="form-control-file" id="carouselImage3" name="carouselImage3" accept="image/*" onchange="previewImage(this)">
+        </div>
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary">Add Banner</button>
     </form>

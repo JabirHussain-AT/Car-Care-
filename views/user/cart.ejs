@@ -96,7 +96,7 @@ AvailableQuantity %>" />
                       </div>
                     </div>
                     <% }); %>
-                      
+
                 </div>
 
                 <div class="border-top pt-4 mx-4 mb-4">
@@ -113,12 +113,21 @@ AvailableQuantity %>" />
             <div class="col-lg-3 coupon-bg">
               <div class="card mb-3 border shadow-0">
                 <div class="card-body  coupon-bg">
-                  <form>
+                  <form id="couponForm">
                     <div class="form-group">
                       <label class="form-label">Have you coupon?</label>
                       <div class="input-group">
-                        <input type="text" class="form-control border" name="" placeholder="Coupon code" />
-                        <button class="btn btn-light border">Apply</button>
+                        <input type="text" class="form-control border" name="couponCode" placeholder="Coupon code" />
+                        <button id="couponCheck" type="submit" class="btn btn-light border">Apply</button>
+                      </div>
+                      <div id="couponSuccessMessage" class="alert alert-success mt-3" style="display: none;">
+                        Coupon applied successfully!
+                      </div>
+                      <!-- <div id="messageContainer" class="alert alert-danger mt-3">sdfghjkl;</div> -->
+                      <div  id="messageContainer" class="alert alert-danger mt-3" style="display: none;"></div>  
+                      <!-- </div> -->
+                      <div id="couponWarningMessage" class="alert alert-danger mt-3" style="display: none;">
+                        Coupon Not Exists!
                       </div>
                     </div>
                   </form>
@@ -174,7 +183,8 @@ AvailableQuantity %>" />
                         </td>
                         <form action="/cart" method="post">
                           <td>
-                            <input type="text" id="totalAmountCell" class="transparent-input " readonly>
+                            <input type="text" style="width: 60%;" id="totalAmountCell" class="transparent-input "
+                              readonly>
                           </td>
                           <input type="hidden" id="hiddenTotalAmount" name="hiddenTotalAmount">
 
@@ -192,191 +202,290 @@ AvailableQuantity %>" />
                   </form>
                   <div class="d-flex justify-content-center align-items-center"><a href="/shop " class="mt-3">Back to
                       Shop</a></div>
-                      <% } else { %>
-                        <div class="container mt-4">
-                          <div class="row justify-content-center">
-                              <div class="col-md-6 text-center">
-                                  <img src="/assets/Empty Cart.png" alt="Cart Empty Image" class="img-fluid">
-                                  <h3>Your cart is empty</h3>
-                                  <a href="/shop" class="btn btn-primary">Back to Shop</a>
-                              </div>
-                          </div>
-                        <% } %>
+                  <% } else { %>
+                    <div class="container mt-4">
+                      <div class="row justify-content-center">
+                        <div class="col-md-6 text-center">
+                          <img src="/assets/Empty Cart.png" alt="Cart Empty Image" class="img-fluid">
+                          <h3>Your cart is empty</h3>
+                          <a href="/shop" class="btn btn-primary">Back to Shop</a>
+                        </div>
+                      </div>
+                      <% } %>
+                    </div>
                 </div>
               </div>
-            </div>
-            <script>
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  const decreaseButtons = document.querySelectorAll(".decrease-quantity");
+                  const increaseButtons = document.querySelectorAll(".increase-quantity");
+                  const couponCheckButton = document.getElementById('couponCheck');
+                  const couponCodeInput = document.querySelector('input[name="couponCode"]');
 
-              ///document.addEventListener("DOMContentLoaded", () => {
-              // ... existing code ...
 
-              document.addEventListener("DOMContentLoaded", () => {
-                const decreaseButtons = document.querySelectorAll(".decrease-quantity");
-                const increaseButtons = document.querySelectorAll(".increase-quantity");
 
-                function updateTotalAmount() {
-                  let totalAmount = 0;
-                  let totalItems = 0;
-                  let subtotalAmount = 0;
-                  let isOutOfStock = false;
+                  function updateTotalAmount() {
+                    let totalAmount = 0;
+                    let totalItems = 0;
+                    let subtotalAmount = 0;
+                    let isOutOfStock = false;
 
-                  // Get all product rows
-                  const productRows = document.querySelectorAll('.row.gy-3.mb-4');
-                  productRows.forEach((row) => {
-                    const productId = row.querySelector('.decrease-quantity').getAttribute('data-product-id');
-                    const quantityInput = row.querySelector(`#count_${productId}`);
-                    const productAmount = parseFloat(row.querySelector(`#productAmount_${productId}`).textContent);
+                    const productRows = document.querySelectorAll('.row.gy-3.mb-4');
+                    productRows.forEach((row) => {
+                      const productId = row.querySelector('.decrease-quantity').getAttribute('data-product-id');
+                      const quantityInput = row.querySelector(`#count_${productId}`);
+                      const productAmount = parseFloat(row.querySelector(`#productAmount_${productId}`).textContent);
+                      const availableQuantity = parseInt(quantityInput.getAttribute('data-available-quantity'), 10);
+                      const enteredQuantity = parseInt(quantityInput.value, 10);
 
-                    const availableQuantity = parseInt(quantityInput.getAttribute('data-available-quantity'), 10);
-                    const enteredQuantity = parseInt(quantityInput.value, 10);
+                      if (enteredQuantity <= availableQuantity) {
+                        totalAmount += productAmount;
+                        subtotalAmount += productAmount;
+                        totalItems += enteredQuantity;
+                      } else {
+                        quantityInput.value = availableQuantity;
+                        isOutOfStock = true;
+                      }
 
-                    if (enteredQuantity <= availableQuantity) {
-                      // Only update total if entered quantity is valid
-                      totalAmount += productAmount;
-                      subtotalAmount += productAmount;
-                      totalItems += enteredQuantity;
-                    } else {
-                      // Reset the entered quantity to available quantity
-                      quantityInput.value = availableQuantity;
-                      isOutOfStock = true;
-                    }
-
-                    // Hide the "Out of Stock" message
-                    const outOfStockMessage = document.getElementById(`outOfStock_${productId}`);
-                    if (outOfStockMessage) {
-                      outOfStockMessage.style.display = 'none';
-                    }
-                  });
-
-                  // Update the total amount in the HTML
-                  const totalAmountCell = document.getElementById('totalAmountCell');
-                  const placeOrderButton = document.getElementById('placeOrderButton');
-
-                  if (isOutOfStock) {
-                    totalAmountCell.value = 'Out of Stock';
-                    placeOrderButton.disabled = true;
-                  } else {
-                    totalAmountCell.value = `Rs ${totalAmount.toFixed(2)}`;
-                    placeOrderButton.disabled = false;
-                  }
-
-                  // Update other elements as before
-                  const subtotalAmountCell = document.getElementById('subtotalAmountCell');
-                  subtotalAmountCell.textContent = `Rs ${subtotalAmount.toFixed(2)}`;
-
-                  const totalItemsCell = document.getElementById('totalItemsCell');
-                  totalItemsCell.textContent = `${totalItems} Items`;
-
-                  const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
-                  hiddenTotalAmount.value = totalAmount.toFixed(2);
-                }
-
-                // Function to send AJAX request to update quantity
-                async function updateQuantity(productId, change) {
-                  try {
-                    const response = await fetch("/updateQuantity", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({ productId, change }),
+                      const outOfStockMessage = document.getElementById(`outOfStock_${productId}`);
+                      if (outOfStockMessage) {
+                        outOfStockMessage.style.display = 'none';
+                      }
                     });
 
-                    if (response.ok) {
-                      const data = await response.json();
-                      console.log("Received new quantity from server:", data.newQuantity);
+                    const totalAmountCell = document.getElementById('totalAmountCell');
+                    const placeOrderButton = document.getElementById('placeOrderButton');
 
-                      const quantityInput = document.getElementById(`count_${productId}`);
-                      const productAmount = document.getElementById(`productAmount_${productId}`);
-                      const existingValue = productAmount.getAttribute('data-value');
-                      // Get stock directly from productId in the EJS template
-
-
-
-                      if (quantityInput) {
-                        quantityInput.value = data.newQuantity;
-                        productAmount.textContent = existingValue * data.newQuantity;
-
-                        // Calculate and update the total amount
-                        updateTotalAmount();
-                        // Get the "Place Order" button
-                        // const placeOrderButton = document.getElementById('placeOrderButton');
-
-                        // Add a click event listener to the button
-                        // placeOrderButton.addEventListener('click', () => {
-                        //   // Get the total amount from the HTML
-                        //   const totalAmount = document.getElementById('totalAmountCell').textContent;
-
-                        //   // Encode the total amount for URL
-                        //   const encodedTotalAmount = encodeURIComponent(totalAmount);
-
-                        //   // Construct the URL with the total amount
-                        //   const checkoutURL = `/checkOut?totalAmount=${encodedTotalAmount}`;
-
-                        //   // Navigate to the checkout URL
-                        //   window.location.href = checkoutURL;
-                        // });
-
-                        // Disable the decrease button only for specific products
-                        const decreaseButton = document.querySelector(`.decrease-quantity[data-product-id="${productId}"]`);
-                        if (decreaseButton) {
-                          decreaseButton.disabled = data.newQuantity <= 1;
-                        }
-                        // Get the "Out of Stock" message
-
-                        const stockMessage = document.getElementById(`stockMessage_${productId}`);
-                        if (stockMessage.style.display === 'block') {
-                          console.error("not coming")
-                          stockMessage.style.display = 'none';
-                        }
-                      }
+                    if (isOutOfStock) {
+                      totalAmountCell.value = 'Out of Stock';
+                      placeOrderButton.disabled = true;
                     } else {
-                      console.error("Error updating quantity:", response.statusText);
+                      totalAmountCell.value = `Rs ${totalAmount.toFixed(2)}`;
+                      placeOrderButton.disabled = false;
                     }
-                  } catch (error) {
-                    console.error("Error updating quantity:", error);
+
+                    const subtotalAmountCell = document.getElementById('subtotalAmountCell');
+                    subtotalAmountCell.textContent = `Rs ${subtotalAmount.toFixed(2)}`;
+
+                    const totalItemsCell = document.getElementById('totalItemsCell');
+                    totalItemsCell.textContent = `${totalItems} Items`;
+
+                    const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
+                    hiddenTotalAmount.value = totalAmount.toFixed(2);
                   }
-                }
 
-                // Initial check for each decrease button
-                decreaseButtons.forEach((button) => {
-                  const productId = button.getAttribute("data-product-id");
-                  const quantityInput = document.getElementById(`count_${productId}`);
-                  const initialQuantity = quantityInput ? parseInt(quantityInput.value, 10) : 0;
-                  button.disabled = initialQuantity <= 1;
-                });
+                  async function updateQuantity(productId, change) {
+                    try {
+                      const response = await fetch("/updateQuantity", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ productId, change }),
+                      });
 
-                // Add event listeners to decrease buttons
-                decreaseButtons.forEach((button) => {
-                  button.addEventListener("click", () => {
+                      if (response.ok) {
+                        const data = await response.json();
+                        const quantityInput = document.getElementById(`count_${productId}`);
+                        const productAmount = document.getElementById(`productAmount_${productId}`);
+                        const existingValue = productAmount.getAttribute('data-value');
+
+                        if (quantityInput) {
+                          quantityInput.value = data.newQuantity;
+                          productAmount.textContent = existingValue * data.newQuantity;
+                          updateTotalAmount();
+
+                          const decreaseButton = document.querySelector(`.decrease-quantity[data-product-id="${productId}"]`);
+                          if (decreaseButton) {
+                            decreaseButton.disabled = data.newQuantity <= 1;
+                          }
+
+                          const stockMessage = document.getElementById(`stockMessage_${productId}`);
+                          if (stockMessage.style.display === 'block') {
+                            stockMessage.style.display = 'none';
+                          }
+                        }
+                      } else {
+                        console.error("Error updating quantity:", response.statusText);
+                      }
+                    } catch (error) {
+                      console.error("Error updating quantity:", error);
+                    }
+                  }
+
+                  decreaseButtons.forEach((button) => {
                     const productId = button.getAttribute("data-product-id");
-                    updateQuantity(productId, -1); // Decrease quantity by 1
-                  });
-                });
-
-                increaseButtons.forEach((button) => {
-                  button.addEventListener("click", () => {
-                    const productId = button.getAttribute("data-product-id");
-                    const maxQuantity = parseInt(button.getAttribute("data-max-quantity"), 10);
                     const quantityInput = document.getElementById(`count_${productId}`);
-                    const enteredQuantity = parseInt(quantityInput.value, 10);
+                    const initialQuantity = quantityInput ? parseInt(quantityInput.value, 10) : 0;
+                    button.disabled = initialQuantity <= 1;
+                  });
 
-                    // Check if the entered quantity is less than the available quantity
-                    if (enteredQuantity < maxQuantity) {
-                      updateQuantity(productId, 1); // Increase quantity by 1
-                    } else {
-                      // Display a message or handle as needed when max quantity is reached
-                      const stockMessage = document.getElementById(`stockMessage_${productId}`);
-                      if (stockMessage) {
-                        stockMessage.innerHTML = `Only ${maxQuantity} items in stock`;
-                        stockMessage.style.display = 'block';
+                  decreaseButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                      const productId = button.getAttribute("data-product-id");
+                      updateQuantity(productId, -1);
+                    });
+                  });
+
+                  increaseButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                      const productId = button.getAttribute("data-product-id");
+                      const maxQuantity = parseInt(button.getAttribute("data-max-quantity"), 10);
+                      const quantityInput = document.getElementById(`count_${productId}`);
+                      const enteredQuantity = parseInt(quantityInput.value, 10);
+                      const couponSuccessMessage = document.getElementById('couponSuccessMessage');
+                      // console.log("couponSuccessMessage:", couponSuccessMessage); 
+
+
+                      if (enteredQuantity < maxQuantity) {
+                        updateQuantity(productId, 1);
+                      } else {
+                        const stockMessage = document.getElementById(`stockMessage_${productId}`);
+                        if (stockMessage) {
+                          stockMessage.innerHTML = `Only ${maxQuantity} items in stock`;
+                          stockMessage.style.display = 'block';
+                        }
+                      }
+                    });
+                  });
+
+                  couponCheckButton.addEventListener('click', async () => {
+                    const couponCodeInput = document.querySelector('input[name="couponCode"]');
+                    const couponCode = couponCodeInput.value.trim();
+
+
+                    const subtotalAmountCell = document.getElementById('subtotalAmountCell');
+                    const subtotalAmount = parseFloat(subtotalAmountCell.textContent.replace('Rs', '').trim());
+
+                    if (couponCode) {
+                      try {
+                        const response = await fetch("/user/validateCoupon", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ couponCode}),
+                        });
+
+                        if (response.ok) {
+                          const data = await response.json();
+
+                          if (data) {
+                            const couponAmount = parseFloat(data.couponAmount);
+                            const totalAmountCell = document.getElementById('totalAmountCell');
+                            const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
+
+                            if (totalAmountCell && hiddenTotalAmount) {
+                              let currentTotalAmount = parseFloat(hiddenTotalAmount.value);
+                              currentTotalAmount -= couponAmount;
+
+                              totalAmountCell.value = `Rs ${currentTotalAmount.toFixed(2)}`;
+                              hiddenTotalAmount.value = currentTotalAmount.toFixed(2);
+
+                              // Show the success message
+                              console.log("Coupon applied successfully!");
+                              console.log("couponSuccessMessage njnum :", couponSuccessMessage,); // Log the element
+                              couponSuccessMessage.style.display = 'block';
+
+                              // Hide the success message after a few seconds (adjust the timeout as needed)
+                              setTimeout(() => {
+                                couponSuccessMessage.style.display = 'none';
+                              }, 5000);
+
+                              console.log("Coupon applied successfully!");
+                            }
+                          } else {
+                            console.error("Invalid coupon code. Please try again.");
+                          }
+                        } else {
+                          console.error("Error validating coupon:", response.statusText);
+                        }
+                      } catch (error) {
+                        console.error("Error validating coupon:", error);
                       }
                     }
                   });
+                  couponCheckButton.addEventListener('click', async (event) => {
+                    event.preventDefault(); // Prevent the default form submission behavior
+
+                    const couponCodeInput = document.querySelector('input[name="couponCode"]');
+                    const couponCode = couponCodeInput.value.trim();
+                    console.log(couponCode)
+
+                    if (couponCode) {
+                      try {
+                        console.log("coupon Inside Try")
+                        const subtotalAmountCell = document.getElementById('subtotalAmountCell');
+                         const subtotalAmount = parseFloat(subtotalAmountCell.textContent.replace('Rs', '').trim());
+                        const response = await fetch("/validateCoupon", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ couponCode,subtotalAmount }),
+                        });
+
+                        if (response.ok) {
+                          const data = await response.json();
+
+                          if (data.status) {
+                            // console.log(data.response.couponAmount,"ill")
+                            const couponAmount = parseFloat(data.couponAmount);
+                            const totalAmountCell = document.getElementById('totalAmountCell');
+                            const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
+
+                            if (totalAmountCell && hiddenTotalAmount) {
+                              let currentTotalAmount = parseFloat(hiddenTotalAmount.value);
+                              currentTotalAmount -= couponAmount;
+                              console.log(data.couponAmount, "hihi")
+                              totalAmountCell.value = `Rs ${currentTotalAmount.toFixed(2)}`;
+                              hiddenTotalAmount.value = currentTotalAmount.toFixed(2);
+
+
+                              console.log("couponSuccessMessage:", couponSuccessMessage); // Log the element
+                              couponSuccessMessage.style.display = 'block';
+
+                              // Hide the success message after a few seconds (adjust the timeout as needed)
+                              setTimeout(() => {
+                                couponSuccessMessage.style.display = 'none';
+                              }, 5000);
+
+                              console.log("Coupon applied successfully!");
+                            }
+                          } else {
+                            // console.log(data.message,"duaehuawednuwedjsdchjusdlaclz")
+                              if(data.message){
+                                console.log("hiii")
+                                   const messageContainer = document.getElementById('messageContainer');
+                                   messageContainer.style.display = 'block';
+                                    messageContainer.innerHTML = data.message;
+                                    setTimeout(() => {
+                                      messageContainer.style.display = 'none';
+                              }, 5000);
+
+                              }else{
+                                // console.log("couponSuccessMessage:", couponSuccessMessage); // Log the element
+                                couponWarningMessage.style.display = 'block';
+                                
+                                // Hide the success message after a few seconds (adjust the timeout as needed)
+                                setTimeout(() => {
+                                  couponWarningMessage.style.display = 'none';
+                                  location.reload()
+                                }, 5000);
+    
+                                console.error("Invalid coupon code. Please try again.");
+
+                              }
+                          }
+                        } else {
+                          console.error("Error validating coupon:", response.statusText);
+                        }
+                      } catch (error) {
+                        console.error("Error validating coupon:",error);
+                      }
+                    }
+                  });
+
+                  updateTotalAmount();
                 });
-
-                // Update total amount on page load
-                updateTotalAmount();
-              });
-
-            </script>
+              </script>
