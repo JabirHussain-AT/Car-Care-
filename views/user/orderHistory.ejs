@@ -78,6 +78,7 @@
 
           <div class="d-flex justify-content-end mt-2">
             <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
+            <button class="btn-info btn btn-rounded mr-2" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</button>
          <% if(order.Status === 'Order placed') { %>
             <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel Order</button></a>
             <% } else if(order.Status === 'Delivered') { %>
@@ -92,3 +93,34 @@
 <% } else { %>
   <p class="container">No order history available.</p>
 <% } %>
+<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+<script>
+  function downloadInvoice(orderId) {
+  fetch('/download-invoice', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ orderId }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'invoice.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+</script>

@@ -124,7 +124,7 @@ AvailableQuantity %>" />
                         Coupon applied successfully!
                       </div>
                       <!-- <div id="messageContainer" class="alert alert-danger mt-3">sdfghjkl;</div> -->
-                      <div  id="messageContainer" class="alert alert-danger mt-3" style="display: none;"></div>  
+                      <div id="messageContainer" class="alert alert-danger mt-3" style="display: none;"></div>
                       <!-- </div> -->
                       <div id="couponWarningMessage" class="alert alert-danger mt-3" style="display: none;">
                         Coupon Not Exists!
@@ -155,7 +155,15 @@ AvailableQuantity %>" />
                       </tr>
                       <tr>
                         <td style="width: 60%; font-family: 'Times New Roman', Times, serif">Coupon Amount :</td>
-                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif">Rs -0.00</td>
+                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="couponAmountCell">Rs
+                          -0.00</td>
+
+                      </tr>
+                      <tr>
+                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif">Tax (18%) :</td>
+                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="TaxAmountCell">Rs +
+                          0.00</td>
+
                       </tr>
                       <tr>
                         <td style="width: 60%; font-family: 'Times New Roman', Times, serif;">Total Quantity : </td>
@@ -252,9 +260,14 @@ AvailableQuantity %>" />
                         outOfStockMessage.style.display = 'none';
                       }
                     });
+                    const taxRate = 0.18;
+                    const taxAmount = subtotalAmount * taxRate;
 
+                    // Increase total amount by tax
+                    totalAmount += taxAmount;
                     const totalAmountCell = document.getElementById('totalAmountCell');
                     const placeOrderButton = document.getElementById('placeOrderButton');
+                    const taxAmountCell = document.getElementById('TaxAmountCell');
 
                     if (isOutOfStock) {
                       totalAmountCell.value = 'Out of Stock';
@@ -272,6 +285,10 @@ AvailableQuantity %>" />
 
                     const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
                     hiddenTotalAmount.value = totalAmount.toFixed(2);
+
+
+                    // Update tax amount cell
+                    taxAmountCell.textContent = `Rs +${taxAmount.toFixed(2)}`;
                   }
 
                   async function updateQuantity(productId, change) {
@@ -364,13 +381,15 @@ AvailableQuantity %>" />
                           headers: {
                             "Content-Type": "application/json",
                           },
-                          body: JSON.stringify({ couponCode}),
+                          body: JSON.stringify({ couponCode }),
                         });
 
                         if (response.ok) {
                           const data = await response.json();
 
                           if (data) {
+                            const couponAmountCell = document.getElementById('couponAmountCell');
+
                             const couponAmount = parseFloat(data.couponAmount);
                             const totalAmountCell = document.getElementById('totalAmountCell');
                             const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
@@ -381,6 +400,7 @@ AvailableQuantity %>" />
 
                               totalAmountCell.value = `Rs ${currentTotalAmount.toFixed(2)}`;
                               hiddenTotalAmount.value = currentTotalAmount.toFixed(2);
+                              couponAmountCell.textContent = `Rs - ${couponAmount.toFixed(2)}`;
 
                               // Show the success message
                               console.log("Coupon applied successfully!");
@@ -416,13 +436,13 @@ AvailableQuantity %>" />
                       try {
                         console.log("coupon Inside Try")
                         const subtotalAmountCell = document.getElementById('subtotalAmountCell');
-                         const subtotalAmount = parseFloat(subtotalAmountCell.textContent.replace('Rs', '').trim());
+                        const subtotalAmount = parseFloat(subtotalAmountCell.textContent.replace('Rs', '').trim());
                         const response = await fetch("/validateCoupon", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
                           },
-                          body: JSON.stringify({ couponCode,subtotalAmount }),
+                          body: JSON.stringify({ couponCode, subtotalAmount }),
                         });
 
                         if (response.ok) {
@@ -441,7 +461,6 @@ AvailableQuantity %>" />
                               totalAmountCell.value = `Rs ${currentTotalAmount.toFixed(2)}`;
                               hiddenTotalAmount.value = currentTotalAmount.toFixed(2);
 
-
                               console.log("couponSuccessMessage:", couponSuccessMessage); // Log the element
                               couponSuccessMessage.style.display = 'block';
 
@@ -450,38 +469,39 @@ AvailableQuantity %>" />
                                 couponSuccessMessage.style.display = 'none';
                               }, 5000);
 
+                              couponAmountCell.textContent = `Rs -${couponAmount.toFixed(2)}`;
                               console.log("Coupon applied successfully!");
                             }
                           } else {
                             // console.log(data.message,"duaehuawednuwedjsdchjusdlaclz")
-                              if(data.message){
-                                console.log("hiii")
-                                   const messageContainer = document.getElementById('messageContainer');
-                                   messageContainer.style.display = 'block';
-                                    messageContainer.innerHTML = data.message;
-                                    setTimeout(() => {
-                                      messageContainer.style.display = 'none';
+                            if (data.message) {
+                              console.log("hiii")
+                              const messageContainer = document.getElementById('messageContainer');
+                              messageContainer.style.display = 'block';
+                              messageContainer.innerHTML = data.message;
+                              setTimeout(() => {
+                                messageContainer.style.display = 'none';
                               }, 5000);
 
-                              }else{
-                                // console.log("couponSuccessMessage:", couponSuccessMessage); // Log the element
-                                couponWarningMessage.style.display = 'block';
-                                
-                                // Hide the success message after a few seconds (adjust the timeout as needed)
-                                setTimeout(() => {
-                                  couponWarningMessage.style.display = 'none';
-                                  location.reload()
-                                }, 5000);
-    
-                                console.error("Invalid coupon code. Please try again.");
+                            } else {
+                              // console.log("couponSuccessMessage:", couponSuccessMessage); // Log the element
+                              couponWarningMessage.style.display = 'block';
 
-                              }
+                              // Hide the success message after a few seconds (adjust the timeout as needed)
+                              setTimeout(() => {
+                                couponWarningMessage.style.display = 'none';
+                                location.reload()
+                              }, 5000);
+
+                              console.error("Invalid coupon code. Please try again.");
+
+                            }
                           }
                         } else {
                           console.error("Error validating coupon:", response.statusText);
                         }
                       } catch (error) {
-                        console.error("Error validating coupon:",error);
+                        console.error("Error validating coupon:", error);
                       }
                     }
                   });

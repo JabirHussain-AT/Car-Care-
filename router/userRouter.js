@@ -69,6 +69,10 @@ router.post('/checkOut',auth.userTokenAuth,userController.postCheckOut)
 router.get('/addAddress',auth.userTokenAuth,userController.addAddress)
 router.post('/addAddress',auth.userTokenAuth,userController.postaddAddress)
 
+
+router.post('/checKoutaddAddress',auth.userTokenAuth,userController.postCheckAddAddress)
+
+
 //edit Address
 router.get('/Address',auth.userTokenAuth,userController.editAddress)
 router.post('/editAddress/:addressId',auth.userTokenAuth,userController.postEditAddress)
@@ -85,7 +89,7 @@ router.get('/orderHistory',auth.userTokenAuth,userController.orderHistory)
 //order detialed view
 router.get('/order/:id',auth.userTokenAuth,userController.orderDetialedView)
 
-
+router.post('/download-invoice',auth.userTokenAuth,userController.downloadInvoice)
 router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
 //profile
 

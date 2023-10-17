@@ -5,6 +5,7 @@ const Products = require('../models/productSchema')
 const Category = require('../models/categorySchema')
 const Orders = require('../models/orderSchema')
 const Cart = require('../models/cartSchema')
+const CouponHistory = require('../models/couponHistorySchema')
 const bcrypt = require('bcrypt')
 const { log } = require('handlebars')
 const jwt = require('jsonwebtoken')
@@ -18,6 +19,7 @@ const razorpay = require('../utilty/onlinePayment')
 const { Mongoose } = require('../config/dbconnection')
 const { getDefaultHighWaterMark } = require('nodemailer/lib/xoauth2')
 const onlinePayment = require('../utilty/onlinePayment')
+const invoice = require('../utilty/invoiceCreater')
 
 
 
@@ -101,7 +103,8 @@ module.exports = {
            
        
         } catch (error) {
-            throw Errorr
+            console.log("error in the verify email")
+            throw error
         }
 
         
@@ -262,12 +265,21 @@ getSignup: (req, res) => {
         //        
                 req.body.Password = bcrypt.hashSync(req.body.Password, 10)
                 const userData = await Users.create(req.body)
+
                 console.log(userData);
                 if (userData) {
                     const accessToken = jwt.sign({ user: userData._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
                     res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 })
                     
                   req.session.user=userData._id
+                   console.log(req.session.user)
+                  const couponAdd = new CouponHistory({
+                    UserId: req.session.user,
+                    Status : 'Not Used',
+                    CouponCode : "NU-69CC"
+                  });
+                  await couponAdd.save()
+
                     res.render('user/home', { user: true })
                 } else {
                     console.log("anirudh");
@@ -277,13 +289,13 @@ getSignup: (req, res) => {
                 console.log(error);
                 if (error.code === 11000) {
                     req.session.error = "USer exists"
-                    res.redirect('/user/signup')
+                    res.redirect('/signup')
                 }
             }
         } else {
 
             req.flash('error', "password not matching")
-            res.redirect('user/signup') 
+            res.redirect('/signup') 
         }
     },
     forgetPass : (req,res)=>{
@@ -576,6 +588,50 @@ getSignup: (req, res) => {
 
 
       },
+      postCheckAddAddress : async (req,res)=>{
+        console.log(req.body)
+        const userid = req.session.user.user
+        
+        const userId = new mongoose.Types.ObjectId(userid)
+        // const user = await Users.findOne({_id:userId})
+        console.log(userId)
+        
+        const {Name, address, city,state, zip, mobileNumber } = req.body;
+        
+        const newAddress = {
+            Name,
+            address,
+            city,
+            state,
+            zip,
+            mobileNumber
+        }
+     try {
+         const user = await Users.findOne({ _id: userId });
+         
+        if (user) {
+          // Push the new address to the Address array
+          user.Address.push(newAddress);
+      
+          // Save the user document
+          await user.save();
+      
+          console.log('Address added successfully');
+          req.flash("added","Address added successfully")
+          res.redirect('/checkOut')
+        //   res.status(200).send('Address added successfully');
+        } else {
+          console.log('User not found');
+          res.status(404).send('User not found');
+        }
+      } catch (error) {
+        console.error('Error adding address:', error.message);
+
+        res.status(500).send('Internal Server Error');
+      }
+
+
+     },
       editAddress :async(req,res)=>{
           const userid = req.session.user.user
           const User = await Users.findOne({_id:userid})
@@ -815,6 +871,14 @@ getSignup: (req, res) => {
             console.log("error in the catch of post checkOut")
             throw error
         }
+    },
+    downloadInvoice :async (req,res)=>{
+            console.log(req.body,"from download invoice")
+            const orderData = await Orders.findOne({_id:req.body.orderId}).populate('Products.ProductId')
+            invoice.invoiceDownload(orderData)
+            // console.log(orderData)
     }
+    
+    
 }
 

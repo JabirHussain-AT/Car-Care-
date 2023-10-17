@@ -17,7 +17,7 @@ router.get('/addAdmin',adminController.addAdmin)
 router.post('/addAdmin',adminController.postaddAdmin)
 
 router.get('/login',auth.adminExist,adminController.login)
-router.post('/login',auth.adminExist,adminController.postLogin)
+router.post('/login',adminController.postLogin)
 
 router.get('/addCategory',adminController.addCatogory)
 router.post('/addCategory',upload.single('Images',1),adminController.postaddCategory)

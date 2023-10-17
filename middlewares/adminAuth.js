@@ -33,7 +33,7 @@ module.exports = {
                         next();
                     }
                     else {
-                        res.redirect('/admin/product')
+                        res.redirect('/admin/Coupons')
                     }
                 })
             }

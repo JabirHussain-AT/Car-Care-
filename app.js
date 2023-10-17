@@ -28,12 +28,16 @@ const SECRET = process.env.SECRET || "HIII"
 
 
 app.use(session({
-    secret: SECRET,
+  secret: SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {maxAge: maxAge}
-}))
-
+  }))
+  
+  app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
 const adminRouter = require('./router/adminRouter')
 const userRouter = require('./router/userRouter');
 
@@ -47,10 +51,6 @@ throw err
   // Send an appropriate response to the client
   res.status(500).send('Something went wrong!');
 });
-app.use((req, res) => {
-  res.setHeader('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-
-})
 app.use("*", (req,res) => {
   res.render('errorpage')
 })
