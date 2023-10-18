@@ -90,6 +90,7 @@ router.get('/orderHistory',auth.userTokenAuth,userController.orderHistory)
 router.get('/order/:id',auth.userTokenAuth,userController.orderDetialedView)
 
 router.post('/download-invoice',auth.userTokenAuth,userController.downloadInvoice)
+
 router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
 //profile
 

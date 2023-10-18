@@ -37,13 +37,39 @@ module.exports = {
         console.log(CouponCode, "is here")
         const couponExist = await Coupon.findOne({ CouponCode: CouponCode })
         // console.log(CouponCode)
-        const couponUsed = await CouponHistory.findOne({ UserId: user, CouponCode: CouponCode })
-        console.log(couponUsed, "uamanfuafiasj")
-        if (couponUsed !== null) {
-            if (couponUsed.Status === 'Not Used') {
-                // console.log(couponExist)
 
-                if (couponExist) {
+        if (couponExist !== null) {
+            if (couponExist.CouponIssuedTo === 'public') {
+                if (couponExist.MinOrderAmount <= req.body.subtotalAmount) {
+                    const momentDate = moment(couponExist.CouponExpiryDate);
+                    const currentDate = moment();
+                    // console.log(momentDate.isBefore(currentDate),"nokkaam")
+                    if (!momentDate.isBefore(currentDate)) {
+
+                        res.json({
+                            status: true,
+                            couponAmount: couponExist.CouponValue
+                        })
+                        //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
+                    } else {
+                        res.json({
+                            status: false
+                        })
+                    }
+                } else {
+                    res.json({
+                        status: false,
+                        message: `Cart need Minimum Total Amount ${couponExist.MinOrderAmount} for getting this coupon`
+                    })
+
+                }
+            } else {
+                const couponUsed = await CouponHistory.findOne({ UserId: user, CouponCode: CouponCode })
+                console.log(couponUsed, "uamanfuafiasj")
+                 if(couponUsed !==null){
+                if (couponUsed.Status === 'Not Used') {
+                    // console.log(couponExist)
+
                     if (couponExist.MinOrderAmount <= req.body.subtotalAmount) {
                         const momentDate = moment(couponExist.CouponExpiryDate);
                         const currentDate = moment();
@@ -69,52 +95,25 @@ module.exports = {
                     }
                 } else {
                     res.json({
-                        status: false
-                    })
-                }
-            } else {
-                if (couponExist == null) {
-                    res.json({
                         status: false,
                         message: `This Coupon Code is already Used`
                     })
 
-                } else {
-
-                    res.json({
-                        status: false,
-                        message: `This Coupon Code is Not Available`
-                    })
-
-
                 }
+            }else{
+                res.json({
+                    status: false,
+                    message: `This Coupon Code Not Available`
+                })
             }
-        } else {
-            if (couponExist) {
-                if (couponExist.MinOrderAmount <= req.body.subtotalAmount) {
-                    const momentDate = moment(couponExist.CouponExpiryDate);
-                    const currentDate = moment();
-                    // console.log(momentDate.isBefore(currentDate),"nokkaam")
-                    if (!momentDate.isBefore(currentDate)) {
-                       
-                        res.json({
-                            status: true,
-                            couponAmount: couponExist.CouponValue
-                        })
-                        //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
-                    } else {
-                        res.json({
-                            status: false
-                        })
-                    }
-                } else {
-                    res.json({
-                        status: false,
-                        message: `Cart need Minimum Total Amount ${couponExist.MinOrderAmount} for getting this coupon`
-                    })
-                }
+
 
             }
+        }else{
+            res.json({
+                status: false,
+                message: `This Coupon Code is already Used`
+            })
         }
     }
 }

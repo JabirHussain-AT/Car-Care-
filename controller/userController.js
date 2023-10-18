@@ -875,8 +875,10 @@ getSignup: (req, res) => {
     downloadInvoice :async (req,res)=>{
             console.log(req.body,"from download invoice")
             const orderData = await Orders.findOne({_id:req.body.orderId}).populate('Products.ProductId')
-            invoice.invoiceDownload(orderData)
-            // console.log(orderData)
+            console.log(orderData)
+           const output = await invoice.order(orderData)
+           console.log(output),"hiii"
+        //    res.json({output})
     }
     
     
