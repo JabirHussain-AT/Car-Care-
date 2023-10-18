@@ -41,7 +41,8 @@ module.exports = {
     home :async (req,res)=>{
         const category = await Category.find()
         const user = req.session.user
-        res.render('user/home',{user:user,})
+        const banner = await Banner.findOne({Status:"Enabled"}) 
+        res.render('user/home',{user:user,Banner:banner})
     },
     profile :async (req,res)=>{
         const userid = req.session.user.user
@@ -859,7 +860,7 @@ getSignup: (req, res) => {
                     order: createdOrder,
                     user: userId
                 };
-                return res.json({ paymentDetials }); // Use return here
+                 res.json({ paymentDetials }); // Use return here
             }
             
         }

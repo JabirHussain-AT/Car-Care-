@@ -26,6 +26,10 @@ module.exports = {
         // console.log(req.body);
         // console.log(req.file);
         try {
+            console.log()
+            if(req.files['carouselImage1'] &&
+            req.files['carouselImage2'] &&
+            req.files['carouselImage3']){
             const carosal = [
                 req.files['carouselImage1'][0].filename,
                 req.files['carouselImage2'][0].filename,
@@ -37,8 +41,19 @@ module.exports = {
                 Carosel: carosal,
                 Date: new Date(),
             })
+            
             await newBanner.save();
             res.redirect('/admin/banner')
+        }else{
+            const newBanner = new Banner({
+                BannerName: req.body.bannerName,
+                Image: req.files['Image'][0].filename,
+                // Carosel: carosal,
+                Date: new Date(),
+            })
+            await newBanner.save();
+            res.redirect('/admin/banner')
+        }
         } catch (err) {
             console.log(err, 'in the submit banner catch');
             throw err

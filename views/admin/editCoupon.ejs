@@ -1,0 +1,69 @@
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header') %>
+
+<div class="container-fluid" style="background:linear-gradient(grey,white);">
+    <div class="row border-start">
+        <main class="px-md-4 icons" style="margin-left: 18%;width: 80%; margin-top: 6%;">
+            <div class="row d-flex justify-content-between">
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-center">
+                        <h1 class="mt-0">Edit Coupon</h1>
+                    </div>
+                    <br>
+                    <form action="/admin/editCoupon/<%= Coupon._id %>" method="post" class="bg-white p-4 rounded shadow">
+                        <div class="mb-3">
+                            <% if(message.Coupon){ %>
+                                <div class="alert alert-danger" role="alert">
+                                   <%= message.Coupon %>
+                                </div>
+                            <% } %>
+                            <% if(Coupon) { %>
+                                <label for="couponName" class="form-label">Coupon Name:</label>
+                                <input type="text" id="couponName" name="CouponName" value="<%= Coupon.CouponName %>" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="CouponCode" class="form-label">Coupon Code:</label>
+                                <input type="text" id="CouponCode" name="CouponCode" value="<%= Coupon.CouponCode %>" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="CouponValue" class="form-label">Coupon Value:</label>
+                                <input type="number" id="CouponValue" name="CouponValue" value="<%= Coupon.CouponValue %>" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="visibility">Issued To:</label>
+                                <select id="visibility" name="CouponIssuedTo" value="<%= Coupon.CouponIssuedTo %>">
+                                    <option value="public" <% if(Coupon.CouponIssuedTo === 'public') { %>selected<% } %>>Public</option>
+                                    <option value="private" <% if(Coupon.CouponIssuedTo === 'private') { %>selected<% } %>>Private</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="MinOrderAmount" class="form-label">Minimum Order Amount:</label>
+                                <input type="number" id="MinOrderAmount" name="MinOrderAmount" value="<%= Coupon.MinOrderAmount %>" class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="CouponDate" class="form-label">Coupon Expiry Date:</label>
+                                <input type="date" id="CouponDate" name="CouponExpiryDate" value="<%= Coupon.CouponExpiryDate %>" class="form-control">
+                            </div>
+
+                            <!-- Add your coupon status field here if needed -->
+
+                            <button type="submit" class="btn btn-primary">Submit Coupon</button>
+                        <% } %>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Add your scripts here -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/script.js"></script>
+
+</html>

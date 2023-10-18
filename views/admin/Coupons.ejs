@@ -14,7 +14,11 @@
             <%= message.existing %>
         </div>
     <% } %>
-
+    <% if (message.CouponDeleted) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message.CouponDeleted %>
+        </div>
+    <% } %>
     <h2 class="mb-4 ml-1" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><u>Coupon Details</u></h2>
     <div class="table-responsive">
         <table class="table table-dark table-bordered">
@@ -41,9 +45,10 @@
                         <td><%= coupon.Status %></td>
                         <td><%= coupon.MinOrderAmount %></td>
                         <td>
-                            <form action="/admin/activate-coupon/<%= coupon._id %>" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-primary">Activate</button>
-                            </form>
+                            <!-- <form action="/admin/activate-coupon/<%= coupon._id %>" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-info">Edit</button>
+                            </form> -->
+                            <a href="/admin/editCoupon/<%= coupon._id %>" class="btn btn-info ">Edit</a>
                             <form action="/admin/delete-coupon/<%= coupon._id %>" method="post" style="display: inline;">
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</button>
                             </form>

@@ -1,5 +1,6 @@
-y
-    <div class="container mt-5">
+<%- include('../layout/admin/layout') %>
+    <%- include('../partials/admin-header-checking') %>
+    <div class="container-fluid mt-5">
       <h2 class="text-center mb-4">Order History</h2>
 
       <% if(order.length> 0) { %>

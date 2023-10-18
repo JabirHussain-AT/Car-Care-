@@ -12,6 +12,7 @@ const CouponSchema = new Schema({
   Status : {type:String,default:"Active"},
   MinOrderAmount: { type: Number },
   Limit: { type: Number },
+  Users : {type : Array}
 });
 
 const Coupon = mongoose.model('Coupon', CouponSchema);

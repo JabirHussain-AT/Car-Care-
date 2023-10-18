@@ -54,9 +54,17 @@ router.post('/addBanner',auth.adminTokenAuth,upload.fields([
 router.post('/activate-banner/:bannerID',auth.adminTokenAuth,bannerController.activateBanner)
 router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
 
+router.post('/delete-coupon/:couponId',auth.adminTokenAuth,couponController.deleteCoupon)
+// router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
+
+
+
 
 router.get('/addCoupon',auth.adminTokenAuth,couponController.addCoupons)
 router.post('/addCoupon',auth.adminTokenAuth,couponController.postaddCoupons)
+
+router.get('/editCoupon/:id',auth.adminTokenAuth,couponController.editCoupon)
+router.post('/editCoupon/:id',auth.adminTokenAuth,couponController.posteditCoupon)
 
 router.get('/Coupons',auth.adminTokenAuth,couponController.Coupons)
 
