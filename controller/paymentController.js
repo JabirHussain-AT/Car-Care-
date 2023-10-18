@@ -4,7 +4,8 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const Products = require('../models/productSchema')
 const Order = require('../models/orderSchema')
-const otpFunctions = require('../utilty/otpFunctions')
+const otpFunctions = require('../utilty/otpFunctions');
+const Users = require('../models/userSchema');
 
 module.exports = {
     verifypayment: async (req, res) => {
@@ -26,6 +27,8 @@ module.exports = {
             try {
                 const updateOrderDocument = await Order.findByIdAndUpdate(orderId, { PaymentStatus: "Paid" })
                 // console.log('Order update success:', updateOrderDocument)
+                const userId = req.session.user.user
+                const user = await Users.findOne({_id:userId})
                 const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
                 const result = otpFunctions.sendMail(req, res, user.Email, content)
                 res.json({ success: true })

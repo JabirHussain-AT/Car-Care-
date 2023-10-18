@@ -49,6 +49,7 @@ router.post('/setNewPass/:email',userController.postsetNewPass)
 //change Password
 router.post('/changePassword',auth.userTokenAuth,userController.changePassword)
 
+router.get('/download-invoice222/:id',auth.userTokenAuth,userController.downloadfile)
 
 //cart
 router.get('/cart',auth.userTokenAuth,userController.cart)

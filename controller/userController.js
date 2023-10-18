@@ -846,22 +846,22 @@ getSignup: (req, res) => {
               const user = await Users.findOne({_id:req.session.user.user})
               
             }
-            if(req.body.paymentMethod === 'COD')
-           { 
-            const user  =  await Users.findOne({_id:req.session.user.user})
-            const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
-            const result = otpFunctions.sendMail(req, res, user.Email, content)
-            res.json({cod:true})
-           }else if(req.body.paymentMethod === 'online'){
-            const amount = parseFloat(req.session.totalAmount.replace(/[^\d.]/g, ''))
-                    const response = await razorpay.onlinePayment(amount,createdOrder._id)
-                    let paymentDetials ={
-                        response : response,
-                        order : createdOrder,
-                        user : userId
-                    }
-                    res.json({paymentDetials})
-           }
+            if (req.body.paymentMethod === 'COD') { 
+                const user = await Users.findOne({_id:req.session.user.user});
+                const content = "Successfully placed your Order. It will be shipped within 1 working day. For more queries, connect with our team at 9007972782.";
+                const result = otpFunctions.sendMail(req, res, user.Email, content);
+                return res.json({ cod: true }); // Use return here
+            } else if (req.body.paymentMethod === 'online') {
+                const amount = parseFloat(req.session.totalAmount.replace(/[^\d.]/g, ''));
+                const response = await razorpay.onlinePayment(amount, createdOrder._id);
+                let paymentDetials = {
+                    response: response,
+                    order: createdOrder,
+                    user: userId
+                };
+                return res.json({ paymentDetials }); // Use return here
+            }
+            
         }
             //   res.redirect('/orderPlaced')
           }
@@ -872,15 +872,26 @@ getSignup: (req, res) => {
             throw error
         }
     },
-    downloadInvoice :async (req,res)=>{
-            console.log(req.body,"from download invoice")
-            const orderData = await Orders.findOne({_id:req.body.orderId}).populate('Products.ProductId')
-            console.log(orderData)
-           const output = await invoice.order(orderData)
-           console.log(output),"hiii"
-        //    res.json({output})
+   downloadInvoice: async (req, res) => {
+    
+        try {
+            const orderData = await Orders.findOne({_id: req.body.orderId}).populate('Products.ProductId');
+            const filePath = await invoice.order(orderData);
+            console.log(filePath, "jiiiinnn");
+            const orderId = orderData._id
+          
+            res.json({orderId});
+        } catch (error) {
+            console.error("Error in downloadInvoice:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+    downloadfile:(req,res)=>{
+        const id = req.params.id
+        const filePath =`D:/E_COMMERCE_project/public/pdf/${id}.pdf`
+        res.download(filePath, `invoice.pdf`);
     }
-    
-    
 }
+    
+
 
