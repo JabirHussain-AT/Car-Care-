@@ -5,6 +5,8 @@ const userController = require('../controller/userController')
 const couponController = require('../controller/couponController')
 const auth = require('../middlewares/userAuth.js')
 const paymentController= require('../controller/paymentController')
+const orderController = require('../controller/orderController')
+const cartController = require('../controller/cartController')
 
 //landing page
 router.get('/',auth.userTokenAuth,userController.landingPage)
@@ -49,17 +51,16 @@ router.post('/setNewPass/:email',userController.postsetNewPass)
 //change Password
 router.post('/changePassword',auth.userTokenAuth,userController.changePassword)
 
-router.get('/download-invoice222/:id',auth.userTokenAuth,userController.downloadfile)
 
 //cart
-router.get('/cart',auth.userTokenAuth,userController.cart)
-router.get('/addToCart/:id',auth.userTokenAuth,userController.addtoCart)
-router.get('/deleteItem/:id',userController.deleteFromCart)
-router.post('/updateQuantity',userController.updatingQuantity)
-router.post('/cart',auth.userTokenAuth,userController.postCart)
+router.get('/cart',auth.userTokenAuth,cartController.cart)
+router.get('/addToCart/:id',auth.userTokenAuth,cartController.addtoCart)
+router.get('/deleteItem/:id',auth.userTokenAuth,cartController.deleteFromCart)
+router.post('/updateQuantity',cartController.updatingQuantity)
+router.post('/cart',auth.userTokenAuth,cartController.postCart)
 
 //orderDetials
-router.get('/orderDetials',auth.userTokenAuth,userController.orderDetials)
+router.get('/orderDetials',auth.userTokenAuth,orderController.orderDetials)
 
 router.get('/category/:id',auth.userTokenAuth,userController.categoryBased)
 //CheckOut page
@@ -70,7 +71,7 @@ router.post('/checkOut',auth.userTokenAuth,userController.postCheckOut)
 router.get('/addAddress',auth.userTokenAuth,userController.addAddress)
 router.post('/addAddress',auth.userTokenAuth,userController.postaddAddress)
 
-
+//checkout time address creation post 
 router.post('/checKoutaddAddress',auth.userTokenAuth,userController.postCheckAddAddress)
 
 
@@ -82,22 +83,30 @@ router.post('/editAddress/:addressId',auth.userTokenAuth,userController.postEdit
 router.get('/deleteAddress/:id',auth.userTokenAuth,userController.deleteAddress)
 
 //order Placed
-router.get('/orderPlaced',auth.userTokenAuth,userController.orderSuccess)
+router.get('/orderPlaced',auth.userTokenAuth,orderController.orderSuccess)
 
 //order History
-router.get('/orderHistory',auth.userTokenAuth,userController.orderHistory)
+router.get('/orderHistory',auth.userTokenAuth,orderController.orderHistory)
 
 //order detialed view
-router.get('/order/:id',auth.userTokenAuth,userController.orderDetialedView)
+router.get('/order/:id',auth.userTokenAuth,orderController.orderDetialedView)
 
-router.post('/download-invoice',auth.userTokenAuth,userController.downloadInvoice)
+//invoice download 
+router.post('/download-invoice',orderController.downloadInvoice)
+router.get('/download-invoice/:id',auth.userTokenAuth,orderController.downloadfile)
 
+//cancel order 
 router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
-//profile
 
-router.post('/verify-payment',auth.userTokenAuth,paymentController.verifypayment)
+
 // router.post('/onlinePayment',auth.userTokenAuth,paymentController.OnlinePayment1)
+router.post('/verify-payment',auth.userTokenAuth,paymentController.verifypayment)
 
+
+//coupon validation
 router.post('/validateCoupon',auth.userTokenAuth,couponController.validateCoupon) 
+
+//return order
+router.post('/returnRequest/:id',auth.userTokenAuth,orderController.returnOrder) 
 
 module.exports = router

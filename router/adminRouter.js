@@ -6,6 +6,7 @@ const userController = require('../controller/userController')
 const bannerController = require('../controller/bannerController')
 const couponController = require('../controller/couponController')
 const auth = require('../middlewares/adminAuth')
+const orderController = require('../controller/orderController')
 
 
 //admin users 
@@ -51,21 +52,30 @@ router.post('/addBanner',auth.adminTokenAuth,upload.fields([
     { name: 'carouselImage3', maxCount: 1 },
 ]),bannerController.submitAddBanner)
 
+//banner activate ,delete
 router.post('/activate-banner/:bannerID',auth.adminTokenAuth,bannerController.activateBanner)
 router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
 
-router.post('/delete-coupon/:couponId',auth.adminTokenAuth,couponController.deleteCoupon)
 // router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
 
+//delete coupon
+router.post('/delete-coupon/:couponId',auth.adminTokenAuth,couponController.deleteCoupon)
 
-
-
+//add coupon
 router.get('/addCoupon',auth.adminTokenAuth,couponController.addCoupons)
 router.post('/addCoupon',auth.adminTokenAuth,couponController.postaddCoupons)
 
+//edit coupon
 router.get('/editCoupon/:id',auth.adminTokenAuth,couponController.editCoupon)
 router.post('/editCoupon/:id',auth.adminTokenAuth,couponController.posteditCoupon)
 
+//coupons
 router.get('/Coupons',auth.adminTokenAuth,couponController.Coupons)
+
+//return requests
+router.get('/manage-return-requests',auth.adminTokenAuth,orderController.manageReturn)
+router.get('/reject-return-request/:orderId',auth.adminTokenAuth,orderController.rejectReturn)
+router.get('/return-accepted/:orderId',auth.adminTokenAuth,orderController.acceptReturn)
+router.get('/return-order-detials/:orderId',auth.adminTokenAuth,orderController.viewReturnProducts)
 
 module.exports = router

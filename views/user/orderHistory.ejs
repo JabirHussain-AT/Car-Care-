@@ -1,119 +1,237 @@
 <%- include('../layout/user/layout') %>
-<link rel="stylesheet" href="/stylesheet/user-cart.css">
-<%- include('../partials/user-header') %>
-<style>
-    body{
+  <link rel="stylesheet" href="/stylesheet/user-cart.css">
+  <%- include('../partials/user-header') %>
+    <style>
+      body {
         background-color: rgb(233, 227, 227);
-    }
-.progress-bar.order-placed {
-    background-color: #007bff;
-}
+      }
 
-.progress-bar.shipped {
-    background-color: #ffc107;
-}
+      .progress-bar.order-placed {
+        background-color: #007bff;
+      }
 
-.progress-bar.delivered {
-    background-color: #28a745;
-}
+      .progress-bar.shipped {
+        background-color: #ffc107;
+      }
 
-.progress-bar.rejected {
-    background-color: #dc3545;
-}
-</style>
+      #loadingSpinner {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+      }
 
-<div class="container-fluid banner">
-  <div class="row">
-    <div class="col-12 text-center">
-      <h1>Order History</h1>
-    </div>
-  </div>
-</div>
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s infinite linear;
+      }
 
-<% if (orderHistory && orderHistory.length > 0) { %>
-  <% orderHistory.forEach((order) => { %>
-    <div class="container my-4">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h4 class="card-title">Order ID: <%= order._id %></h4>
-            <p>Payment Method: <%= order.PaymentMethord %></p>
-          </div>
-          <p>Ordered Date: <%= order.OrderedDate %></p>
-          <% if(order.Status === "Delivered") { %>
-            <p>Delivered Date: <%= order.DeliveredDate %></p>
-            <p>Return Policy End At : <%= order.LastReturnDate %></p>
-           <% } else {%> 
-          <p>Expected Delivery Date: <%= order.ExpectedDeliveryDate %></p>
-          <% } %>
-          <% if (order.Status === 'Delivered') { %>
-            <p class="text-success">Order Status: <%= order.Status %></p>
-          <% } else if (order.Status === 'Shipped') { %>
-            <p class="text-warning">Order Status: <%= order.Status %></p>
-          <% } else if (order.Status === 'Order placed') { %>
-            <p class="text-primary">Order Status: <%= order.Status %></p>
-          <% } else if (order.Status === 'Rejected' || order.Status === 'Cancelled') { %>
-            <p class="text-danger">Order Status: <%= order.Status %></p>
-          <% } %>
-          <div class="progress">
-            <div class="progress-bar
-                <% if (order.Status.toLowerCase() === 'order placed') { %> order-placed <% } %>
-                <% if (order.Status.toLowerCase() === 'shipped') { %> shipped <% } %>
-                <% if (order.Status.toLowerCase() === 'delivered') { %> delivered <% } %>
-                <% if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> rejected <% } %>"
-                role="progressbar" aria-valuenow="<%=
-                order.Status.toLowerCase() === 'order placed' ? 10 :  /* 10% for " order placed" */
-                order.Status.toLowerCase() === 'shipped' ? 50 :
-                order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>"
-                aria-valuemin="0" aria-valuemax="100" style="width: <%= order.Status.toLowerCase() === 'order placed' ? 10 :
-                order.Status.toLowerCase() === 'shipped' ? 50 :
-                order.Status.toLowerCase() === 'delivered' ? 100 :
-                order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>%;">
-                <%= order.Status.toLowerCase() === 'order placed' ? '10%' :
-                order.Status.toLowerCase() === 'shipped' ? '50%' :
-                order.Status.toLowerCase() === 'delivered' ? '100%' :
-                order.Status.toLowerCase() === 'rejected' ? '0%' : '' %>
-            </div>
-        </div>
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
 
-          <div class="d-flex justify-content-end mt-2">
-            <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
-            <button class="btn-info btn btn-rounded mr-2" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</button>
-            <!-- <a href="/download-invoice222/<%= order._id %>" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
+        100% {
+          transform: rotate(360deg);
+        }
+      }
 
-            <!-- <a href=`D:\E_COMMERCE_project\public\pdf\${orderid}.pdf `  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
-         <% if(order.Status === 'Order placed') { %>
-            <a id="AtagForInvoice" href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel Order</button></a>
-            <% } else if(order.Status === 'Delivered') { %>
-                <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Return</button></a>
-                <% } %>
-                
-          </div>
+      .progress-bar.delivered {
+        background-color: #28a745;
+      }
+
+      .progress-bar.rejected {
+        background-color: #dc3545;
+      }
+    </style>
+
+    <div class="container-fluid banner">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h1>Order History</h1>
         </div>
       </div>
     </div>
-  <% }); %>
-<% } else { %>
-  <p class="container">No order history available.</p>
-<% } %>
+    <!-- Add this element to show loading spinner -->
+    <div id="loadingSpinner">
+      <div class="spinner"></div>
+      <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;font-weight: 500;">
+        Loading...</p>
+    </div>
+    <% if (orderHistory && orderHistory.length> 0) { %>
+      <% orderHistory.forEach((order)=> { %>
+        <div class="container my-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h4 class="card-title">Order ID: <%= order._id %>
+                </h4>
+                <p>Payment Method: <%= order.PaymentMethord %>
+                </p>
+              </div>
+              <p>Ordered Date: <%= order.OrderedDate %>
+              </p>
+              <% if(order.Status==="Delivered" ) { %>
+                <p>Delivered Date: <%= order.DeliveredDate %>
+                </p>
+                <p>Return Policy End At : <%= order.LastReturnDate %>
+                </p>
+                <% } else {%>
+                  <p>Expected Delivery Date: <%= order.ExpectedDeliveryDate %>
+                  </p>
+                  <% } %>
+                    <% if (order.Status==='Delivered' ) { %>
+                      <p class="text-success">Order Status: <%= order.Status %>
+                      </p>
+                      <% } else if (order.Status==='Shipped' ) { %>
+                        <p class="text-warning">Order Status: <%= order.Status %>
+                        </p>
+                        <% } else if (order.Status==='Order placed' ) { %>
+                          <p class="text-primary">Order Status: <%= order.Status %>
+                          </p>
+                          <% } else if (order.Status==='Rejected' || order.Status==='Cancelled' ) { %>
+                            <p class="text-danger">Order Status: <%= order.Status %>
+                            </p>
+                            <% } else if(order.Status==='Delivered (Return Rejected)') {%>
+                              <p class="text-success">Order Status: <%= order.Status %>
+                              </p>
+                              <% } %>
+                              <div class="progress">
+                                <div class="progress-bar
+                                    <% if (order.Status.toLowerCase() === 'order placed') { %> bg-info <% } %>
+                                    <% if (order.Status.toLowerCase() === 'shipped') { %> bg-warning <% } %>
+                                    <% if (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') { %> bg-success <% } %>
+                                    <% if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> bg-danger <% } %>"
+                                    role="progressbar" aria-valuenow="<%=
+                                        order.Status.toLowerCase() === 'order placed' ? 10 :
+                                        order.Status.toLowerCase() === 'shipped' ? 50 :
+                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
+                                        order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>"
+                                    aria-valuemin="0" aria-valuemax="100" style="width: <%=
+                                        order.Status.toLowerCase() === 'order placed' ? 10 :
+                                        order.Status.toLowerCase() === 'shipped' ? 50 :
+                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
+                                        order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>%;">
+                                    <%= order.Status.toLowerCase() === 'order placed' ? '10%' :
+                                        order.Status.toLowerCase() === 'shipped' ? '50%' :
+                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? '100%' :
+                                        order.Status.toLowerCase() === 'rejected' ? '0%' : '' %>
+                                </div>
+                            </div>
+                            
+
+                              <div class="d-flex justify-content-end mt-2">
+                                <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
+                                <button class="btn-info btn btn-rounded mr-2"
+                                  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</button>
+                                <!-- <a href="/download-invoice222/<%= order._id %>" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
+
+                                <!-- <a href=`D:\E_COMMERCE_project\public\pdf\${orderid}.pdf `  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
+                                <% if(order.Status==='Order Placed' ) { %>
+                                  <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel
+                                      Order</button></a>
+                                  <% } else if(order.Status==='Delivered' ) { %>
+                                    <a href="/returnOrder/<%= order._id %> " data-bs-toggle="modal"
+                                      data-bs-target="#returnModal<%= order._id %>"><button
+                                        class="btn btn-danger">Request Return</button></a>
+                                    <!-- Modal for order return -->
+                                    <div class="modal fade" id="returnModal<%= order._id %>" tabindex="-1" role="dialog"
+                                      aria-labelledby="returnModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                              aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>Are you sure you want to return this order?</p>
+                                            <!-- Button to open the second modal -->
+                                            <button class="btn btn-primary"
+                                              data-bs-target="#returnReasonModal<%= order._id %>"
+                                              data-bs-toggle="modal">Yes</button>
+                                            <button type="button" class="btn btn-secondary"
+                                              data-bs-dismiss="modal">No</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <!-- Modal for providing the reason for return -->
+                                    <div class="modal fade" id="returnReasonModal<%= order._id %>" tabindex="-1"
+                                      role="dialog" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="returnReasonModalLabel">Provide Reason for
+                                              Return</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                              aria-label="Close"></button>
+                                          </div>
+                                          <form action="/returnRequest/<%= order._id %>" method="post">
+                                            <div class="modal-body">
+                                              <!-- Your form for providing the reason goes here -->
+                                              <label for="returnReason">Reason:</label>
+                                              <textarea id="returnReason" name="returnReason" class="form-control"
+                                                placeholder="Enter reason for return..." rows="4"></textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                              <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                          </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <% } %>
+
+                              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+          <% } else { %>
+            <p class="container">No order history available.</p>
+            <% } %>
 
 
-<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
-<script>
- async function downloadInvoice(orderId) {
-  const downloadLink = document.getElementById(`AtagForInvoice`);
-  downloadLink.style.pointerEvents = 'none';
-  const response =await fetch('/download-invoice', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ orderId }),
-  })
-  if(response.ok){
-    
-    console.log("response inside",response)
-    window.location.href =`/download-invoice222/${orderId}`;
-}
- }
-</script>
+              <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+              <script>
+                async function downloadInvoice(orderId) {
+                  //  const downloadLink = document.getElementById(`AtagForInvoice`);
+                  //  downloadLink.style.pointerEvents = 'none';
+
+
+                  // Show the loading spinner
+                  const loadingSpinner = document.getElementById('loadingSpinner');
+                  loadingSpinner.style.display = 'block';
+
+                  try {
+                    //  console.log(orderId,"bhb")
+                    const response = await fetch('/download-invoice', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ orderId }),
+                    })
+                    if (response.ok) {
+
+                      console.log("response inside", response)
+                      window.location.href = `/download-invoice/${orderId}`;
+                    }
+                  } catch (err) {
+                    console.error("error in order History", err)
+                  } finally {
+                    // Hide the loading spinner
+                    loadingSpinner.style.display = 'none';
+                  }
+                }
+              </script>

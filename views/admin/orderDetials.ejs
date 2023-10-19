@@ -1,6 +1,32 @@
 <%- include('../layout/admin/layout') %>
-    <%- include('../partials/admin-header-checking') %>
+  <%- include('../partials/admin-header-checking') %>
     <div class="container-fluid mt-5">
+      <!-- this is search bar and that button -->
+      <div class="container-fluid mt-5">
+        <div class="row">
+          <div class="col-md-6"></div> <!-- Empty column for spacing on the left -->
+
+          <!-- Right Side: Search Bar and Return Requests Button -->
+          <div class="col-md-6 d-flex justify-content-end">
+            <!-- Search Bar -->
+            <div class="input-group mb-3" style="max-width: 300px;">
+              <input type="text" class="form-control" placeholder="Search by Order ID or Customer ID" id="searchInput">
+              <button class="btn btn-outline-secondary" type="button" onclick="searchOrders()">Search</button>
+            </div>
+
+            <!-- Return Requests Button -->
+            <div class="position-relative ml-2">
+              <a href="/admin/manage-return-requests" class="btn btn-info">
+                Return Requests
+                <!-- Uncomment the following code to show the badge with the item count -->
+                <!-- <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <span id="itemCount">50</span>
+          </span> -->
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       <h2 class="text-center mb-4">Order History</h2>
 
       <% if(order.length> 0) { %>
@@ -36,19 +62,23 @@
                 <td>
                   <!-- Displaying the current status dynamically -->
                   <% const currentStatus=order[i].Status || 'Order Placed' ; %>
-                  <% if (order[i].Status === 'Cancelled') { %>
-                    <!-- Displaying the canceled status if the order is cancelled -->
-                    <span class="text-danger p-2" style="background-color:aliceblue; border-radius:  10px;">Cancelled Order</span>
-                  <% } else { %>
-                    <!-- Displaying the dropdown for other statuses -->
-                    <select class="form-select" id="statusSelect<%= i %>"
-                      onchange="changeOrderStatus('<%= order[i]._id %>', <%= i %> )">
-                      <option value="Order Placed" <%=currentStatus==='Order Placed' ? 'selected' : '' %>>Order Placed</option>
-                      <option value="Shipped" <%=currentStatus==='Shipped' ? 'selected' : '' %>>Shipped</option>
-                      <option value="Delivered" <%=currentStatus==='Delivered' ? 'selected' : '' %>>Delivered</option>
-                      <option value="Rejected" <%=currentStatus==='Rejected' ? 'selected' : '' %>>Rejected</option>
-                    </select>
-                  <% } %>
+                    <% if (order[i].Status==='Cancelled' ) { %>
+                      <!-- Displaying the canceled status if the order is cancelled -->
+                      <span class="text-danger p-2" style="background-color:aliceblue; border-radius:  10px;">Cancelled
+                        Order</span>
+                      <% } else { %>
+                        <!-- Displaying the dropdown for other statuses -->
+                        <select class="form-select" id="statusSelect<%= i %>"
+                          onchange="changeOrderStatus('<%= order[i]._id %>', <%= i %> )">
+                          <option value="Order Placed" <%=currentStatus==='Order Placed' ? 'selected' : '' %>>Order
+                            Placed</option>
+                          <option value="Shipped" <%=currentStatus==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                          <option value="Delivered" <%=currentStatus==='Delivered' ? 'selected' : '' %>>Delivered
+                          </option>
+                          <option value="Rejected" <%=currentStatus==='Rejected' ? 'selected' : '' %>>Rejected
+                          </option>
+                        </select>
+                        <% } %>
 
 
                 </td>
@@ -104,7 +134,7 @@
         const statusSelect = document.getElementById(`statusSelect${index}`);
         const newStatus = statusSelect.value;
         location.reload()
-      
+
         // Assuming you have backend routes for updating order status and payment status
         fetch(`/admin/order/update-status/${orderId}`, {
           method: 'PUT',
@@ -113,39 +143,39 @@
           },
           body: JSON.stringify({ status: newStatus }),
         })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Order status updated:', data);
-      
-          // Check if the new status is "Delivered"
-          if (newStatus.toLowerCase() === 'delivered') {
-            location.reload()
-            // Fetch and update payment status
-            fetch(`/admin/order/update-payment-status/${orderId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ paymentStatus: 'paid' }),
-            })
-            .then(paymentResponse => paymentResponse.json())
-            .then(paymentData => {
-              console.log('Payment status updated:', paymentData);
-              // Update the UI or display a confirmation message
-              const paymentStatusCell = document.getElementById(`paymentStatus${index}`);
-              paymentStatusCell.textContent = 'paid';
-            })
-            .catch(paymentError => {
-              console.error('Error updating payment status:', paymentError);
-              // Handle error
-            });
-          }
-        })
-        .catch(error => {
-          console.error('Error updating order status:', error);
-          // Handle error
-        });
+          .then(response => response.json())
+          .then(data => {
+            console.log('Order status updated:', data);
+
+            // Check if the new status is "Delivered"
+            if (newStatus.toLowerCase() === 'delivered') {
+              location.reload()
+              // Fetch and update payment status
+              fetch(`/admin/order/update-payment-status/${orderId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ paymentStatus: 'paid' }),
+              })
+                .then(paymentResponse => paymentResponse.json())
+                .then(paymentData => {
+                  console.log('Payment status updated:', paymentData);
+                  // Update the UI or display a confirmation message
+                  const paymentStatusCell = document.getElementById(`paymentStatus${index}`);
+                  paymentStatusCell.textContent = 'paid';
+                })
+                .catch(paymentError => {
+                  console.error('Error updating payment status:', paymentError);
+                  // Handle error
+                });
+            }
+          })
+          .catch(error => {
+            console.error('Error updating order status:', error);
+            // Handle error
+          });
       }
-      </script>
-      
+    </script>
+
     <%- include('../partials/user-footer') %>

@@ -161,7 +161,7 @@ AvailableQuantity %>" />
                       </tr>
                       <tr>
                         <td style="width: 60%; font-family: 'Times New Roman', Times, serif">Tax (18%) :</td>
-                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="TaxAmountCell">Rs +
+                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="TaxAmountCell">Rs 
                           0.00</td>
 
                       </tr>
@@ -264,7 +264,7 @@ AvailableQuantity %>" />
                     const taxAmount = subtotalAmount * taxRate;
 
                     // Increase total amount by tax
-                    totalAmount += taxAmount;
+                    // totalAmount += taxAmount;no need for increase i think
                     const totalAmountCell = document.getElementById('totalAmountCell');
                     const placeOrderButton = document.getElementById('placeOrderButton');
                     const taxAmountCell = document.getElementById('TaxAmountCell');
@@ -288,7 +288,7 @@ AvailableQuantity %>" />
 
 
                     // Update tax amount cell
-                    taxAmountCell.textContent = `Rs +${taxAmount.toFixed(2)}`;
+                    taxAmountCell.textContent = `Rs ${taxAmount.toFixed(2)}`;
                   }
 
                   async function updateQuantity(productId, change) {

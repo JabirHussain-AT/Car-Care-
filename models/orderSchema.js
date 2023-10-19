@@ -26,6 +26,7 @@ const OrdersSchema = new Schema({
   PaymentMethord :{type : String},
   PaymentStatus :{type : String,default:"Pending"},
   TransactionId:{type:String},
+  returnReason : {type:String},
   TotalAmount: { type: Number, required: true },
 });
 

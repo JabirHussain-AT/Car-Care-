@@ -47,7 +47,7 @@ module.exports = {
                 "quantity": product.Quantity,
                 "description": product.ProductId.ProductName, // You might want to use product description here
                 "tax-rate": 18,
-                "price": product.ProductId.DiscountAmount
+                 "price":(product.ProductId.DiscountAmount /1+ ( 18 / 100)),
             })),
 
             "bottom-notice": "Thank You For Your Purchase",
