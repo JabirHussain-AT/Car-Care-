@@ -16,7 +16,15 @@
                 Order ID: <%= order._id %>
                </p> 
             </div>
-            <div class="card-body" style="background-color: rgba(48, 46, 63, 0.325);">
+            <% if(order.Status === "Return Accepted") {%>
+                <div class="card-body" style="background-color: rgba(58, 154, 199, 0.325);">
+                    <span style="font-family: 'Times New Roman', Times, serif; font-size: medium; font-weight: 600;">
+                        Return Status:</span> <p> <%= order.Status%></p>
+                    <a href="/admin/verify-return/<%= order._id %>">
+                        <button class="btn btn-success">Verify Return</button>
+                       </a> 
+                    <% } else { %>
+               <div class="card-body" style="background-color: rgba(41, 131, 240, 0.368);">
                 <span style="font-family: 'Times New Roman', Times, serif; font-size: medium; font-weight: 600;">
                     Return Reason:</span> <p> <%= order.returnReason %></p>
                 <div class="">
@@ -31,6 +39,7 @@
                     </a>
                 </div>
             </div>
+            <% } %>
         </div>
     <% }) %>
 <% } %>

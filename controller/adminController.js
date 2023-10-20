@@ -372,7 +372,7 @@ module.exports = {
             const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
             const perPage = 10; // Number of items per page
             const skip = (page - 1) * perPage;
-
+            const  returnRequested = await Orders.find({ Status: 'Return Requested' })
             // Query the database for products, skip and limit based on the pagination
             const order = await Orders.find()
                 .skip(skip)
@@ -382,6 +382,7 @@ module.exports = {
 
             res.render('admin/orderDetials', {
                 order,
+                returnRequested,
                 currentPage: page,
                 perPage,
                 totalCount,

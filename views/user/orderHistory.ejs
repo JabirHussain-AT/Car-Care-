@@ -32,6 +32,9 @@
         animation: spin 1s infinite linear;
       }
 
+
+
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -72,9 +75,11 @@
               <div class="d-flex justify-content-between">
                 <h4 class="card-title">Order ID: <%= order._id %>
                 </h4>
-                <p>Payment Method: <%= order.PaymentMethord %>
-                </p>
+
               </div>
+              <p>Payment Method: <span>
+                  <%= order.PaymentMethord %>
+                </span </p>
               <p>Ordered Date: <%= order.OrderedDate %>
               </p>
               <% if(order.Status==="Delivered" ) { %>
@@ -98,101 +103,136 @@
                           <% } else if (order.Status==='Rejected' || order.Status==='Cancelled' ) { %>
                             <p class="text-danger">Order Status: <%= order.Status %>
                             </p>
-                            <% } else if(order.Status==='Delivered (Return Rejected)') {%>
+                            <% } else if(order.Status==='Delivered (Return Rejected)' ) {%>
                               <p class="text-success">Order Status: <%= order.Status %>
                               </p>
-                              <% } %>
-                              <div class="progress">
-                                <div class="progress-bar
-                                    <% if (order.Status.toLowerCase() === 'order placed') { %> bg-info <% } %>
-                                    <% if (order.Status.toLowerCase() === 'shipped') { %> bg-warning <% } %>
-                                    <% if (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') { %> bg-success <% } %>
-                                    <% if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> bg-danger <% } %>"
-                                    role="progressbar" aria-valuenow="<%=
-                                        order.Status.toLowerCase() === 'order placed' ? 10 :
-                                        order.Status.toLowerCase() === 'shipped' ? 50 :
-                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
-                                        order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>"
-                                    aria-valuemin="0" aria-valuemax="100" style="width: <%=
-                                        order.Status.toLowerCase() === 'order placed' ? 10 :
-                                        order.Status.toLowerCase() === 'shipped' ? 50 :
-                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
-                                        order.Status.toLowerCase() === 'rejected' ? 100 : 0 %>%;">
-                                    <%= order.Status.toLowerCase() === 'order placed' ? '10%' :
-                                        order.Status.toLowerCase() === 'shipped' ? '50%' :
-                                        (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? '100%' :
-                                        order.Status.toLowerCase() === 'rejected' ? '0%' : '' %>
+                              <% } else if (order.Status==='Return Requested' ) { %>
+                                <p class="text-warning">Order Status: <%= order.Status %>
+                                </p>
+                                <!-- Show green color bar for Return Requested -->
+                                <div class="progress" style="height: 10px; border-radius: 10px; overflow: hidden;">
+                                  <div class="progress-bar bg-success" role="progressbar" aria-valuenow="100"
+                                    aria-valuemin="0" aria-valuemax="100"
+                                    style="width: 100%; border-radius: 10px; animation: progressBarAnimation 1s ease-out;">
+                                    Delivered
+                                  </div>
                                 </div>
-                            </div>
-                            
-
-                              <div class="d-flex justify-content-end mt-2">
-                                <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
-                                <button class="btn-info btn btn-rounded mr-2"
-                                  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</button>
-                                <!-- <a href="/download-invoice222/<%= order._id %>" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
-
-                                <!-- <a href=`D:\E_COMMERCE_project\public\pdf\${orderid}.pdf `  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
-                                <% if(order.Status==='Order Placed' ) { %>
-                                  <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel
-                                      Order</button></a>
-                                  <% } else if(order.Status==='Delivered' ) { %>
-                                    <a href="/returnOrder/<%= order._id %> " data-bs-toggle="modal"
-                                      data-bs-target="#returnModal<%= order._id %>"><button
-                                        class="btn btn-danger">Request Return</button></a>
-                                    <!-- Modal for order return -->
-                                    <div class="modal fade" id="returnModal<%= order._id %>" tabindex="-1" role="dialog"
-                                      aria-labelledby="returnModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                              aria-label="Close"></button>
-                                          </div>
-                                          <div class="modal-body">
-                                            <p>Are you sure you want to return this order?</p>
-                                            <!-- Button to open the second modal -->
-                                            <button class="btn btn-primary"
-                                              data-bs-target="#returnReasonModal<%= order._id %>"
-                                              data-bs-toggle="modal">Yes</button>
-                                            <button type="button" class="btn btn-secondary"
-                                              data-bs-dismiss="modal">No</button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <!-- Modal for providing the reason for return -->
-                                    <div class="modal fade" id="returnReasonModal<%= order._id %>" tabindex="-1"
-                                      role="dialog" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="returnReasonModalLabel">Provide Reason for
-                                              Return</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                              aria-label="Close"></button>
-                                          </div>
-                                          <form action="/returnRequest/<%= order._id %>" method="post">
-                                            <div class="modal-body">
-                                              <!-- Your form for providing the reason goes here -->
-                                              <label for="returnReason">Reason:</label>
-                                              <textarea id="returnReason" name="returnReason" class="form-control"
-                                                placeholder="Enter reason for return..." rows="4"></textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cancel</button>
-                                              <button type="submit" class="btn btn-primary">Submit</button>
-                                            </div>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    </div>
+                                <% } else if(order.Status==='Return Accepted' ) {%>
+                                  <p class="text-success">Order Status: <%= order.Status %>
+                                  </p>
+                                  <span style="color: #dc3545; font-family: 'Times New Roman', Times, serif;"> Note :
+                                  </span>
+                                  <p style="font-size: small;">We Will Contact you soon..Amount will be credited to
+                                    wallet with in 7 working days</p>
+                                  <% } else if(order.Status==='Returned' ) {%>
+                                    <p class="text-danger">Order Status: <%= order.Status %>
+                                    </p>
                                     <% } %>
 
-                              </div>
+                                      <!--  -->
+                                      <div class="progress"
+                                        style="height: 10px; border-radius: 10px; overflow: hidden;">
+                                        <div class="progress-bar
+        <% if (order.Status.toLowerCase() === 'order placed') { %> bg-info
+        <% } else if (order.Status.toLowerCase() === 'shipped') { %> bg-warning
+        <% } else if (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') { %> bg-success
+        <% } else if (order.Status.toLowerCase() === 'rejected' || order.Status.toLowerCase() === 'canceled') { %> bg-danger
+        <% } else if (order.Status.toLowerCase() === 'returned') { %> bg-info <!-- Change to a different color -->
+        <% } %>" role="progressbar" aria-valuenow="<%=
+            order.Status.toLowerCase() === 'order placed' ? 10 :
+            order.Status.toLowerCase() === 'shipped' ? 50 :
+            (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
+            order.Status.toLowerCase() === 'rejected' ? 100 :
+            order.Status.toLowerCase() === 'returned' ? 0 : 0 %>" aria-valuemin="0" aria-valuemax="100"
+                                          style="width: <%=
+            order.Status.toLowerCase() === 'order placed' ? 10 :
+            order.Status.toLowerCase() === 'shipped' ? 50 :
+            (order.Status.toLowerCase() === 'delivered' || order.Status.toLowerCase() === 'delivered (return rejected)') ? 100 :
+            order.Status.toLowerCase() === 'rejected' ? 100 :
+            order.Status.toLowerCase() === 'returned' ? 0 : 0 %>%; border-radius: 10px; animation: progressBarAnimation 1s ease-out;">
+
+                                          <!-- You can add additional styling or content here if needed -->
+
+                                          <%= order.Status.toLowerCase()==='order placed' ? 'Order Placed' :
+                                            order.Status.toLowerCase()==='shipped' ? 'Shipped' :
+                                            (order.Status.toLowerCase()==='delivered' ||
+                                            order.Status.toLowerCase()==='delivered (return rejected)' ) ? 'Delivered' :
+                                            order.Status.toLowerCase()==='rejected' ? 'Rejected' :
+                                            order.Status.toLowerCase()==='returned' ? 'Returned' : '' %>
+                                        </div>
+                                      </div>
+
+                                      <!--  -->
+
+                                      <div class="d-flex justify-content-end mt-2">
+                                        <a href="/order/<%= order._id %>" class="btn btn-dark mx-2">View Details</a>
+                                        <button class="btn-info btn btn-rounded mr-2"
+                                          onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</button>
+                                        <!-- <a href="/download-invoice222/<%= order._id %>" onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
+
+                                        <!-- <a href=`D:\E_COMMERCE_project\public\pdf\${orderid}.pdf `  onclick="downloadInvoice('<%= order._id %>')"> Download Invoice</a> -->
+                                        <% if(order.Status==='Order placed' ) { %>
+                                          <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel
+                                              Order</button></a>
+                                          <% } else if(order.Status==='Delivered' ) { %>
+                                            <a href="/returnOrder/<%= order._id %> " data-bs-toggle="modal"
+                                              data-bs-target="#returnModal<%= order._id %>"><button
+                                                class="btn btn-danger">Request Return</button></a>
+                                            <!-- Modal for order return -->
+                                            <div class="modal fade" id="returnModal<%= order._id %>" tabindex="-1"
+                                              role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    <p>Are you sure you want to return this order?</p>
+                                                    <!-- Button to open the second modal -->
+                                                    <button class="btn btn-primary"
+                                                      data-bs-target="#returnReasonModal<%= order._id %>"
+                                                      data-bs-toggle="modal">Yes</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                      data-bs-dismiss="modal">No</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <!-- Modal for providing the reason for return -->
+                                            <div class="modal fade" id="returnReasonModal<%= order._id %>" tabindex="-1"
+                                              role="dialog" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="returnReasonModalLabel">Provide Reason
+                                                      for
+                                                      Return</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                                  </div>
+                                                  <form action="/returnRequest/<%= order._id %>" method="post">
+                                                    <div class="modal-body">
+                                                      <!-- Your form for providing the reason goes here -->
+                                                      <label for="returnReason">Reason:</label>
+                                                      <textarea id="returnReason" name="returnReason"
+                                                        class="form-control" placeholder="Enter reason for return..."
+                                                        rows="4"></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                      <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                  </form>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <% } %>
+
+                                      </div>
             </div>
           </div>
         </div>

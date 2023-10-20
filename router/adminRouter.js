@@ -77,5 +77,6 @@ router.get('/manage-return-requests',auth.adminTokenAuth,orderController.manageR
 router.get('/reject-return-request/:orderId',auth.adminTokenAuth,orderController.rejectReturn)
 router.get('/return-accepted/:orderId',auth.adminTokenAuth,orderController.acceptReturn)
 router.get('/return-order-detials/:orderId',auth.adminTokenAuth,orderController.viewReturnProducts)
+router.get('/verify-return/:orderId',auth.adminTokenAuth, orderController.verifyReturn)
 
 module.exports = router

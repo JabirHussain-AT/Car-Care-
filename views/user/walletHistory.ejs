@@ -1,0 +1,33 @@
+<%- include('../layout/user/layout') %>
+<link rel="stylesheet" href="/stylesheet/walletHistory.css">
+<%- include('../partials/user-header') %>
+
+<div class="container">
+    <% if (Wallet) { %>
+        <% const sortedTransactions = Wallet.Transactions.sort((a, b) => new Date(b.Date) - new Date(a.Date)); %>
+        <% sortedTransactions.forEach((Transaction) => { %>
+            <div class="row justify-content-center m-2">
+                <div class="col-md-12">
+                    <div class="card rounded-man">
+                        <div class="card-body">
+                            <% if (Transaction.State === "In") { %>
+                                <h5 class="card-title text-success">Rs <%= Transaction.Amount %> - In</h5>
+                            <% } else { %>
+                                <h5 class="card-title text-danger">Rs <%= Transaction.Amount %> - Out</h5>
+                            <% } %>
+                            <a href="/admin/order/details/<%=Wallet.Order %>">
+                                <p class="card-text">
+                                    <span style="font-family: Arial, Helvetica, sans-serif;">Order Id :</span><%= Wallet.Order %>
+                                </p>
+                            </a>
+                            <p class="card-text">
+                                <span style="font-family: Arial, Helvetica, sans-serif;">Date :</span> <%= Transaction.Date %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    <% } %>
+</div>
+<%- include('../partials/user-footer') %>

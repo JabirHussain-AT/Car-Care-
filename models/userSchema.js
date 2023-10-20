@@ -35,6 +35,9 @@ const UsersSchema = new Schema({
   Address: [{
     type:addressSchema
   }],
+  Wallet : {
+     type:Number
+  }
 });
 
 const Users = mongoose.model('Users', UsersSchema);

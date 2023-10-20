@@ -4,6 +4,7 @@ const Admin = require('../models/adminSchema')
 const Products = require('../models/productSchema')
 const Category = require('../models/categorySchema')
 const Orders = require('../models/orderSchema')
+const Wallet = require('../models/walletHistorySchema')
 const Cart = require('../models/cartSchema')
 const CouponHistory = require('../models/couponHistorySchema')
 const bcrypt = require('bcrypt')
@@ -47,7 +48,8 @@ module.exports = {
     profile :async (req,res)=>{
         const userid = req.session.user.user
         const user = await Users.findOne({_id:userid})
-        res.render("user/profile",{user:user,message:req.flash()})
+        const wallet = await Wallet.findOne({UserId:userid})
+        res.render("user/profile",{user:user,message:req.flash(),Wallet:wallet})
     },
     postProfile : async (req,res)=>{
         try{
@@ -605,58 +607,7 @@ getSignup: (req, res) => {
     //     console.log("orderPlaced")
     //   },
       
-      cancelOrder : async (req,res)=>{
-        const orderId = req.params.id; // Assuming orderId is passed in the request parameters
-
-        try {
-          // Find the order by ID
-          console.log("Cancellll")
-          const order = await Orders.findById(orderId);
       
-        //   if (!order) {
-        //     return res.status(404).json({ message: 'Order not found' });
-        //   }
-      
-          // Update order properties
-          order.Status = 'Cancelled';
-          order.PaymentStatus = 'Order Cancelled';
-      
-          // Save the updated order
-          const updatedOrder = await order.save();
-      
-          // Respond with the updated order
-        //   res.status(200).json(updatedOrder);
-            const orderItems = updatedOrder.Products.map(item => ({
-            productId: item.ProductId,
-            quantity: item.Quantity
-            }));
-
-              // Retrieve products based on the product IDs
-              const products = await Products.find({ _id: { $in: orderItems.map(item => item.productId) } });
-              //
-              for (const orderItem of orderItems) {
-                const product =  products.find(product => orderItem.productId.equals(product._id));
-                 if (product) {
-                     // Convert AvailableQuantity to a number if it's stored as a string
-                      const currentQuantity = parseFloat(product.AvailableQuantity);
-                    // Convert orderItem.quantity to a number if it's stored as a string
-                      const orderQuantity = parseFloat(orderItem.quantity);   
-                      product.AvailableQuantity = currentQuantity + orderQuantity;
-
-         // Update stock quantity in the database for this product
-                 await Products.updateOne({ _id: product._id }, { $set: { AvailableQuantity: product.AvailableQuantity } });
-                 console.log("quantity added")
-              }
-          }
-        //   console.log(orderItems,"blank")
-        
-        res.redirect('/orderHistory')
-        } catch (error) {
-          console.error('Error cancelling order:in cancel order', error);
-          res.status(500).json({ message: 'Internal Server Error' });
-        }
-      
-      },
       postCheckOut: async (req,res)=>{
         
         console.log("orderPlaced",req.body)

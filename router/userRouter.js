@@ -7,6 +7,7 @@ const auth = require('../middlewares/userAuth.js')
 const paymentController= require('../controller/paymentController')
 const orderController = require('../controller/orderController')
 const cartController = require('../controller/cartController')
+const walletController = require('../controller/walletController')
 
 //landing page
 router.get('/',auth.userTokenAuth,userController.landingPage)
@@ -96,7 +97,7 @@ router.post('/download-invoice',orderController.downloadInvoice)
 router.get('/download-invoice/:id',auth.userTokenAuth,orderController.downloadfile)
 
 //cancel order 
-router.get('/cancelOrder/:id',auth.userTokenAuth,userController.cancelOrder)
+router.get('/cancelOrder/:id',auth.userTokenAuth,orderController.cancelOrder)
 
 
 // router.post('/onlinePayment',auth.userTokenAuth,paymentController.OnlinePayment1)
@@ -108,5 +109,8 @@ router.post('/validateCoupon',auth.userTokenAuth,couponController.validateCoupon
 
 //return order
 router.post('/returnRequest/:id',auth.userTokenAuth,orderController.returnOrder) 
+
+//user WalletHistory
+router.get('/view-wallet-history',auth.userTokenAuth,walletController.walletHistory)
 
 module.exports = router
