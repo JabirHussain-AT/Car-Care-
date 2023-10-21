@@ -228,10 +228,16 @@ module.exports = {
           }
           console.log("iam here",req.session)
           const userId = req.session.user.user
-          const wallet = await Wallet.findOne({_id:userId})
+          const wallet = await Wallet.findOne({UserId:userId})
         //   console.log(refund,"refund")
         if(wallet ===null)
         {
+          const userId = req.session.user.user
+          const newUserDoc = await Users.findOneAndUpdate({_id:userId},{
+            $inc: {
+              Wallet: orderUpdate.TotalAmount
+            }
+          })
             await Wallet.create({
                 UserId :userId,
                 WalletAmount : orderUpdate.TotalAmount,
@@ -239,21 +245,37 @@ module.exports = {
                     {
                         Amount :orderUpdate.TotalAmount,
                         Date :moment(new Date()).format('llll'),
-                        State :'In'
+                        State :'In',
+                        Order : orderUpdate._id
                     }
                 ],
-                Order : orderUpdate._id
              })
         }else if(wallet){
-            await wallet.updateOne({
-                WalletAmount:wallet.WalletAmount + orderUpdate.TotalAmount,
-                $push: {
-                    Transactions: {
-                        Amount:orderUpdate.TotalAmount,
-                        Date: moment(new Date()).format('llll'),
-                    }
-                }
-            })
+          const userId = req.session.user.user
+          const newUserDoc = await Users.findOneAndUpdate({_id:userId},{
+            $inc: {
+              Wallet: orderUpdate.TotalAmount
+            }
+          })
+
+          console.log('new',newUserDoc);
+
+
+          const user = Users.findOne({_id:userId})
+          console.log("njnm cewsxfsgayhbjsvhjwvgwvsgxvwegvavgvhwsvgavdhgvascv")
+          await wallet.updateOne({
+            WalletAmount:wallet.WalletAmount + orderUpdate.TotalAmount,
+            $push: {
+              Transactions: {
+                Amount:orderUpdate.TotalAmount,
+                State :"In",
+                Date: moment(new Date()).format('llll'),
+                Order : orderUpdate._id
+              }
+            }
+          })
+          // const updated = await Wallet.findOne({UserId:userId})
+          
         }
           res.redirect('/admin/manage-return-requests')
     } catch (error) {

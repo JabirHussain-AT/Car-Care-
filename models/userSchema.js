@@ -36,7 +36,8 @@ const UsersSchema = new Schema({
     type:addressSchema
   }],
   Wallet : {
-     type:Number
+     type:Number,
+     default:0
   }
 });
 

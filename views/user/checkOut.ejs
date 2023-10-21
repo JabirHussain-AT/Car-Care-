@@ -18,12 +18,13 @@
                 <div class="col-1">
                   <input type="radio" name="address" id="<%= 'address' + (index + 1) %>" value="<%= address.address %>" data-name="<%= address.Name %>" data-address="<%= address.address %>" data-zip="<%= address.zip %>"  data-state="<%= address.state %>"  data-city="<%= address.city %>" data-mobile="<%= address.mobileNumber %>" <%= index === 0 ? 'checked' : '' %>>
                 </div>
-                <div class="col-5">
+                <div class="col-4">
                   <div class="address-line">Name :</div>
-                  <div class="address-line">Address :</div>
+                  <div style="height: 8vh;" class="address-line">Address :</div>
                   <div class="address-line">City:</div>
+                  <div class="address-line">State:</div>
                   <div class="address-line">ZIP:</div>
-                  <div class="address-line">MOb No :</div>
+                  <div class="address-line">Mob No :</div>
                  
                 </div>
                 <div class="col-6">
@@ -66,6 +67,15 @@
               <input class="form-check-input" type="radio" name="paymentMethod" id="online" value="online">
               <label class="form-check-label" for="online">
                 Online Payment
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="Wallet">
+              <label class="form-check-label" for="Wallet">
+                Wallet Payment <span><img class="img-fluid mb-1" width="28px" height="auto" src="/assets/wallet-removebg-preview.png" alt=""></span>
+                <p class="text-info mb-3" style="font-size: small;"> Wallet Balance :Rs 1234.00 /-</p>
+                <p class="text-info mb-3 text-danger" style="font-size: small;" id="walletWarning"></p>
+
               </label>
             </div>
             <div class=" justify-content-center">
@@ -183,6 +193,12 @@
       const orderData = await response.json();
       if(orderData.cod===true){
         location.href = '/orderPlaced'
+       }else if(orderData.walletPurchase === true){
+          location.href = '/orderPlaced'
+       }else if(orderData.message){
+             // Display the message in the walletWarning paragraph tag
+              const walletWarning = document.getElementById('walletWarning');
+              walletWarning.innerText = orderData.message;
        }
       console.log(orderData.paymentDetials.response.amount,"hi this is the amount")
       console.log('Razorpay Order Data:', orderData);
