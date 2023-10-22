@@ -1,0 +1,32 @@
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header-checking') %>
+
+<div class="container">
+    <h2>Review Management</h2>
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Review ID</th>
+                <th>Review</th>
+                <th>Actions</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% reviews.forEach((review) => { %>
+                <tr>
+                    <td><%= review.productId %></td>
+                    <td><%= review.reviewId %></td>
+                    <td><%= review.reviewContent %></td>
+                    <td>
+                        <a href="/admin/edit-review/<%= review.reviewId %>" class="btn btn-secondary">Edit</a>
+                        <a href="/admin/delete-review/<%= review.reviewId %>" class="btn btn-secondary">Delete</a>
+                    </td>
+                    <td><%= review.date %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>

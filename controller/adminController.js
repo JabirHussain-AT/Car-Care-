@@ -434,6 +434,10 @@ module.exports = {
         // console.log(orderDetials)
         res.render('admin/admin- orderDetials',{order:orderDetials})
 
+    },
+    reviewManagement : (req,res)=>{
+        const review =[]
+        res.render('admin/reviewManagement',{reviews:review})
     }
 }
 

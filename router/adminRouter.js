@@ -79,4 +79,7 @@ router.get('/return-accepted/:orderId',auth.adminTokenAuth,orderController.accep
 router.get('/return-order-detials/:orderId',auth.adminTokenAuth,orderController.viewReturnProducts)
 router.get('/verify-return/:orderId',auth.adminTokenAuth, orderController.verifyReturn)
 
+//review management 
+router.get('/review-manage',auth.adminTokenAuth,adminController.reviewManagement)
+
 module.exports = router

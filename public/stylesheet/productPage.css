@@ -5,3 +5,11 @@
         height: auto;
     }
 }
+h6 {
+    cursor: pointer;
+    color: grey;
+}
+
+h6.active {
+    color: rgb(0, 0, 0); /* Change this to your desired active color */
+}

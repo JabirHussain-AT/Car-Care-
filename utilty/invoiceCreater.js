@@ -1,16 +1,14 @@
 //Import the library into your project
-var easyinvoice = require('easyinvoice')
-const fs = require('fs')
+var easyinvoice = require('easyinvoice');
+const fs = require("fs");
 const path = require("path");
-const util = require('util');
+const util = require("util");
 const writeFileAsync = util.promisify(fs.writeFile);
 
-
-
 module.exports = {
-    order: async (order) => {
-        console.log(order, "utitlity")
-        var data = {
+  order: async (order) => {
+    console.log(order, "utitlity");
+  var data = {
             // Customize enables you to provide your own templates
             // Please review the documentation for instructions and examples
             "customize": {
@@ -93,4 +91,4 @@ module.exports = {
         }
     });
     }
-}
+};
