@@ -87,7 +87,21 @@ $(document).ready(function(){
         console.log("clicked");
         var selectedImageSrc = $(this).attr("src")
         $("#selectedImage").attr("src",selectedImageSrc);
+        var options = {
+            width: 400,
+            zoomWidth: 400,
+            offset: {vertical: 0, horizontal: 0
+            }
+        };
+        new ImageZoom(document.getElementById("img-container"), options);
+        
     })
+    var options = {
+        width: 400,
+        zoomWidth: 500,
+        offset: {vertical: 0, horizontal: 10}
+    };
+    new ImageZoom(document.getElementById("img-container"), options);
   
     
 })

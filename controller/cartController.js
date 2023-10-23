@@ -30,21 +30,21 @@ module.exports = {
     addtoCart: async (req, res) => {
         try {
             const product_id = req.params.id
-            console.log(product_id, 'from act')
+            // console.log(product_id, 'from act')
 
             const user = new mongoose.Types.ObjectId(req.session.user.user)
 
-            console.log(user, "from anirudh")
+            // console.log(user, "from anirudh")
             console.log(user, "its from add to cart")
             const cart = await Cart.findOne({ UserId: user })
 
             if (cart) {
-                console.log("saferr");
+                // console.log("saferr");
                 const userid = user.user
 
                 const existing = cart.Products.find((product) => product.ProductId === (product_id))
                 if (existing) {
-                    console.log("iam here")
+                    // console.log("iam here")
 
                     await Cart.findOneAndUpdate(
                         { "UserId": user, "Products.ProductId": product_id },

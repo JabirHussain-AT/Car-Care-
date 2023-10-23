@@ -8,6 +8,7 @@ const paymentController= require('../controller/paymentController')
 const orderController = require('../controller/orderController')
 const cartController = require('../controller/cartController')
 const walletController = require('../controller/walletController')
+const reviewController = require('../controller/reviewController')
 
 //landing page
 router.get('/',auth.userTokenAuth,userController.landingPage)
@@ -112,5 +113,8 @@ router.post('/returnRequest/:id',auth.userTokenAuth,orderController.returnOrder)
 
 //user WalletHistory
 router.get('/view-wallet-history',auth.userTokenAuth,walletController.walletHistory)
+
+//submit Review
+router.post('/submit-review',auth.userTokenAuth,reviewController.submitReview)
 
 module.exports = router
