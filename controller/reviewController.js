@@ -4,6 +4,7 @@ const Admin = require("../models/adminSchema");
 const Products = require("../models/productSchema");
 const Category = require("../models/categorySchema");
 const Orders = require("../models/orderSchema");
+const Reviews = require('../models/reviewSchema')
 const Wallet = require("../models/walletHistorySchema");
 const Cart = require("../models/cartSchema");
 const CouponHistory = require("../models/couponHistorySchema");
@@ -24,7 +25,14 @@ const invoice = require("../utilty/invoiceCreater");
 
 module.exports = {
     submitReview  : async (req,res)=>{
-        console.log("in submit review reached ",req.body.review)
+        console.log("in submit review reached ",req.body.review,req.body.ProductId)
+        const savedReview = await Reviews.create({
+            UserId : req.session.user.user,
+            ProductId : req.body.ProductId,
+            Comment : req.body.review,
+            Date : moment(new Date()).format('ll')
+        })
+        console.log("review Successfully saved",savedReview)
         // res.json({success:true})
     }
 }

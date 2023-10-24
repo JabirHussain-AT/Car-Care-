@@ -25,7 +25,7 @@ router.get('/signup',auth.userExist,userController.getSignup)
 router.post('/signup',userController.postSignup)
 
 //product page
-router.get('/product/:id',userController.getproduct)
+router.get('/product/:id',auth.userTokenAuth,userController.getproduct)
 
 //verifyEmail and ot[]
 router.get('/verifyEmail',userController.verifyEmail)

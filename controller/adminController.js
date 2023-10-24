@@ -78,6 +78,64 @@ module.exports = {
         }
 
     },
+    Dashboard:async (req,res)=>{
+        try{
+            // const orders = await Orders.find().limit(10)
+            // res.render('admin/dashboard',{orders:orders})
+            const bestSeller = await Orders.aggregate([
+                {
+                  $unwind: "$Products",
+                },
+                {
+                  $group: {
+                    _id: "$Products.ProductId",
+                    totalCount:{ $sum:"$Products.Quantity" },
+                  },
+                },
+                {
+                  $sort: {
+                    totalCount: -1,
+                  },
+                },
+                {
+                  $limit: 10,
+                },
+                {
+                  $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails",
+                  },
+                },
+                {
+                  $unwind: "$productDetails",
+                },
+              ]);
+              console.log(bestSeller,'JHijediufuier')
+            const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
+            const perPage = 10; // Number of items per page
+            const skip = (page - 1) * perPage;
+
+            // Query the database for products, skip and limit based on the pagination
+            const orders = await Orders.find()
+                .skip(skip)
+                .limit(perPage).lean();
+
+            const totalCount = await Orders.countDocuments();
+
+            res.render('admin/dashboard', {
+                bestSeller,
+                orders,
+                currentPage: page,
+                perPage,
+                totalCount,
+                totalPages: Math.ceil(totalCount / perPage),
+            });
+        }catch(error){
+            console.log(error,"from the catch of admin dashboard")
+        }
+    },
     getProductview: async (req, res) => {
         const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
         const perPage = 10; // Number of items per page
@@ -378,7 +436,7 @@ module.exports = {
                 .skip(skip)
                 .limit(perPage).lean();
 
-            const totalCount = await Users.countDocuments();
+            const totalCount = await Orders.countDocuments();
 
             res.render('admin/orderDetials', {
                 order,
@@ -438,6 +496,90 @@ module.exports = {
     reviewManagement : (req,res)=>{
         const review =[]
         res.render('admin/reviewManagement',{reviews:review})
+    },
+    getCount :async (req,res)=>{
+        try {
+            const orders = await Orders.find({
+              Status: {
+                $nin:["Returned","Cancelled","Rejected"]
+              }
+            });
+            const orderCountsByDay = {};
+            const orderCountsByMonthYear = {};
+            const orderCountsByYear = {};
+            let labels;
+            let data;
+            console.log('outside')
+            orders.forEach((order) => {
+              console.log('inside')
+              const orderDate = moment(order.OrderedDate, "ddd, MMM D, YYYY h:mm A");
+              const dayMonthYear = orderDate.format("YYYY-MM-DD");
+              const monthYear = orderDate.format("YYYY-MM");
+              const year = orderDate.format("YYYY");
+              
+              if (req.url === "/count-orders-by-day") {
+                console.log("count");
+                // Count orders by day
+                if (!orderCountsByDay[dayMonthYear]) {
+                  orderCountsByDay[dayMonthYear] = order.TotalAmount;
+                } else {
+                  orderCountsByDay[dayMonthYear]+= order.TotalAmount;
+                }
+                const ordersByDay = Object.keys(orderCountsByDay).map(
+                  (dayMonthYear) => ({
+                    _id: dayMonthYear,
+                    count: orderCountsByDay[dayMonthYear],
+                  })
+                );
+                ordersByDay.sort((a, b) => (a._id < b._id ? -1 : 1));
+                labels = ordersByDay.map((entry) =>
+                  moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
+                );
+                data = ordersByDay.map((entry) => entry.count);
+                // console.log(data,"data",ordersByDay,"orderby day")
+              } else if (req.url === "/count-orders-by-month") {
+                // Count orders by month-year
+                if (!orderCountsByMonthYear[monthYear]) {
+                  orderCountsByMonthYear[monthYear] = 1;
+                } else {
+                  orderCountsByMonthYear[monthYear]++;
+                }
+                const ordersByMonthYear = Object.keys(orderCountsByMonthYear).map(
+                  (monthYear) => ({
+                    _id: monthYear,
+                    count: orderCountsByMonthYear[monthYear],
+                  })
+                );
+                ordersByMonthYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+                labels = ordersByMonthYear.map((entry) =>
+                  moment(entry._id, "YYYY-MM").format("MMM YYYY")
+                );
+                data = ordersByMonthYear.map((entry) => entry.count);
+              } else if (req.url === "/count-orders-by-year") {
+                // Count orders by year
+                if (!orderCountsByYear[year]) {
+                  orderCountsByYear[year] = 1;
+                } else {
+                  orderCountsByYear[year]++;
+                }
+                const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
+                  _id: year,
+                  count: orderCountsByYear[year],
+                }));
+                ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+                labels = ordersByYear.map((entry) =>
+                  moment(entry._id, "YYYY").format("YYYY")
+                );
+                data = ordersByYear.map((entry) => entry.count);
+              }
+            });
+            console.log(data);
+            console.log(labels)
+      
+            res.json({ labels, data });
+          } catch (err) {
+            console.error(err);
+          }
     }
 }
 

@@ -6,6 +6,7 @@ const Category = require("../models/categorySchema");
 const Orders = require("../models/orderSchema");
 const Wallet = require("../models/walletHistorySchema");
 const Cart = require("../models/cartSchema");
+const Reviews = require('../models/reviewSchema')
 const CouponHistory = require("../models/couponHistorySchema");
 const bcrypt = require("bcrypt");
 const { log } = require("handlebars");
@@ -69,10 +70,33 @@ module.exports = {
   getproduct: async (req, res) => {
     console.log(req.params.id);
     const _id = req.params.id;
+    console.log(req.session.user,"user")
     const product = await Products.findOne({ _id });
+    const reviews = await Reviews.find({ProductId:_id}).populate('UserId')
+    // const userOrderHistory = await Orders.find({UserId:req.session.user.user})
+    // console.log(userOrderHistory,"order history")
+    // here i want to check this particlar product is in the order history of the user with status of the order must be delivered,returned ,deliverd(Return Rejected)
+    // Delivered(Return Requested),Delivered(Return Accepted),Returned
+    const userOrderHistory = await Orders.find({
+      UserId: req.session.user.user,
+      'Products.ProductId': _id,
+      Status: {
+        $in: [
+          'Delivered',
+          'Returned',
+          'Delivered(Return Requested)',
+          'Delivered(Return Accepted)',
+          'Delivered(Return Rejected)',
+        ],
+      },
+    });
+    const isInOrderHistory = userOrderHistory.length > 0;
 
+    console.log('Is in order history:', isInOrderHistory);
+  
+    // console.log(reviews ,"reviews lets check")
     const user = req.session.user;
-    res.render("user/productPage", { product: product, user: user });
+    res.render("user/productPage", { product: product, user: user,Reviews : reviews ,isUserHaveRight:isInOrderHistory });
   },
   login: (req, res) => {
     const user = req.session.user;

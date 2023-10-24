@@ -6,7 +6,7 @@
         <main class="px-md-4 icons " style="margin-left: 18%;width: 80%; margin-top: 6%;">
             <div class="row d-flex justify-content-between">
                 <div class="col-md-8">
-                    <h1 class="mt-5">Edit Product</h1>
+                    <h1 class="mt-5" style="color: white;">Edit Product</h1>
                     <br>
                     <form action="/admin/editProduct/<%= product._id %>" method="post" enctype="multipart/form-data" class="bg-white">
                         <div class="form-group">
@@ -23,7 +23,7 @@
                         </div><br>
 
                         <div class="form-group">
-                            <label for="productDescription">Product Description:</label>
+                            <label for="productDescription text-dark">Product Description:</label>
                             <input
                                 type="text"
                                 value="<%=product.Description%>"
@@ -94,19 +94,19 @@
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
                                         <img src="/uploads/<%=product.images[0] %>" alt="Uploaded Image 1" id="uploadedImage1" class="img-fluid" data-index="1">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="1">Change</button>
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="1">delete</button>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
                                         <img src="/uploads/<%=product.images[1]%>" alt="Uploaded Image 2" id="uploadedImage2" class="img-fluid" data-index="2">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="2">Change</button>
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="2">delete</button>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="uploaded-image">
                                         <img src="/uploads/<%=product.images[2]%>" alt="Uploaded Image 3" id="uploadedImage3" class="img-fluid" data-index="3">
-                                        <button class="btn btn-danger btn-sm delete-image"  data-index="3">Change</button>
+                                        <button class="btn btn-danger btn-sm delete-image"  data-index="3">delet</button>
                                     </div>
                                 </div>
                             </div>
@@ -173,6 +173,7 @@
                                 <label for="quantity">Quantity:</label>
                                 <input
                                     type="number"
+                                    value="<%= product.AvailableQuantity %>"
                                     name="AvailableQuantity"
                                     class="form-control bg-light"
                                     id="quantity"
@@ -216,7 +217,8 @@
                             <input
                                 type="text"
                                 class="form-control bg-light"
-                                name="Tags"
+                                name="Tags",
+                                value='<%= product.Tags %>'
                                 id="tags"
                                 placeholder="Enter tags"
                                 required

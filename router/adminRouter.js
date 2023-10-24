@@ -20,6 +20,12 @@ router.post('/addAdmin',adminController.postaddAdmin)
 router.get('/login',auth.adminExist,adminController.login)
 router.post('/login',adminController.postLogin)
 
+router.get('/Dashboard',auth.adminTokenAuth,adminController.Dashboard)
+
+router.get('/count-orders-by-day',auth.adminTokenAuth,adminController.getCount)
+router.get('/count-orders-by-month',auth.adminTokenAuth,adminController.getCount)
+router.get('/count-orders-by-year',auth.adminTokenAuth,adminController.getCount)
+
 router.get('/addCategory',adminController.addCatogory)
 router.post('/addCategory',upload.single('Images',1),adminController.postaddCategory)
 

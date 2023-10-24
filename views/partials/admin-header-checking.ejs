@@ -10,7 +10,7 @@
   <style>
     body {
       background-color: #343a40;
-      color: #fff;
+      /* color: #fff; */
     }
 
     #sidebar {
@@ -38,7 +38,7 @@
       <button class="btn btn-light" type="button" onclick="toggleSidebar()"><img src="/assets/car_care_logo-removebg-preview.png" style="width: 60px;" alt=""></button>
     </div>
 
-    <div id="sidebar">
+    <div id="sidebar" style="z-index: 1;">
       <div class="text-center">
       <!-- <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="40"> 
         <h4 class="mt-2">John Doe</h4>
@@ -48,7 +48,7 @@
        <!-- Navigation Links -->
        <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a class="nav-link" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>

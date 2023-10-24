@@ -26,25 +26,25 @@
     </div>
 
     <h2 class="mb-4">All Banners</h2>
-    <div class="table-responsive">
-        <table class="table table-bordered">
+    <div class="table-responsive ">
+        <table class="table table-bordered ">
             <thead>
                 <tr>
-                    <th>Banner Image</th>
-                    <th>Banner Name</th>
-                    <th>Status</th>
-                    <th>Carosel</th>
-                    <th>Action</th>
+                    <th style="color: azure;">Banner Image</th>
+                    <th  style="color: azure;">Banner Name</th>
+                    <th  style="color: azure;">Status</th>
+                    <th  style="color: azure;">Carosel</th>
+                    <th style="color: azure;">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <% banners.forEach(banner => { %>
                     <tr>
                         <td><img src="/uploads/<%= banner.Image %>" alt="<%= banner.BannerName %>" class="img-fluid" style="max-height: 50px;"></td>
-                        <td><%= banner.BannerName %></td>
-                        <td><%= banner.Status %></td>
-                        <td><%= banner.Carosel.length %></td>
-                        <td>
+                        <td  style="color: azure;"><%= banner.BannerName %></td>
+                        <td  style="color: azure;"><%= banner.Status %></td>
+                        <td  style="color: azure;"><%= banner.Carosel.length %></td>
+                        <td  style="color: azure;">
                             <form action="/admin/activate-banner/<%= banner._id %>" method="post" style="display: inline;">
                                 <button type="submit" class="btn btn-primary">Activate</button>
                             </form>

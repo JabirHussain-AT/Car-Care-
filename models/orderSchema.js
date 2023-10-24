@@ -15,7 +15,7 @@ const OrdersSchema = new Schema({
   UserId: { type:Schema.Types.ObjectId, required: true, unique:false },
   Products: [{
         ProductId :{type:Schema.Types.ObjectId,ref:"Product"},
-        Quantity:{type:String},
+        Quantity:{type:Number},
    }],
   OrderedDate: { type: String, required: true },
   DeliveredDate: { type: String },
