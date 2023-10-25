@@ -191,6 +191,7 @@
       }
         
       const orderData = await response.json();
+      // console.log(orderData,"its order data from the ajax in checkout page")
       if(orderData.cod===true){
         location.href = '/orderPlaced'
        }else if(orderData.walletPurchase === true){
@@ -199,6 +200,9 @@
              // Display the message in the walletWarning paragraph tag
               const walletWarning = document.getElementById('walletWarning');
               walletWarning.innerText = orderData.message;
+              setTimeout(() => {
+                location.href
+              }, 3000);
        }
       console.log(orderData.paymentDetials.response.amount,"hi this is the amount")
       console.log('Razorpay Order Data:', orderData);
@@ -290,8 +294,9 @@
       method : "post",
       success:(response)=>{
         if(response.success){
-          // alert("Payment Successfull")
-          location.href = '/orderPlaced'
+          console.log(order,"lets checl ofd");
+          alert("Payment Successfull")
+          location.href = `/orderPlaced/${order._id}`
         }else{
           alert("Payment Failed")
         }

@@ -629,6 +629,7 @@ module.exports = {
     const ProductsInCart = await Cart.findOne({ UserId: userId });
 
     try {
+      const TotalAmount = ProductsInCart.TotalAmount
       const selectedAddress = JSON.parse(req.body.selectedAddress);
       const newOrder = {
         UserId: userId,
@@ -644,23 +645,22 @@ module.exports = {
           Mobile: selectedAddress.mobile,
         },
         //   ShippedAddress :selectedAddress,
-        PaymentMethord: paymentMethod,
-        TotalAmount: parseFloat(req.session.totalAmount.replace(/[^\d.]/g, "")),
+        PaymentMethod: paymentMethod,
+        TotalAmount: TotalAmount,
         // Add other properties as needed
       };
       const createdOrder = await Orders.create(newOrder);
-      console.log(createdOrder);
+      // console.log(createdOrder);
       //we are making empty the cart
-      await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
-
-      // const order = await Orders.findOne({UserId:userId})
+     
+//  await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
       // console.log(createdOrder.Products,"huehfuefuilwe")
 
       const orderItems = createdOrder.Products.map((item) => ({
         productId: item.ProductId,
         quantity: item.Quantity,
       }));
-      console.log(orderItems, "blank");
+      // console.log(orderItems, "blank");
 
       // Retrieve products based on the product IDs
       const products = await Products.find({
@@ -685,11 +685,10 @@ module.exports = {
           const content =
             "Successfully placed your Order. It will be shipped within 1 working day. For more queries, connect with our team at 9007972782.";
           const result = otpFunctions.sendMail(req, res, user.Email, content);
-          return res.json({ cod: true }); // Use return here
+          const order = createdOrder._id
+          return res.json({ cod: true,order }); // Use return here
         } else if (req.body.paymentMethod === "online") {
-          const amount = parseFloat(
-            req.session.totalAmount.replace(/[^\d.]/g, "")
-          );
+          const amount = TotalAmount
           const response = await razorpay.onlinePayment(
             amount,
             createdOrder._id
@@ -703,9 +702,7 @@ module.exports = {
         } else {
           // console.log(req.body.paymentMethod,"wallet is working")
           const user = await Users.findOne({ _id: req.session.user.user });
-          const amount = parseFloat(
-            req.session.totalAmount.replace(/[^\d.]/g, "")
-          );
+          const amount =TotalAmount
           const wallet = await Wallet.findOne({ UserId: user._id });
           const orderId = new mongoose.Types.ObjectId(createdOrder._id);
           if(wallet!==null){
@@ -730,8 +727,9 @@ module.exports = {
               await user.updateOne({
                 Wallet: newUPdated.WalletAmount,
               });
+              const orderid = createdOrder._id
               const walletPurchase = true;
-              res.json({ walletPurchase });
+              res.json({ walletPurchase,orderid});
             }
         }else{
             console.log("wallet not have enough money to purchase");

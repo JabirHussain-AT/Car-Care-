@@ -9,24 +9,37 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js"></script>
   <style>
     body {
-      background-color: #343a40;
-      /* color: #fff; */
+      background-color: #b5f2fd;
+      background: linear-gradient(232deg, white, rgb(36, 150, 226));
     }
 
     #sidebar {
-      display: none; /* Initially hide the sidebar */
+      display: none;
       position: fixed;
       height: 100vh;
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
       width: 250px;
-      /* background-color: #212529; */
-      background: linear-gradient(grey,black);
+      background: white;
       padding-top: 20px;
+      z-index: 1;
     }
 
     #sidebar a {
       padding: 8px;
       text-decoration: none;
-      border-bottom: 2px solid black;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.227);
+      color: #007BFF; /* Blue color for icons */
+      background-color: #f8f9fa; /* Light grey background */
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #sidebar a:hover {
+      background-color: rgb(11, 59, 74);
+      color: #fff;
+    }
+
+    #sidebar .active a {
+      background-color: rgb(0, 0, 0);
       color: #fff;
     }
   </style>
@@ -35,51 +48,47 @@
 
   <header>
     <div style="width: 100vw; height: auto; background-color: grey;">
-      <button class="btn btn-light" type="button" onclick="toggleSidebar()"><img src="/assets/car_care_logo-removebg-preview.png" style="width: 60px;" alt=""></button>
+      <button class="btn btn-light" type="button" onclick="toggleSidebar()">
+        <img src="/assets/car_care_logo-removebg-preview.png" style="width: 60px;" alt="">
+      </button>
     </div>
 
-    <div id="sidebar" style="z-index: 1;">
+    <div id="sidebar">
       <div class="text-center">
-      <!-- <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="40"> 
-        <h4 class="mt-2">John Doe</h4>
-        <p>Position</p>  -->
+        <!-- Your profile content here -->
       </div>
-      <!-- Navigation Links -->
-       <!-- Navigation Links -->
-       <ul class="nav flex-column">
+      <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+          <a class="nav-link" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
+          <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
+          <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/orderDetials"><i class="fas fa-shopping-cart"></i> Orders</a>
+          <a class="nav-link" href="/admin/orderDetials"><i class="fas fa-shopping-cart"></i> Orders</a>
         </li>
         <li class="nav-item active">
-            <a class="nav-link" href="/admin/users"><i class="fas fa-users"></i> Users</a>
+          <a class="nav-link" href="/admin/users"><i class="fas fa-users"></i> Users</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
+          <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
+          <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/banner"><i class="fas fa-images"></i> Banners</a>
+          <a class="nav-link" href="/admin/banner"><i class="fas fa-images"></i> Banners</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/admin/Coupons"><i class="fas fa-tags"></i> Coupons</a>
+          <a class="nav-link" href="/admin/Coupons"><i class="fas fa-tags"></i> Coupons</a>
         </li>
-    </ul>
-    <!-- Logout Button -->
-    <div class="mt-auto">
+      </ul>
+      <div class="mt-auto">
         <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-    
+      </div>
     </div>
   </header>
 
@@ -89,5 +98,5 @@
       sidebar.style.display = (sidebar.style.display === 'none' || sidebar.style.display === '') ? 'block' : 'none';
     }
   </script>
-
-
+</body>
+</html>

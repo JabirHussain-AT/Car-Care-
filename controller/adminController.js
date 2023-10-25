@@ -290,6 +290,18 @@ module.exports = {
         try {
             const id = req.params.id
             const productType = req.body.productType
+            let images = [];
+            const existingProduct = await Product.findById(id);
+            if (existingProduct) {
+                images.push(...existingProduct.images); 
+            }
+            //updating again if its having
+            for (let i = 0; i < 3; i++) {
+                const fieldName = `image${i+1}`;
+                if (req.files[fieldName] && req.files[fieldName][0]) {
+                    images[i] = req.files[fieldName][0].filename;
+                }
+            }
 
             const variations = []
             console.log(req.body);
@@ -307,7 +319,7 @@ module.exports = {
             req.body.Variation = variations[0].value
             
             // req.body.images = req.files.map(val => val.filename)
-            req.body.images = [existingImage1,existingImage2,existingImage3]
+            req.body.images = images
             req.body.Display = "Active"
             req.body.Status = "in Stock"
             req.body.updateOn = moment(new Date()).format('MMMM Do YYYY, h:mm:ss a')

@@ -63,7 +63,8 @@
         <td>
           <!-- Displaying the current status dynamically -->
           <% const currentStatus=order[i].Status || 'Order Placed' ; %>
-          <% if (order[i].Status==='Cancelled' || order[i].Status==='Return Requested'||order[i].Status==='Return Accepted'||order[i].Status==='Delivered (Return Rejected)' || order[i].Status==='Returned' ) { %>
+          <% if (order[i].Status==='Cancelled' || order[i].Status==='Return Requested'||order[i].Status==='Return Accepted'||order[i].Status==='Delivered (Return Rejected)' || order[i].Status==='Returned'
+          || order[i].Status === "Order Attempted" ) { %>
           <!-- Displaying the canceled status if the order is cancelled -->
           <!-- <span  class="text-danger p-2" style=" width: ;   background-color:aliceblue; border-radius:  10px;">Cancelled Order</span> -->
           <p class="text-danger pl-2" style=" background-color:aliceblue; border-radius:  10px;"><%= order[i].Status %></p>

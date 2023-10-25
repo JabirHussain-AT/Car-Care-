@@ -104,7 +104,7 @@ module.exports = {
             }
             const newQuantity = cartItem.Quantity + parseInt(change)
             if (newQuantity <= 0) {
-                userCart.Product = userCart.Products.filter(item => !item.ProductId === (productId));
+                userCart.Products = userCart.Products.filter(item => !item.ProductId === (productId));
             } else {
                 cartItem.Quantity = newQuantity;
             }
@@ -118,8 +118,13 @@ module.exports = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-    postCart: (req, res) => {
-        req.session.totalAmount = req.body.hiddenTotalAmount
+    postCart:async (req, res) => {
+        const user = req.session.user.user
+        const TotalAmount =  parseFloat(req.body.hiddenTotalAmount.replace(/[^\d.]/g, ""))
+        const toUpdate = await Cart.findOne({UserId:user})
+        await toUpdate.updateOne({TotalAmount:TotalAmount},{upsert:true},{new:true})
+        console.log(toUpdate,"to update")
+      
         res.redirect('/checkOut')
 
     }

@@ -27,14 +27,28 @@ module.exports = {
   orderDetials: (req, res) => {
     res.render("user/orderDetials");
   },
-  orderSuccess: (req, res) => {
-    res.render("user/orderSuccess");
-  },
+  orderSuccess: async (req, res) => {
+    //  console.log(latestOrder,"latestOrder")
+    // console.log(req.params.id);
+    try{
+      
+      const latestOrder = await Orders.findOne({_id:req.params.id})
+      if(latestOrder.PaymentMethod === 'COD'){
+        await latestOrder.updateOne({Status:"Order placed"})
+      }else{
+        await latestOrder.updateOne({Status:"Order placed",PaymentStatus:"Paid"})
+      }
+      await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
+      res.render("user/orderSuccess");
+    }catch(err){
+      console.log(err,"error in the order Success ")
+    }
+    },
   orderHistory: async (req, res) => {
     const user = req.session.user.user;
     const userId = new mongoose.Types.ObjectId(user);
     // const returnRequests = Orders.find({Status :'Return Requested'})
-    const order = await Orders.find({ UserId: userId });
+    const order = await Orders.find({ UserId: userId,Status:{$ne:"Order Attempted"}});
     console.log(order);
     const momentFormattedDate = moment("");
     res.render("user/orderHistory", { orderHistory: order });
@@ -60,7 +74,7 @@ module.exports = {
         _id: req.body.orderId,
       }).populate("Products.ProductId");
       const filePath = await invoice.order(orderData);
-      console.log(filePath, "jiiiinnn");
+      // console.log(filePath, "jiiiinnn");
       const orderId = orderData._id;
 
       res.json({ orderId });

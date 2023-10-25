@@ -39,7 +39,12 @@ router.get('/addProduct',adminController.getAddProduct)
 router.post('/addProduct',upload.array('images',3),adminController.postAddProduct)
 
 router.get('/editProduct/:id',adminController.editProduct)
-router.post('/editProduct/:id',upload.array('Images',3),adminController.postEditProduct)
+router.post('/editProduct/:id',upload.fields([
+    {name:'image1',maxCount:1},
+    {name:'image2',maxCount:1},
+    {name:'image3',maxCount:1},
+
+]),adminController.postEditProduct)
 
 router.get('/productView',auth.adminTokenAuth,adminController.getProductview)
 router.get('/productView/:id',adminController.postProductview)

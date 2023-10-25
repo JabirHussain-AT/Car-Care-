@@ -12,9 +12,9 @@
                     <br>
                     <form action="/admin/addCoupon" method="post" class="bg-white p-4 rounded shadow">
                         <div class="mb-3">
-                            <% if(message.Coupon){ %>
+                            <% if(message.uniqueErr){ %>
                                 <div class="alert alert-danger" role="alert">
-                                   <%= message.Coupon %>
+                                   <%= message.uniqueErr %>
                                   </div>
                            <% } %>
                             <label for="couponCode" class="form-label">Coupon Name:</label>

@@ -17,15 +17,28 @@ require('dotenv').config
 
 module.exports = {
     addCoupons: async (req, res) => {
-        res.render('admin/addCoupon', { message: true })
+        res.render('admin/addCoupon', { message: req.flash() })
     },
     postaddCoupons: async (req, res) => {
-        console.log(req.body)
-        req.body.CouponCreatedDate = moment(new Date()).format('llll')
-        req.body.CouponExpiryDate = moment(req.body.CouponExpiryDate).format('llll')
-        const createCoupon = await Coupon.create(req.body)
-      res.redirect('/admin/Coupons')
-    },
+        try{
+
+            console.log(req.body)
+            req.body.CouponCreatedDate = moment(new Date()).format('llll')
+            req.body.CouponExpiryDate = moment(req.body.CouponExpiryDate).format('llll')
+            const createCoupon = await Coupon.create(req.body)
+            res.redirect('/admin/Coupons')
+        }catch(err){
+            if (err.code === 11000) {
+                console.error('Coupon code must be unique.');
+                req.flash('uniqueErr',"its already exists.Coupon Name and Code Code Must be unique")
+                res.redirect('/admin/addCoupon');
+              } else {
+                // Handle other errors
+                console.error('Error in adding coupon:', err);
+                throw err; // Rethrow the error if you want to propagate it further
+              }
+        }
+        },
     Coupons: async (req, res) => {
         const coupon = await Coupon.find()
         res.render('admin/Coupons', { message: req.flash(), coupons: coupon })

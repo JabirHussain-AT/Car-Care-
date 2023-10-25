@@ -85,7 +85,7 @@ router.post('/editAddress/:addressId',auth.userTokenAuth,userController.postEdit
 router.get('/deleteAddress/:id',auth.userTokenAuth,userController.deleteAddress)
 
 //order Placed
-router.get('/orderPlaced',auth.userTokenAuth,orderController.orderSuccess)
+router.get('/orderPlaced/:id',auth.userTokenAuth,orderController.orderSuccess)
 
 //order History
 router.get('/orderHistory',auth.userTokenAuth,orderController.orderHistory)
