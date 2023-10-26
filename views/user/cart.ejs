@@ -84,12 +84,19 @@ AvailableQuantity %>" />
                           <a href="/deleteItem/<%= cartProducts.ProductId._id %>"
                             class="btn btn-light border text-danger icon-hover-danger">
                             Remove</a>
+
                           <div id="outOfStock_<%= cartProducts.ProductId._id %>" class="text-danger"
                             style="display: none;">Out of Stock</div>
-                          <div id="stockMessage_<%= cartProducts.ProductId._id %>" class="text-danger"
-                            style="display: none;">
-                            Only <%= cartProducts.ProductId.AvailableQuantity %> items in stock
-                          </div>
+
+
+                          <% if(cartProducts.ProductId.AvailableQuantity < 1){ %>
+                            <div class="text-danger">Out of Stock</div>
+                            <% } %>
+
+                              <div id="stockMessage_<%= cartProducts.ProductId._id %>" class="text-danger"
+                                style="display: none;">
+                                Only <%= cartProducts.ProductId.AvailableQuantity %> items in stock
+                              </div>
                         </div>
 
 
@@ -161,7 +168,7 @@ AvailableQuantity %>" />
                       </tr>
                       <tr>
                         <td style="width: 60%; font-family: 'Times New Roman', Times, serif">Tax (18%) :</td>
-                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="TaxAmountCell">Rs 
+                        <td style="width: 60%; font-family: 'Times New Roman', Times, serif" id="TaxAmountCell">Rs
                           0.00</td>
 
                       </tr>
@@ -189,7 +196,7 @@ AvailableQuantity %>" />
                           <h6 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Total :
                           </h6>
                         </td>
-                        <form action="/cart" method="post">
+                        <form id="checkoutForm" action="/cart" method="post">
                           <td>
                             <input type="text" style="width: 60%;" id="totalAmountCell" class="transparent-input "
                               readonly>
@@ -204,7 +211,7 @@ AvailableQuantity %>" />
 
                   <div class="d-flex justify-content-center align-items-center">
 
-                    <button type="submit" id="placeOrderButton" class="btn btn-outline-dark btn-rounded">Place
+                    <button type="button" id="placeOrderButton" class="btn btn-outline-dark btn-rounded">Place
                       Order</button>
                   </div>
                   </form>
@@ -223,6 +230,7 @@ AvailableQuantity %>" />
                     </div>
                 </div>
               </div>
+              <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
               <script>
                 document.addEventListener("DOMContentLoaded", () => {
                   const decreaseButtons = document.querySelectorAll(".decrease-quantity");
@@ -508,4 +516,68 @@ AvailableQuantity %>" />
 
                   updateTotalAmount();
                 });
+                // 
+                //show out of stock messages from array 
+                function showOutOfStockMessages(outOfStockProducts) {
+                  outOfStockProducts.forEach((productId) => {
+                    const outOfStockMessage = document.getElementById(`outOfStock_${productId}`);
+                    if (outOfStockMessage) {
+                      outOfStockMessage.style.display = 'block';
+                    }
+                  });
+                }
+
+
+
+                // 
+                $(document).ready(function () {
+                  $('#placeOrderButton').click(function () {
+                    console.log("hiiiiii")
+                    $.ajax({
+                      url: '/confirmStock',
+                      type: 'GET',
+                      success: function (data) {
+                        console.log(data, "data")
+                        if (data.ConfirmedStock === false) {
+                          // console.log(`${data.message}`)
+                          showOutOfStockMessages(data.outOfStockProducts);
+
+                          Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Product Went Out Of Stock!',
+                            footer: '<a href="">Why do I have this issue?</a>',
+
+                          })
+
+
+                        } else {
+                          const formData = $('#checkoutForm').serialize();
+                          $.ajax({
+                            url: '/cart',  // Change the URL to your server endpoint
+                            type: 'POST',         // Adjust the HTTP method if needed
+                            data: formData,
+                            success: function (data) {
+                              // Handle the success response
+                              window.location.href = '/checkout'
+                              console.log('Order placed successfully:');
+                              // You might want to redirect or show a success message here
+                            },
+                            error: function (error) {
+                              // Handle the error response
+                              console.error('Error placing order:', error.statusText);
+                            }
+                          });
+                        }
+                        console.log('stock confimred successfully')
+
+                      },
+                      error: function (error) {
+                        // Handle the error response
+                        console.error('Error confirming stock:', error.statusText);
+                      }
+                    })
+                  })
+                })
+
               </script>

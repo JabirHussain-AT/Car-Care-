@@ -449,6 +449,15 @@ module.exports = {
                 .limit(perPage).lean();
 
             const totalCount = await Orders.countDocuments();
+            let hasNext = false;
+            let hasPrev = false;
+            if (totalCount > page) {
+                hasNext = true
+            }
+            if (page > 1) {
+                hasPrev = true;
+            }
+            // totalPages: Math.ceil(totalCount / perPage),
 
             res.render('admin/orderDetials', {
                 order,
@@ -456,7 +465,8 @@ module.exports = {
                 currentPage: page,
                 perPage,
                 totalCount,
-                totalPages: Math.ceil(totalCount / perPage),
+                hasNext,
+                hasPrev,
             });
 
         }

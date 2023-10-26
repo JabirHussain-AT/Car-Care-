@@ -31,7 +31,7 @@ module.exports = {
     //  console.log(latestOrder,"latestOrder")
     // console.log(req.params.id);
     try{
-      
+      const userId = req.session.user.user
       const latestOrder = await Orders.findOne({_id:req.params.id})
       if(latestOrder.PaymentMethod === 'COD'){
         await latestOrder.updateOne({Status:"Order placed"})

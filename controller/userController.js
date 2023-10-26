@@ -445,8 +445,9 @@ module.exports = {
     const userId = new mongoose.Types.ObjectId(userid);
     try {
       const user = await Users.findOne({ _id: userId });
+      const wallet = await Wallet.findOne({UserId:userid})
       //   console.log("from checkout",user);
-      res.render("user/checkOut", { user: user });
+      res.render("user/checkOut", { user: user ,Wallet:wallet});
     } catch (error) {
       throw error;
       console.log("error in the  checkout catch");
@@ -685,8 +686,8 @@ module.exports = {
           const content =
             "Successfully placed your Order. It will be shipped within 1 working day. For more queries, connect with our team at 9007972782.";
           const result = otpFunctions.sendMail(req, res, user.Email, content);
-          const order = createdOrder._id
-          return res.json({ cod: true,order }); // Use return here
+          const orderid = createdOrder._id
+          return res.json({ cod: true,orderid }); // Use return here
         } else if (req.body.paymentMethod === "online") {
           const amount = TotalAmount
           const response = await razorpay.onlinePayment(
@@ -727,7 +728,7 @@ module.exports = {
               await user.updateOne({
                 Wallet: newUPdated.WalletAmount,
               });
-              const orderid = createdOrder._id
+              const orderid= createdOrder._id
               const walletPurchase = true;
               res.json({ walletPurchase,orderid});
             }

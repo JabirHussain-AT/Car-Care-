@@ -117,4 +117,6 @@ router.get('/view-wallet-history',auth.userTokenAuth,walletController.walletHist
 //submit Review
 router.post('/submit-review',auth.userTokenAuth,reviewController.submitReview)
 
+router.get('/confirmStock',auth.userTokenAuth,cartController.confirmStock)
+
 module.exports = router

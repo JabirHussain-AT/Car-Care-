@@ -48,14 +48,20 @@
         <% products.forEach(function(product) { %>
             <div class="col-md-3 mb-4">
                 <div class="card" style="border: none;">
+                    <a href="/product/<%= product._id %>">
                     <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;" class="card-img-top" alt="">
+                    </a>
                     <div class="card-body">
                         <h5 class="card-title"><%= product.ProductName %></h5>
                         <p class="card-text">Price: $<%= product.Price %></p>
                         <!-- Add any additional product information here -->
                         <div class="d-flex justify-content-between">
                             <a href="/product/<%= product._id %>" class="btn btn-sm btn btn-warning">Add to Wishlist</a>
-                            <a href="/product/<%= product._id %>"><button class="btn-primary">View Details</button></a>
+                            <% if (product.AvailableQuantity > 1){ %>
+                                <a href="/product/<%= product._id %>"><button class="btn-primary">View Details</button></a>
+                                <% } else {%>
+                                        <button  disabled class="btn btn-danger"><p style="font-size: smaller;">Out Of Stock</p></button>
+                                    <% } %>
                         </div>
                     </div>
                 </div>

@@ -118,14 +118,42 @@ module.exports = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-    postCart:async (req, res) => {
-        const user = req.session.user.user
-        const TotalAmount =  parseFloat(req.body.hiddenTotalAmount.replace(/[^\d.]/g, ""))
-        const toUpdate = await Cart.findOne({UserId:user})
-        await toUpdate.updateOne({TotalAmount:TotalAmount},{upsert:true},{new:true})
-        console.log(toUpdate,"to update")
-      
-        res.redirect('/checkOut')
+    confirmStock: async (req, res) => {
+        // console.log("called confirm stock");
+        try {
 
+            const userId = req.session.user.user
+            const userCart = await Cart.findOne({ UserId: userId })
+            const outOfStockProducts = []
+            // console.log(ConfirmStock,"confirm stock")
+
+            for (const cartProduct of userCart.Products) {
+                const product = await Products.findById(cartProduct.ProductId);
+                if (!product || product.AvailableQuantity < cartProduct.Quantity) {
+                    outOfStockProducts.push(cartProduct.ProductId);
+                }
+            }
+            let ConfirmedStock
+            if (outOfStockProducts.length > 0) {
+                ConfirmedStock = false
+               return res.json({message: 'Some products are out of stock',outOfStockProducts,ConfirmedStock})
+            }
+            
+            return res.json({ConfirmedStock:true})
+
+        } catch (err) {
+            console.log(err, "err in the confirm stock time ")
+        }
+
+    },
+    postCart: async (req, res) => {
+        console.log("hiiiii")
+        const user = req.session.user.user
+        const TotalAmount = parseFloat(req.body.hiddenTotalAmount.replace(/[^\d.]/g, ""))
+        const toUpdate = await Cart.findOne({ UserId: user })
+        await toUpdate.updateOne({ TotalAmount: TotalAmount }, { upsert: true }, { new: true })
+        console.log(toUpdate,"to update")
+        res.json({postcart:true})
+        
     }
 }
