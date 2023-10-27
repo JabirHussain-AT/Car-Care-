@@ -443,7 +443,11 @@ module.exports = {
   checkout: async (req, res) => {
     const userid = req.session.user.user;
     const userId = new mongoose.Types.ObjectId(userid);
+    const cart  = await Cart.findOne({UserId:userId})
     try {
+      if(cart === null){
+        res.redirect('/cart')
+      }
       const user = await Users.findOne({ _id: userId });
       const wallet = await Wallet.findOne({UserId:userid})
       //   console.log("from checkout",user);
@@ -657,30 +661,32 @@ module.exports = {
 //  await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
       // console.log(createdOrder.Products,"huehfuefuilwe")
 
-      const orderItems = createdOrder.Products.map((item) => ({
-        productId: item.ProductId,
-        quantity: item.Quantity,
-      }));
+      // const orderItems = createdOrder.Products.map((item) => ({
+      //   productId: item.ProductId,
+      //   quantity: item.Quantity,
+      // }));
+
+
       // console.log(orderItems, "blank");
 
-      // Retrieve products based on the product IDs
-      const products = await Products.find({
-        _id: { $in: orderItems.map((item) => item.productId) },
-      });
-      // Update stock quantities in the database
-      for (const orderItem of orderItems) {
-        const product = products.find((product) =>
-          orderItem.productId.equals(product._id)
-        );
-        if (product) {
-          product.AvailableQuantity -= orderItem.quantity;
-          // Update stock quantity in the database for this product
-          await Products.updateOne(
-            { _id: product._id },
-            { $set: { AvailableQuantity: product.AvailableQuantity } }
-          );
+      // // Retrieve products based on the product IDs
+      // const products = await Products.find({
+      //   _id: { $in: orderItems.map((item) => item.productId) },
+      // });
+      // // Update stock quantities in the database
+      // for (const orderItem of orderItems) {
+      //   const product = products.find((product) =>
+      //     orderItem.productId.equals(product._id)
+      //   );
+      //   if (product) {
+      //     product.AvailableQuantity -= orderItem.quantity;
+      //     // Update stock quantity in the database for this product
+      //     await Products.updateOne(
+      //       { _id: product._id },
+      //       { $set: { AvailableQuantity: product.AvailableQuantity } }
+      //     );
           const user = await Users.findOne({ _id: req.session.user.user });
-        }
+        // }
         if (req.body.paymentMethod === "COD") {
           const user = await Users.findOne({ _id: req.session.user.user });
           const content =
@@ -738,7 +744,7 @@ module.exports = {
         }
           }
         
-      }
+      // }
       //   res.redirect('/orderPlaced')
     } catch (error) {
       console.log("error in the catch of post checkOut");

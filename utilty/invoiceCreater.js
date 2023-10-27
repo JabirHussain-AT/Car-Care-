@@ -7,7 +7,7 @@ const writeFileAsync = util.promisify(fs.writeFile);
 
 module.exports = {
   order: async (order) => {
-    console.log(order, "utitlity");
+    // console.log(order, "utitlity");
   var data = {
             // Customize enables you to provide your own templates
             // Please review the documentation for instructions and examples
@@ -45,14 +45,6 @@ module.exports = {
                 "date": order.OrderedDate,
                 "due-date": order.OrderedDate
             },
-            "products": [
-                {
-                    "quantity": "2",
-                    "description": "Test1",
-                    "tax-rate": 6,
-                    "price": order.TotalAmount
-                }
-            ],
             "products": order.Products.map((product) => ({
                 "quantity": product.Quantity,
                 "description": product.ProductId.ProductName, // You might want to use product description here
@@ -85,21 +77,6 @@ module.exports = {
             // "product-total": "Totaal", // Defaults to 'Total'
             // "total": "Totaal", // Defaults to 'Total'
             // "vat": "btw" // Defaults to 'vat'
-
-            // Translate your invoice to your preferred language
-            "translate": {
-                // "invoice": "FACTUUR",  // Default to 'INVOICE'
-                // "number": "Nummer", // Defaults to 'Number'
-                // "date": "Datum", // Default to 'Date'
-                // "due-date": "Verloopdatum", // Defaults to 'Due Date'
-                // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
-                // "products": "Producten", // Defaults to 'Products'
-                // "quantity": "Aantal", // Default to 'Quantity'
-                // "price": "Prijs", // Defaults to 'Price'
-                // "product-total": "Totaal", // Defaults to 'Total'
-                // "total": "Totaal", // Defaults to 'Total'
-                // "vat": "btw" // Defaults to 'vat'
-            }
         }
     }
 

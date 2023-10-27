@@ -49,6 +49,10 @@ router.post('/editProduct/:id',upload.fields([
 router.get('/productView',auth.adminTokenAuth,adminController.getProductview)
 router.get('/productView/:id',adminController.postProductview)
 
+//add varient 
+router.get('/addVariant/:productId',auth.adminTokenAuth,adminController.addVariants)
+router.post('/addVarient/:productId',upload.array('images',3),adminController.postaddVarient)
+
 router.get('/orderDetials',auth.adminTokenAuth,adminController.orderTable)
 router.put('/order/update-status/:orderId',adminController.updateStatus)
 router.get('/order/details/:orderId',adminController.orderViewMore)
@@ -92,5 +96,7 @@ router.get('/verify-return/:orderId',auth.adminTokenAuth, orderController.verify
 
 //review management 
 router.get('/review-manage',auth.adminTokenAuth,adminController.reviewManagement)
+
+
 
 module.exports = router

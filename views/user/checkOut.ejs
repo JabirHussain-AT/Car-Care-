@@ -189,6 +189,36 @@
       state: selectedAddressRadio ? selectedAddressRadio.dataset.state : '',
       mobile: selectedAddressRadio ? selectedAddressRadio.dataset.mobile : '',
     };
+
+    //check stock is left or not
+    const stockCheckResponse = await checkStockConfirmation();
+    if (!stockCheckResponse.ConfirmedStock) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Some products are out of stock',
+            footer: '<a href="/cart">View Out of Stock Products</a>'
+        });
+        return; // Stop further execution
+    }
+    async function checkStockConfirmation() {
+    try {
+        const response = await fetch('/confirmStock', {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to confirm stock');
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error:', error.message);
+        return { ConfirmedStock: false };
+    }
+}
+    // 
     
     
     console.log('Selected Address:', fullAddressDetails);
@@ -314,8 +344,8 @@
       method : "post",
       success:(response)=>{
         if(response.success){
-          console.log(order,"lets checl ofd");
-          alert("Payment Successfull")
+          console.log(order,"order reached success stage of the razor pay");
+          // alert("Payment Successfull")
           location.href = `/orderPlaced/${order._id}`
         }else{
           alert("Payment Failed")

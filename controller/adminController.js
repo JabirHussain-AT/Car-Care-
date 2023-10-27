@@ -1,4 +1,5 @@
 const Users = require('../models/userSchema')
+const VariantConnector = require('../utilty/variantConnector')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
 const Product = require('../models/productSchema')
@@ -7,6 +8,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const moment = require('moment')
+const variantConnector = require('../utilty/variantConnector')
 require('dotenv').config()
 
 
@@ -175,6 +177,47 @@ module.exports = {
             console.log("error in product display");
             throw error
         }
+
+    },
+    addVariants:async(req,res)=>{
+        const id = req.params.productId
+        const product = await Product.findOne({ _id: id })
+        // console.log(Product);
+        res.render('admin/addVarient', { product: product })
+    },
+    postaddVarient : async (req,res)=>{
+        console.log(req.body,"req.body")
+        console.log(req.files,"req.files")
+
+        const productType = req.body.productType
+
+        const variations = []
+        console.log(req.body);
+        if (productType === 'Tyre') {
+
+            const tyreSize = req.body.Tyre;
+
+            variations.push({ value: tyreSize })
+        } else if (productType === 'Oil') {
+            console.log("inside oil");
+            const oilSize = req.body.Oil;
+            variations.push({ value: oilSize })
+        }
+        console.log(variations);
+        req.body.Variation = variations[0].value
+        req.body.images = req.files.map(val => val.filename)
+        req.body.Display = "Active"
+        req.body.Status = "in Stock"
+        const newDate= new Date()
+        req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
+        const createdProduct = await Product.create(req.body)
+        // Now Call the function to Create Connention of varients
+        // console.log( createdProduct._id,"Created Product")
+        const mainProductId = new mongoose.Types.ObjectId(req.params.productId)
+        const connected = variantConnector.VariantConnector(mainProductId,createdProduct._id)
+
+
+        res.redirect('/admin/productView')
 
     },
     postUsers: async (req, res) => {

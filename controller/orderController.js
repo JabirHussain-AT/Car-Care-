@@ -30,25 +30,52 @@ module.exports = {
   orderSuccess: async (req, res) => {
     //  console.log(latestOrder,"latestOrder")
     // console.log(req.params.id);
-    try{
+    try {
       const userId = req.session.user.user
-      const latestOrder = await Orders.findOne({_id:req.params.id})
-      if(latestOrder.PaymentMethod === 'COD'){
-        await latestOrder.updateOne({Status:"Order placed"})
-      }else{
-        await latestOrder.updateOne({Status:"Order placed",PaymentStatus:"Paid"})
+      const latestOrder = await Orders.findOne({ _id: req.params.id })
+
+      const orderItems = latestOrder.Products.map((item) => ({
+        productId: item.ProductId,
+        quantity: item.Quantity,
+      }));
+      // Retrieve products based on the product IDs
+      const products = await Products.find({
+        _id: { $in: orderItems.map((item) => item.productId) },
+      });
+      // Update stock quantities in the database
+      for (const orderItem of orderItems) {
+        const product = products.find((product) =>
+          orderItem.productId.equals(product._id)
+        );
+        if (product) {
+          product.AvailableQuantity -= orderItem.quantity;
+          // Update stock quantity in the database for this product
+          await Products.updateOne(
+            { _id: product._id },
+            { $set: { AvailableQuantity: product.AvailableQuantity } }
+          );
+        }
       }
-      await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
+
+
+
+      if (latestOrder.PaymentMethod === 'COD') {
+        await latestOrder.updateOne({ Status: "Order placed" })
+      } else {
+        await latestOrder.updateOne({ Status: "Order placed", PaymentStatus: "Paid" })
+      }
+      // await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
+      await Cart.findOneAndDelete({ UserId: userId })
       res.render("user/orderSuccess");
-    }catch(err){
-      console.log(err,"error in the order Success ")
+    } catch (err) {
+      console.log(err, "error in the order Success ")
     }
-    },
+  },
   orderHistory: async (req, res) => {
     const user = req.session.user.user;
     const userId = new mongoose.Types.ObjectId(user);
     // const returnRequests = Orders.find({Status :'Return Requested'})
-    const order = await Orders.find({ UserId: userId,Status:{$ne:"Order Attempted"}});
+    const order = await Orders.find({ UserId: userId, Status: { $ne: "Order Attempted" } });
     console.log(order);
     const momentFormattedDate = moment("");
     res.render("user/orderHistory", { orderHistory: order });
@@ -69,7 +96,7 @@ module.exports = {
   },
   downloadInvoice: async (req, res) => {
     try {
-      console.log("njn,,,,asijdiaj");
+      // console.log("njn,,,,asijdiaj");
       const orderData = await Orders.findOne({
         _id: req.body.orderId,
       }).populate("Products.ProductId");
@@ -200,101 +227,100 @@ module.exports = {
     res.render("admin/admin- orderDetials", { order: orderDetials });
   },
   verifyReturn: async (req, res) => {
-      try {
-        
-        const orderId = req.params.orderId;
-        console.log(
-          req.params.orderId,
-          "from verify Products in return in order Controller"
+    try {
+
+      const orderId = req.params.orderId;
+      console.log(
+        req.params.orderId,
+        "from verify Products in return in order Controller"
+      );
+      const orderUpdate = await Orders.findByIdAndUpdate(orderId, {
+        Status: "Returned",
+        PaymentStatus: "Refunded"
+      });
+      console.log(orderUpdate, "updated");
+      //On the time of return products reupdating the stock
+      const orderItems = orderUpdate.Products.map((item) => ({
+        productId: item.ProductId,
+        quantity: item.Quantity,
+      }));
+      const products = await Products.find({
+        _id: { $in: orderItems.map((item) => item.productId) },
+      });
+      //
+      for (const orderItem of orderItems) {
+        const product = products.find((product) =>
+          orderItem.productId.equals(product._id)
         );
-        const orderUpdate = await Orders.findByIdAndUpdate(orderId, {
-          Status: "Returned",
-          PaymentStatus:"Refunded"
-        });
-        console.log(orderUpdate, "updated");
-        //On the time of return products reupdating the stock
-        const orderItems =orderUpdate.Products.map((item) => ({
-            productId: item.ProductId,
-            quantity: item.Quantity,
-          }));
-        const products = await Products.find({
-            _id: { $in: orderItems.map((item) => item.productId) },
-          });
-          //
-          for (const orderItem of orderItems) {
-            const product = products.find((product) =>
-              orderItem.productId.equals(product._id)
-            );
-            if (product) {
-              // Convert AvailableQuantity to a number if it's stored as a string
-              const currentQuantity = parseFloat(product.AvailableQuantity);
-              // Convert orderItem.quantity to a number if it's stored as a string
-              const orderQuantity = parseFloat(orderItem.quantity);
-              product.AvailableQuantity = currentQuantity + orderQuantity;
-    
-              // Update stock quantity in the database for this product
-              await Products.updateOne(
-                { _id: product._id },
-                { $set: { AvailableQuantity: product.AvailableQuantity } }
-              );
-              console.log("quantity added");
+        if (product) {
+          // Convert AvailableQuantity to a number if it's stored as a string
+          const currentQuantity = parseFloat(product.AvailableQuantity);
+          // Convert orderItem.quantity to a number if it's stored as a string
+          const orderQuantity = parseFloat(orderItem.quantity);
+          product.AvailableQuantity = currentQuantity + orderQuantity;
+
+          // Update stock quantity in the database for this product
+          await Products.updateOne(
+            { _id: product._id },
+            { $set: { AvailableQuantity: product.AvailableQuantity } }
+          );
+          console.log("quantity added");
+        }
+      }
+      console.log("iam here", req.session)
+      const userId = req.session.user.user
+      const wallet = await Wallet.findOne({ UserId: userId })
+      //   console.log(refund,"refund")
+      if (wallet === null) {
+        const userId = req.session.user.user
+        const newUserDoc = await Users.findOneAndUpdate({ _id: userId }, {
+          $inc: {
+            Wallet: orderUpdate.TotalAmount
+          }
+        })
+        await Wallet.create({
+          UserId: userId,
+          WalletAmount: orderUpdate.TotalAmount,
+          Transactions: [
+            {
+              Amount: orderUpdate.TotalAmount,
+              Date: moment(new Date()).format('llll'),
+              State: 'In',
+              Order: orderUpdate._id
+            }
+          ],
+        })
+      } else if (wallet) {
+        const userId = req.session.user.user
+        const newUserDoc = await Users.findOneAndUpdate({ _id: userId }, {
+          $inc: {
+            Wallet: orderUpdate.TotalAmount
+          }
+        })
+
+        console.log('new', newUserDoc);
+
+
+        const user = Users.findOne({ _id: userId })
+        console.log("njnm cewsxfsgayhbjsvhjwvgwvsgxvwegvavgvhwsvgavdhgvascv")
+        await wallet.updateOne({
+          WalletAmount: wallet.WalletAmount + orderUpdate.TotalAmount,
+          $push: {
+            Transactions: {
+              Amount: orderUpdate.TotalAmount,
+              State: "In",
+              Date: moment(new Date()).format('llll'),
+              Order: orderUpdate._id
             }
           }
-          console.log("iam here",req.session)
-          const userId = req.session.user.user
-          const wallet = await Wallet.findOne({UserId:userId})
-        //   console.log(refund,"refund")
-        if(wallet ===null)
-        {
-          const userId = req.session.user.user
-          const newUserDoc = await Users.findOneAndUpdate({_id:userId},{
-            $inc: {
-              Wallet: orderUpdate.TotalAmount
-            }
-          })
-            await Wallet.create({
-                UserId :userId,
-                WalletAmount : orderUpdate.TotalAmount,
-                Transactions :[
-                    {
-                        Amount :orderUpdate.TotalAmount,
-                        Date :moment(new Date()).format('llll'),
-                        State :'In',
-                        Order : orderUpdate._id
-                    }
-                ],
-             })
-        }else if(wallet){
-          const userId = req.session.user.user
-          const newUserDoc = await Users.findOneAndUpdate({_id:userId},{
-            $inc: {
-              Wallet: orderUpdate.TotalAmount
-            }
-          })
+        })
+        // const updated = await Wallet.findOne({UserId:userId})
 
-          console.log('new',newUserDoc);
-
-
-          const user = Users.findOne({_id:userId})
-          console.log("njnm cewsxfsgayhbjsvhjwvgwvsgxvwegvavgvhwsvgavdhgvascv")
-          await wallet.updateOne({
-            WalletAmount:wallet.WalletAmount + orderUpdate.TotalAmount,
-            $push: {
-              Transactions: {
-                Amount:orderUpdate.TotalAmount,
-                State :"In",
-                Date: moment(new Date()).format('llll'),
-                Order : orderUpdate._id
-              }
-            }
-          })
-          // const updated = await Wallet.findOne({UserId:userId})
-          
-        }
-          res.redirect('/admin/manage-return-requests')
+      }
+      res.redirect('/admin/manage-return-requests')
     } catch (error) {
-        console.log("Error happened in verify return")
-        throw error
+      console.log("Error happened in verify return")
+      throw error
     }
   },
 };

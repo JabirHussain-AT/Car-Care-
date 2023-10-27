@@ -62,6 +62,9 @@ const ProductSchema = new Schema({
       },
       Specification4: {
         type: String
+      },
+      variants :{
+        type:Array
       }
    
     
