@@ -532,12 +532,12 @@ AvailableQuantity %>" />
                 // 
                 $(document).ready(function () {
                   $('#placeOrderButton').click(function () {
-                    // console.log("hiiiiii")
+                    // console.log(" Inside the confim Stock ")
                     $.ajax({
                       url: '/confirmStock',
                       type: 'GET',
                       success: function (data) {
-                        console.log(data, "data")
+                        // console.log(data, "data")
                         if (data.ConfirmedStock === false) {
                           // console.log(`${data.message}`)
                           showOutOfStockMessages(data.outOfStockProducts);

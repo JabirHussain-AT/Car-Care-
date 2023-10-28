@@ -147,13 +147,18 @@ module.exports = {
 
     },
     postCart: async (req, res) => {
-        console.log("hiiiii")
-        const user = req.session.user.user
-        const TotalAmount = parseFloat(req.body.hiddenTotalAmount.replace(/[^\d.]/g, ""))
-        const toUpdate = await Cart.findOne({ UserId: user })
-        await toUpdate.updateOne({ TotalAmount: TotalAmount }, { upsert: true }, { new: true })
-        console.log(toUpdate,"to update")
-        res.json({postcart:true})
+        try{
+
+            const user = req.session.user.user
+            const TotalAmount = parseFloat(req.body.hiddenTotalAmount.replace(/[^\d.]/g, ""))
+            const toUpdate = await Cart.findOne({ UserId: user })
+            await toUpdate.updateOne({ TotalAmount: TotalAmount }, { upsert: true }, { new: true })
+            console.log(toUpdate,"to update")
+            res.json({postcart:true})
+        }catch(err)
+        {
+            console.log(err,"error happended in the try of postCart")
+        }
         
     }
 }

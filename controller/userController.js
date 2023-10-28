@@ -71,7 +71,8 @@ module.exports = {
     console.log(req.params.id);
     const _id = req.params.id;
     console.log(req.session.user,"user")
-    const product = await Products.findOne({ _id });
+    const product = await Products.findOne({ _id }).populate('variants');
+    console.log(product,"product")
     const reviews = await Reviews.find({ProductId:_id}).populate('UserId')
     // const userOrderHistory = await Orders.find({UserId:req.session.user.user})
     // console.log(userOrderHistory,"order history")

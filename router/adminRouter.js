@@ -21,6 +21,8 @@ router.get('/login',auth.adminExist,adminController.login)
 router.post('/login',adminController.postLogin)
 
 router.get('/Dashboard',auth.adminTokenAuth,adminController.Dashboard)
+router.get('/download-sales-report',auth.adminTokenAuth,adminController.salesReport)
+
 
 router.get('/count-orders-by-day',auth.adminTokenAuth,adminController.getCount)
 router.get('/count-orders-by-month',auth.adminTokenAuth,adminController.getCount)

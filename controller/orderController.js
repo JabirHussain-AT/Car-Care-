@@ -1,4 +1,4 @@
-const Users = require("../models/userSchema");
+ const Users = require("../models/userSchema");
 const OTP = require("../models/otpSchema");
 const Admin = require("../models/adminSchema");
 const Products = require("../models/productSchema");

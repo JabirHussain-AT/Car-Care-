@@ -64,7 +64,8 @@ const ProductSchema = new Schema({
         type: String
       },
       variants :{
-        type:Array
+        type:Array,
+        ref:"Product"
       }
    
     

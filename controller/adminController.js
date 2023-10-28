@@ -1,4 +1,5 @@
 const Users = require('../models/userSchema')
+const excel = require('exceljs');
 const VariantConnector = require('../utilty/variantConnector')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
@@ -138,6 +139,84 @@ module.exports = {
             console.log(error,"from the catch of admin dashboard")
         }
     },
+    salesReport: async (req, res) => {
+        const generateSalesData = async () => {
+            try {
+                // Fetch orders data from the database
+                const orders = await Orders.find({
+                    DeliveredDate: { $exists: false }, // Filter out delivered orders
+                    PaymentStatus: 'Paid', // Filter by payment status
+                }).populate('Products.ProductId', 'ProductName Price');
+    
+                // Map orders data to the required format for Excel
+                return orders.map(order => {
+                    const products = order.Products.map(product => ({
+                        product: product.ProductId.ProductName,
+                        quantity: product.Quantity,
+                        userId: order.UserId,
+                        price: product.ProductId.Price,
+                        total: product.Quantity * product.ProductId.Price,
+                    }));
+    
+                    // Calculate total amount for the order
+                    const totalAmount = products.reduce((total, product) => total + product.total, 0);
+    
+                    return {
+                        order: order._id,
+                        orderedDate: order.OrderedDate, // Add the ordered date
+                        products,
+                        totalAmount,
+                    };
+                });
+            } catch (error) {
+                throw error;
+            }
+        };
+    
+        try {
+            // Generate Excel Report
+            const workbook = new excel.Workbook();
+            const worksheet = workbook.addWorksheet('Sales Report');
+    
+            // Add some sample data
+            worksheet.columns = [
+                { header: 'User Id', key: 'User', width: 30 },
+                { header: 'Order', key: 'order', width: 30 },
+                { header: 'Ordered Date', key: 'orderedDate', width: 30 }, // Add Ordered Date column
+                { header: 'Price', key: 'price', width: 10 },
+                { header: ' ₹ Total Sales ', key: 'total', width: 15 },
+            ];
+    
+            const salesData = await generateSalesData();
+    
+            // Add sales data to the worksheet
+            let totalAmount = 0; // Initialize total amount for each order
+            salesData.forEach(order => {
+                order.products.forEach(product => {
+                    worksheet.addRow({
+                        User: product.userId,
+                        order: order.order,
+                        orderedDate: order.orderedDate, // Include ordered date
+                        price: order.totalAmount,
+                        total: totalAmount += order.totalAmount, // Sum of each order's total amount
+                    });
+                });
+            });
+    
+            // Set response headers for Excel download
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
+    
+            // Send the workbook as a buffer
+            workbook.xlsx.write(res).then(() => {
+                res.end();
+            });
+        } catch (err) {
+            console.log(err, 'err in the sales report');
+        }
+    },
+     
+    
     getProductview: async (req, res) => {
         const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
         const perPage = 10; // Number of items per page
@@ -570,10 +649,12 @@ module.exports = {
               }
             });
             const orderCountsByDay = {};
+            const orderNumberByDay = {};
             const orderCountsByMonthYear = {};
             const orderCountsByYear = {};
             let labels;
             let data;
+            let Count;
             console.log('outside')
             orders.forEach((order) => {
               console.log('inside')
@@ -590,6 +671,25 @@ module.exports = {
                 } else {
                   orderCountsByDay[dayMonthYear]+= order.TotalAmount;
                 }
+
+                //
+                //for count or number of sales
+
+                if (!orderNumberByDay[dayMonthYear]) {
+                    orderNumberByDay[dayMonthYear] = 1;
+                  } else {
+                    orderNumberByDay[dayMonthYear]++;
+                  }
+                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                    (dayMonthYear) => ({
+                      _id: dayMonthYear,
+                      count: orderNumberByDay[dayMonthYear],
+                    })
+                  );
+                  Count = ordersNumbersByDay.map((entry) => entry.count);
+
+
+                //
                 const ordersByDay = Object.keys(orderCountsByDay).map(
                   (dayMonthYear) => ({
                     _id: dayMonthYear,
@@ -605,9 +705,9 @@ module.exports = {
               } else if (req.url === "/count-orders-by-month") {
                 // Count orders by month-year
                 if (!orderCountsByMonthYear[monthYear]) {
-                  orderCountsByMonthYear[monthYear] = 1;
+                  orderCountsByMonthYear[monthYear] = order.TotalAmount;
                 } else {
-                  orderCountsByMonthYear[monthYear]++;
+                  orderCountsByMonthYear[monthYear]+= order.TotalAmount;
                 }
                 const ordersByMonthYear = Object.keys(orderCountsByMonthYear).map(
                   (monthYear) => ({
@@ -615,6 +715,28 @@ module.exports = {
                     count: orderCountsByMonthYear[monthYear],
                   })
                 );
+                //   
+                    //
+                //for count or number of sales
+
+                if (!orderNumberByDay[monthYear]) {
+                    orderNumberByDay[monthYear] = 1;
+                  } else {
+                    orderNumberByDay[monthYear]++;
+                  }
+                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                    (dayMonthYear) => ({
+                      _id: dayMonthYear,
+                      count: orderNumberByDay[dayMonthYear],
+                    })
+                  );
+                  Count = ordersNumbersByDay.map((entry) => entry.count);
+
+
+                // 
+
+
+
                 ordersByMonthYear.sort((a, b) => (a._id < b._id ? -1 : 1));
                 labels = ordersByMonthYear.map((entry) =>
                   moment(entry._id, "YYYY-MM").format("MMM YYYY")
@@ -623,14 +745,35 @@ module.exports = {
               } else if (req.url === "/count-orders-by-year") {
                 // Count orders by year
                 if (!orderCountsByYear[year]) {
-                  orderCountsByYear[year] = 1;
+                  orderCountsByYear[year]  = order.TotalAmount;
                 } else {
-                  orderCountsByYear[year]++;
+                  orderCountsByYear[year] += order.TotalAmount;
                 }
                 const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
                   _id: year,
                   count: orderCountsByYear[year],
                 }));
+
+                  //
+                //for count or number of sales
+
+                if (!orderNumberByDay[year]) {
+                    orderNumberByDay[year] = 1;
+                  } else {
+                    orderNumberByDay[year]++;
+                  }
+                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                    (dayMonthYear) => ({
+                      _id: dayMonthYear,
+                      count: orderNumberByDay[dayMonthYear],
+                    })
+                  );
+                  Count = ordersNumbersByDay.map((entry) => entry.count);
+
+
+                //
+
+
                 ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
                 labels = ordersByYear.map((entry) =>
                   moment(entry._id, "YYYY").format("YYYY")
@@ -641,7 +784,7 @@ module.exports = {
             console.log(data);
             console.log(labels)
       
-            res.json({ labels, data });
+            res.json({ labels, data ,Count});
           } catch (err) {
             console.error(err);
           }
