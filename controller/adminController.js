@@ -1,5 +1,8 @@
 const Users = require('../models/userSchema')
 const excel = require('exceljs');
+const PDFDocument = require('pdfkit');
+const pdf = require('html-pdf');
+const fs = require('fs');
 const VariantConnector = require('../utilty/variantConnector')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
@@ -10,6 +13,7 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const moment = require('moment')
 const variantConnector = require('../utilty/variantConnector')
+const pdfMaker = require('../utilty/salesReportPdf')
 require('dotenv').config()
 
 
@@ -46,7 +50,7 @@ module.exports = {
         // res.render('admin/admin-users')
     },
     login: (req, res) => {
-        res.render('admin/adminLogin',{message:req.flash()})
+        res.render('admin/adminLogin', { message: req.flash() })
     },
     postLogin: async (req, res) => {
         try {
@@ -81,41 +85,41 @@ module.exports = {
         }
 
     },
-    Dashboard:async (req,res)=>{
-        try{
+    Dashboard: async (req, res) => {
+        try {
             // const orders = await Orders.find().limit(10)
             // res.render('admin/dashboard',{orders:orders})
             const bestSeller = await Orders.aggregate([
                 {
-                  $unwind: "$Products",
+                    $unwind: "$Products",
                 },
                 {
-                  $group: {
-                    _id: "$Products.ProductId",
-                    totalCount:{ $sum:"$Products.Quantity" },
-                  },
+                    $group: {
+                        _id: "$Products.ProductId",
+                        totalCount: { $sum: "$Products.Quantity" },
+                    },
                 },
                 {
-                  $sort: {
-                    totalCount: -1,
-                  },
+                    $sort: {
+                        totalCount: -1,
+                    },
                 },
                 {
-                  $limit: 10,
+                    $limit: 10,
                 },
                 {
-                  $lookup: {
-                    from: "products",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "productDetails",
-                  },
+                    $lookup: {
+                        from: "products",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "productDetails",
+                    },
                 },
                 {
-                  $unwind: "$productDetails",
+                    $unwind: "$productDetails",
                 },
-              ]);
-              console.log(bestSeller,'JHijediufuier')
+            ]);
+            console.log(bestSeller, 'JHijediufuier')
             const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
             const perPage = 10; // Number of items per page
             const skip = (page - 1) * perPage;
@@ -135,8 +139,8 @@ module.exports = {
                 totalCount,
                 totalPages: Math.ceil(totalCount / perPage),
             });
-        }catch(error){
-            console.log(error,"from the catch of admin dashboard")
+        } catch (error) {
+            console.log(error, "from the catch of admin dashboard")
         }
     },
     salesReport: async (req, res) => {
@@ -147,7 +151,7 @@ module.exports = {
                     DeliveredDate: { $exists: false }, // Filter out delivered orders
                     PaymentStatus: 'Paid', // Filter by payment status
                 }).populate('Products.ProductId', 'ProductName Price');
-    
+
                 // Map orders data to the required format for Excel
                 return orders.map(order => {
                     const products = order.Products.map(product => ({
@@ -157,10 +161,10 @@ module.exports = {
                         price: product.ProductId.Price,
                         total: product.Quantity * product.ProductId.Price,
                     }));
-    
+
                     // Calculate total amount for the order
                     const totalAmount = products.reduce((total, product) => total + product.total, 0);
-    
+
                     return {
                         order: order._id,
                         orderedDate: order.OrderedDate, // Add the ordered date
@@ -172,12 +176,12 @@ module.exports = {
                 throw error;
             }
         };
-    
+
         try {
             // Generate Excel Report
             const workbook = new excel.Workbook();
             const worksheet = workbook.addWorksheet('Sales Report');
-    
+
             // Add some sample data
             worksheet.columns = [
                 { header: 'User Id', key: 'User', width: 30 },
@@ -186,9 +190,9 @@ module.exports = {
                 { header: 'Price', key: 'price', width: 10 },
                 { header: ' ₹ Total Sales ', key: 'total', width: 15 },
             ];
-    
+
             const salesData = await generateSalesData();
-    
+
             // Add sales data to the worksheet
             let totalAmount = 0; // Initialize total amount for each order
             salesData.forEach(order => {
@@ -202,11 +206,11 @@ module.exports = {
                     });
                 });
             });
-    
+
             // Set response headers for Excel download
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
-    
+
             // Send the workbook as a buffer
             workbook.xlsx.write(res).then(() => {
                 res.end();
@@ -215,8 +219,8 @@ module.exports = {
             console.log(err, 'err in the sales report');
         }
     },
-     
-    
+
+
     getProductview: async (req, res) => {
         const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
         const perPage = 10; // Number of items per page
@@ -258,15 +262,15 @@ module.exports = {
         }
 
     },
-    addVariants:async(req,res)=>{
+    addVariants: async (req, res) => {
         const id = req.params.productId
         const product = await Product.findOne({ _id: id })
         // console.log(Product);
         res.render('admin/addVarient', { product: product })
     },
-    postaddVarient : async (req,res)=>{
-        console.log(req.body,"req.body")
-        console.log(req.files,"req.files")
+    postaddVarient: async (req, res) => {
+        console.log(req.body, "req.body")
+        console.log(req.files, "req.files")
 
         const productType = req.body.productType
 
@@ -287,13 +291,13 @@ module.exports = {
         req.body.images = req.files.map(val => val.filename)
         req.body.Display = "Active"
         req.body.Status = "in Stock"
-        const newDate= new Date()
+        const newDate = new Date()
         req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
         const createdProduct = await Product.create(req.body)
         // Now Call the function to Create Connention of varients
         // console.log( createdProduct._id,"Created Product")
         const mainProductId = new mongoose.Types.ObjectId(req.params.productId)
-        const connected = variantConnector.VariantConnector(mainProductId,createdProduct._id)
+        const connected = variantConnector.VariantConnector(mainProductId, createdProduct._id)
 
 
         res.redirect('/admin/productView')
@@ -387,7 +391,7 @@ module.exports = {
             req.body.images = req.files.map(val => val.filename)
             req.body.Display = "Active"
             req.body.Status = "in Stock"
-            const newDate= new Date()
+            const newDate = new Date()
             req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
             const uploaded = await Product.create(req.body)
             res.redirect('/admin/productView')
@@ -408,18 +412,18 @@ module.exports = {
         console.log(req.params.id);
         console.log(req.body)
         console.log(req.files)
-        const {existingImage1,existingImage2,existingImage3}=req.body
+        const { existingImage1, existingImage2, existingImage3 } = req.body
         try {
             const id = req.params.id
             const productType = req.body.productType
             let images = [];
             const existingProduct = await Product.findById(id);
             if (existingProduct) {
-                images.push(...existingProduct.images); 
+                images.push(...existingProduct.images);
             }
             //updating again if its having
             for (let i = 0; i < 3; i++) {
-                const fieldName = `image${i+1}`;
+                const fieldName = `image${i + 1}`;
                 if (req.files[fieldName] && req.files[fieldName][0]) {
                     images[i] = req.files[fieldName][0].filename;
                 }
@@ -439,7 +443,7 @@ module.exports = {
             }
             console.log(variations);
             req.body.Variation = variations[0].value
-            
+
             // req.body.images = req.files.map(val => val.filename)
             req.body.images = images
             req.body.Display = "Active"
@@ -459,29 +463,28 @@ module.exports = {
     },
     addCatogory: (req, res) => {
         console.log("yes");
-        res.render('admin/addCatogory',{message:req.flash()})
+        res.render('admin/addCatogory', { message: req.flash() })
     },
     postaddCategory: async (req, res) => {
-        const { Name} = req.body
+        const { Name } = req.body
         try {
             const category = await Category.findOne({ Name: { $regex: new RegExp('^' + Name + '$', 'i') } })
-            if(category)
-            {
-                req.flash("Category","Category Already Exists..")
+            if (category) {
+                req.flash("Category", "Category Already Exists..")
                 res.redirect('/admin/addCategory')
-            }else{
-          
-                console.log(req.file,"file upload")
+            } else {
+
+                console.log(req.file, "file upload")
                 req.body.Images = req.file.filename
-           
-            console.log(req.body.Images)
-            const uploaded = await Category.create({
-                Name: Name,
-                Images: req.body.Images
-            })
-            res.redirect('/admin/viewCategory')
-            }  
-        
+
+                console.log(req.body.Images)
+                const uploaded = await Category.create({
+                    Name: Name,
+                    Images: req.body.Images
+                })
+                res.redirect('/admin/viewCategory')
+            }
+
         }
         catch (error) {
             throw error
@@ -531,16 +534,15 @@ module.exports = {
 
     },
     editCategory: async (req, res) => {
-        try{
+        try {
             const id = req.params.id
             const catogory = await Category.findOne({ _id: id })
-            console.log(catogory,"is it here?")
-            res.render('admin/editCategory', { category: catogory})
-        }catch(error)
-        {
+            console.log(catogory, "is it here?")
+            res.render('admin/editCategory', { category: catogory })
+        } catch (error) {
             console.log("error in the edit category catch")
         }
-       
+
     },
     postEditCategory: async (req, res) => {
         try {
@@ -550,7 +552,7 @@ module.exports = {
                 _id: id
             }, {
                 Name: req.body.ProductName,
-                Images:  req.file.filename
+                Images: req.file.filename
             })
             res.redirect('/admin/viewCategory')
         }
@@ -558,13 +560,13 @@ module.exports = {
             throw error
         }
     },
-    orderTable:async(req,res)=>{
+    orderTable: async (req, res) => {
         try {
 
             const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
             const perPage = 10; // Number of items per page
             const skip = (page - 1) * perPage;
-            const  returnRequested = await Orders.find({ Status: 'Return Requested' })
+            const returnRequested = await Orders.find({ Status: 'Return Requested' })
             // Query the database for products, skip and limit based on the pagination
             const order = await Orders.find()
                 .skip(skip)
@@ -593,36 +595,36 @@ module.exports = {
 
         }
         catch (error) {
-            console.log(error.message ,"from ordertable admin catch")
+            console.log(error.message, "from ordertable admin catch")
         }
-       
+
         // res.render('admin/orderDetials',{order:orders})
     },
     updateStatus: async (req, res) => {
         const orderId = req.params.orderId;
         const { status } = req.body;
-    
+
         try {
             // Update the order status in the database
             const updatedOrder = await Orders.findByIdAndUpdate(orderId, { Status: status }, { new: true });
-    
+
             // If the status is "Delivered," update the payment status to "paid"
             if (status.toLowerCase() === 'delivered') {
                 updatedOrder.DeliveredDate = moment(new Date()).format('llll')
-                updatedOrder.LastReturnDate =  moment().add(14, 'days').format('llll'),
-                updatedOrder.PaymentStatus = 'Paid';
-            }else{
+                updatedOrder.LastReturnDate = moment().add(14, 'days').format('llll'),
+                    updatedOrder.PaymentStatus = 'Paid';
+            } else {
                 updatedOrder.PaymentStatus = 'Pending';
             }
-    
+
             // If the status is "rejected," update the payment status to "order rejected"
             if (status.toLowerCase() === 'rejected') {
                 updatedOrder.PaymentStatus = 'order rejected';
             }
-    
+
             // Save the changes to the order
             await updatedOrder.save();
-    
+
             // Respond with the updated order
             res.json(updatedOrder);
         } catch (error) {
@@ -630,23 +632,23 @@ module.exports = {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     },
-    orderViewMore:async (req,res)=>{
+    orderViewMore: async (req, res) => {
         const orderId = req.params.orderId
-        const orderDetials  = await Orders.findOne({_id:orderId}).populate("Products.ProductId")
+        const orderDetials = await Orders.findOne({ _id: orderId }).populate("Products.ProductId")
         // console.log(orderDetials)
-        res.render('admin/admin- orderDetials',{order:orderDetials})
+        res.render('admin/admin- orderDetials', { order: orderDetials })
 
     },
-    reviewManagement : (req,res)=>{
-        const review =[]
-        res.render('admin/reviewManagement',{reviews:review})
+    reviewManagement: (req, res) => {
+        const review = []
+        res.render('admin/reviewManagement', { reviews: review })
     },
-    getCount :async (req,res)=>{
+    getCount: async (req, res) => {
         try {
             const orders = await Orders.find({
-              Status: {
-                $nin:["Returned","Cancelled","Rejected"]
-              }
+                Status: {
+                    $nin: ["Returned", "Cancelled", "Rejected"]
+                }
             });
             const orderCountsByDay = {};
             const orderNumberByDay = {};
@@ -657,137 +659,168 @@ module.exports = {
             let Count;
             console.log('outside')
             orders.forEach((order) => {
-              console.log('inside')
-              const orderDate = moment(order.OrderedDate, "ddd, MMM D, YYYY h:mm A");
-              const dayMonthYear = orderDate.format("YYYY-MM-DD");
-              const monthYear = orderDate.format("YYYY-MM");
-              const year = orderDate.format("YYYY");
-              
-              if (req.url === "/count-orders-by-day") {
-                console.log("count");
-                // Count orders by day
-                if (!orderCountsByDay[dayMonthYear]) {
-                  orderCountsByDay[dayMonthYear] = order.TotalAmount;
-                } else {
-                  orderCountsByDay[dayMonthYear]+= order.TotalAmount;
-                }
+                console.log('inside')
+                const orderDate = moment(order.OrderedDate, "ddd, MMM D, YYYY h:mm A");
+                const dayMonthYear = orderDate.format("YYYY-MM-DD");
+                const monthYear = orderDate.format("YYYY-MM");
+                const year = orderDate.format("YYYY");
 
-                //
-                //for count or number of sales
+                if (req.url === "/count-orders-by-day") {
+                    console.log("count");
+                    // Count orders by day
+                    if (!orderCountsByDay[dayMonthYear]) {
+                        orderCountsByDay[dayMonthYear] = order.TotalAmount;
+                    } else {
+                        orderCountsByDay[dayMonthYear] += order.TotalAmount;
+                    }
 
-                if (!orderNumberByDay[dayMonthYear]) {
-                    orderNumberByDay[dayMonthYear] = 1;
-                  } else {
-                    orderNumberByDay[dayMonthYear]++;
-                  }
-                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
-                    (dayMonthYear) => ({
-                      _id: dayMonthYear,
-                      count: orderNumberByDay[dayMonthYear],
-                    })
-                  );
-                  Count = ordersNumbersByDay.map((entry) => entry.count);
-
-
-                //
-                const ordersByDay = Object.keys(orderCountsByDay).map(
-                  (dayMonthYear) => ({
-                    _id: dayMonthYear,
-                    count: orderCountsByDay[dayMonthYear],
-                  })
-                );
-                ordersByDay.sort((a, b) => (a._id < b._id ? -1 : 1));
-                labels = ordersByDay.map((entry) =>
-                  moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
-                );
-                data = ordersByDay.map((entry) => entry.count);
-                // console.log(data,"data",ordersByDay,"orderby day")
-              } else if (req.url === "/count-orders-by-month") {
-                // Count orders by month-year
-                if (!orderCountsByMonthYear[monthYear]) {
-                  orderCountsByMonthYear[monthYear] = order.TotalAmount;
-                } else {
-                  orderCountsByMonthYear[monthYear]+= order.TotalAmount;
-                }
-                const ordersByMonthYear = Object.keys(orderCountsByMonthYear).map(
-                  (monthYear) => ({
-                    _id: monthYear,
-                    count: orderCountsByMonthYear[monthYear],
-                  })
-                );
-                //   
                     //
-                //for count or number of sales
+                    //for count or number of sales
 
-                if (!orderNumberByDay[monthYear]) {
-                    orderNumberByDay[monthYear] = 1;
-                  } else {
-                    orderNumberByDay[monthYear]++;
-                  }
-                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
-                    (dayMonthYear) => ({
-                      _id: dayMonthYear,
-                      count: orderNumberByDay[dayMonthYear],
-                    })
-                  );
-                  Count = ordersNumbersByDay.map((entry) => entry.count);
-
-
-                // 
+                    if (!orderNumberByDay[dayMonthYear]) {
+                        orderNumberByDay[dayMonthYear] = 1;
+                    } else {
+                        orderNumberByDay[dayMonthYear]++;
+                    }
+                    const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                        (dayMonthYear) => ({
+                            _id: dayMonthYear,
+                            count: orderNumberByDay[dayMonthYear],
+                        })
+                    );
+                    Count = ordersNumbersByDay.map((entry) => entry.count);
 
 
+                    //
+                    const ordersByDay = Object.keys(orderCountsByDay).map(
+                        (dayMonthYear) => ({
+                            _id: dayMonthYear,
+                            count: orderCountsByDay[dayMonthYear],
+                        })
+                    );
+                    ordersByDay.sort((a, b) => (a._id < b._id ? -1 : 1));
+                    labels = ordersByDay.map((entry) =>
+                        moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
+                    );
+                    data = ordersByDay.map((entry) => entry.count);
+                    // console.log(data,"data",ordersByDay,"orderby day")
+                } else if (req.url === "/count-orders-by-month") {
+                    // Count orders by month-year
+                    if (!orderCountsByMonthYear[monthYear]) {
+                        orderCountsByMonthYear[monthYear] = order.TotalAmount;
+                    } else {
+                        orderCountsByMonthYear[monthYear] += order.TotalAmount;
+                    }
+                    const ordersByMonthYear = Object.keys(orderCountsByMonthYear).map(
+                        (monthYear) => ({
+                            _id: monthYear,
+                            count: orderCountsByMonthYear[monthYear],
+                        })
+                    );
+                    //   
+                    //
+                    //for count or number of sales
 
-                ordersByMonthYear.sort((a, b) => (a._id < b._id ? -1 : 1));
-                labels = ordersByMonthYear.map((entry) =>
-                  moment(entry._id, "YYYY-MM").format("MMM YYYY")
-                );
-                data = ordersByMonthYear.map((entry) => entry.count);
-              } else if (req.url === "/count-orders-by-year") {
-                // Count orders by year
-                if (!orderCountsByYear[year]) {
-                  orderCountsByYear[year]  = order.TotalAmount;
-                } else {
-                  orderCountsByYear[year] += order.TotalAmount;
+                    if (!orderNumberByDay[monthYear]) {
+                        orderNumberByDay[monthYear] = 1;
+                    } else {
+                        orderNumberByDay[monthYear]++;
+                    }
+                    const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                        (dayMonthYear) => ({
+                            _id: dayMonthYear,
+                            count: orderNumberByDay[dayMonthYear],
+                        })
+                    );
+                    Count = ordersNumbersByDay.map((entry) => entry.count);
+
+
+                    // 
+
+
+
+                    ordersByMonthYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+                    labels = ordersByMonthYear.map((entry) =>
+                        moment(entry._id, "YYYY-MM").format("MMM YYYY")
+                    );
+                    data = ordersByMonthYear.map((entry) => entry.count);
+                } else if (req.url === "/count-orders-by-year") {
+                    // Count orders by year
+                    if (!orderCountsByYear[year]) {
+                        orderCountsByYear[year] = order.TotalAmount;
+                    } else {
+                        orderCountsByYear[year] += order.TotalAmount;
+                    }
+                    const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
+                        _id: year,
+                        count: orderCountsByYear[year],
+                    }));
+
+                    //
+                    //for count or number of sales
+
+                    if (!orderNumberByDay[year]) {
+                        orderNumberByDay[year] = 1;
+                    } else {
+                        orderNumberByDay[year]++;
+                    }
+                    const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
+                        (dayMonthYear) => ({
+                            _id: dayMonthYear,
+                            count: orderNumberByDay[dayMonthYear],
+                        })
+                    );
+                    Count = ordersNumbersByDay.map((entry) => entry.count);
+
+
+                    //
+
+
+                    ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
+                    labels = ordersByYear.map((entry) =>
+                        moment(entry._id, "YYYY").format("YYYY")
+                    );
+                    data = ordersByYear.map((entry) => entry.count);
                 }
-                const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
-                  _id: year,
-                  count: orderCountsByYear[year],
-                }));
-
-                  //
-                //for count or number of sales
-
-                if (!orderNumberByDay[year]) {
-                    orderNumberByDay[year] = 1;
-                  } else {
-                    orderNumberByDay[year]++;
-                  }
-                  const ordersNumbersByDay = Object.keys(orderNumberByDay).map(
-                    (dayMonthYear) => ({
-                      _id: dayMonthYear,
-                      count: orderNumberByDay[dayMonthYear],
-                    })
-                  );
-                  Count = ordersNumbersByDay.map((entry) => entry.count);
-
-
-                //
-
-
-                ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
-                labels = ordersByYear.map((entry) =>
-                  moment(entry._id, "YYYY").format("YYYY")
-                );
-                data = ordersByYear.map((entry) => entry.count);
-              }
             });
             console.log(data);
             console.log(labels)
-      
-            res.json({ labels, data ,Count});
-          } catch (err) {
-            console.error(err);
-          }
-    }
-}
 
+            res.json({ labels, data, Count });
+        } catch (err) {
+            console.error(err);
+        }
+    },
+    salesReportPdf: async (req, res) => {
+        try {
+            const { startDate, endDate } = req.query;
+
+            // Fetch orders data from the database for the specified date range
+            console.log(moment.utc(startDate, 'llll').toISOString())
+            // Convert JavaScript Date objects to the format used in MongoDB (Moment.js format)
+           
+            // Specify the start and end dates in JavaScript Date objects
+            const orders = await Orders.find({
+                DeliveredDate: { $exists: true },
+                PaymentStatus: 'Paid',
+                OrderedDate: {
+                    $gte: moment.utc(startDate).format("llll"),
+                    $lte: moment.utc(endDate).format("llll"),
+                },
+            }).populate('Products.ProductId');
+            
+
+            const totalAmountSum = orders.reduce((sum, order) => sum + order.TotalAmount, 0);
+            // console.log(orders, "orders are this again")
+
+            pdfMaker.downloadPdf(req, res, orders, startDate, endDate,totalAmountSum)
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        }
+    },
+
+
+
+}

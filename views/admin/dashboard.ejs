@@ -3,7 +3,21 @@
 <%- include('../partials/admin-header-checking') %>
 <link rel="stylesheet" href="/stylesheet/adminDashboard.css">
 <div class="container mt-4">
-   <a class="btn btn-primary"  href="/admin/download-sales-report"></a>
+   <!-- <a class="btn btn-primary"  href="/admin/download-sales-report">Excel</a> -->
+   <div class="row">
+        <div class="col-lg-6">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" class="form-control" required>
+        </div>
+        <div class="col-lg-6">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" class="form-control" required>
+        </div>
+        <div class="col-lg-12 mt-2">
+            <a href="/admin/download-salesReport-pdf"></a><button id="salerReportPdf" class="btn btn-primary">Update Sales</button>
+        </div>
+    </div>
+  
     <div class="row">
       <div class="col-lg-6">
         <div class="card mb-4" style="background: linear-gradient(65deg, rgb(255, 255, 255), rgb(148, 166, 163));">
@@ -297,5 +311,10 @@
           },
       });
   }
+  document.getElementById("salerReportPdf").addEventListener("click", function () {
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        window.location.href = `/admin/download-salesReport-pdf?startDate=${startDate}&endDate=${endDate}`;
+    });
   
   </script>

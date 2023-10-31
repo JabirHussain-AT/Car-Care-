@@ -9,6 +9,7 @@ const orderController = require('../controller/orderController')
 const cartController = require('../controller/cartController')
 const walletController = require('../controller/walletController')
 const reviewController = require('../controller/reviewController')
+const wishlistController = require('../controller/wishlistController')
 
 //landing page
 router.get('/',auth.userTokenAuth,userController.landingPage)
@@ -41,6 +42,10 @@ router.get('/logout',userController.logout)
 
 //shop
 router.get('/shop',userController.shop)
+
+//wishlist
+router.get('/wishlist',auth.userTokenAuth,wishlistController.wishlist)
+router.get('/wishlist/:id',auth.userTokenAuth,wishlistController.AddToWishlist)
 
 //forget Password
 router.get('/forgetPass',userController.forgetPass)

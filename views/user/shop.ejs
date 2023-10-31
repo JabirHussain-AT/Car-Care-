@@ -56,7 +56,7 @@
                         <p class="card-text">Price: $<%= product.Price %></p>
                         <!-- Add any additional product information here -->
                         <div class="d-flex justify-content-between">
-                            <a href="/product/<%= product._id %>" class="btn btn-sm btn btn-warning">Add to Wishlist</a>
+                            <a href="/wishlist/<%= product._id %>" class="btn btn-sm btn btn-warning">Add to Wishlist</a>
                             <% if (product.AvailableQuantity > 0){ %>
                                 <a href="/product/<%= product._id %>"><button class="btn-primary">View Details</button></a>
                                 <% } else {%>
