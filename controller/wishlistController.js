@@ -26,40 +26,72 @@ const invoice = require('../utilty/invoiceCreater')
 module.exports = {
     wishlist: async (req, res) => {
         try {
-            const user = req.session.user
-            const userWishList = await wishList.findOne({ UserId: user.user }).populate('Products')
+            const user = new mongoose.Types.ObjectId(req.session.user.user)
+            const userWishList = await wishList.findOne({ UserId: user }).populate('Products')
+            console.log(userWishList,"kklklk")
             res.render('user/wishList', { userWishList })
         } catch (err) {
             console.log(err, "err in the wishlist catch")
         }
     },
     AddToWishlist: async (req, res) => {
-        try {
-            const user = req.session.user;
-            const productId = req.params.id;
-            const productIdToAdd = new mongoose.Types.ObjectId(productId)
-            // Find the user's wishlist
-            let userWishlist = await wishList.findOne({ UserId: user.user });
-
-            if (!userWishlist) {
-                // If the wishlist doesn't exist, create a new one
-                const newWishlist = await wishList.create({ UserId: user.user, Products: [] });
-                userWishlist = newWishlist;
+            try {
+              const userId = new mongoose.Types.ObjectId(req.session.user.user);
+              const productId = new mongoose.Types.ObjectId(req.params.id);
+              const userWishlist = await wishList.findOne({ UserId: userId });
+              if (userWishlist) {
+                const sameItem = userWishlist.Products.some((item) =>
+                  item.equals(productId)
+                );
+                if (sameItem) {
+                  console.log(`Item already exists in the wishlist.`);
+                  const response ={
+                    success:false,
+                    message : `Item already exists in the wishlist.`
+                  }
+                  res.json(response)
+                } else {
+                  const updatedWishlist = await wishList.findOneAndUpdate(
+                    { UserId: userId },
+                    { $push: { Products: productId } },
+                    { new: true }
+                  );
+                }
+              } else {
+                console.log(`user wishlist not found`);
+                const wishlist = new wishList({
+                  UserId: userId,
+                  Products: [productId],
+                });
+                wishlist.save();
+              }
+              const response = {
+                success: true,
+                productId,
+              };
+              res.json(response);
+            } catch (error) {
+              console.log(error, "error happened");
             }
-
-            // Add the product to the 
-            console.log(productIdToAdd,"nokkkinokkam")
-            await  userWishlist.Products.push({ ProductId: productIdToAdd });
-            await userWishlist.save();
-
-            // Populate the Products field to get product details
-            const populatedWishlist = await wishList.findById(userWishlist._id).populate('Products');
-            console.log(populatedWishlist,"popoulated")
-
-            res.render('user/wishList', { userWishList: populatedWishlist });
-        } catch (err) {
-            console.error(err, "Error in the wishlist catch");
-            res.status(500).send('Internal Server Error');
-        }
-    }
+          },
+          RemoveFromWishList : async (req,res)=>{
+            try {
+                const productId = new mongoose.Types.ObjectId(req.params.id) ;
+                const userId = new mongoose.Types.ObjectId(req.session.user.user) ;
+                const removedItem = await wishList.findOneAndUpdate(
+                    {
+                        UserId: userId,
+                    },
+                  {
+                    $pull: {
+                        Products: productId,
+                    },
+                }
+                );
+                console.log("hiii")
+                res.redirect("/wishlist");
+              } catch (error) {
+                console.log(error, "error happened");
+              }
+          }
 }

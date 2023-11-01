@@ -45,7 +45,8 @@ router.get('/shop',userController.shop)
 
 //wishlist
 router.get('/wishlist',auth.userTokenAuth,wishlistController.wishlist)
-router.get('/wishlist/:id',auth.userTokenAuth,wishlistController.AddToWishlist)
+router.post('/wishlist/:id',auth.userTokenAuth,wishlistController.AddToWishlist)
+router.get('/removeFromWishlist/:id',auth.userTokenAuth,wishlistController.RemoveFromWishList)
 
 //forget Password
 router.get('/forgetPass',userController.forgetPass)

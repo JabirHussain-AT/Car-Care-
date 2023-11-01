@@ -1,90 +1,141 @@
 <%- include('../layout/user/layout') %>
-<link rel="stylesheet" href="/stylesheet/user-shop.css">
-<%- include('../partials/user-header') %>
+    <link rel="stylesheet" href="/stylesheet/user-shop.css">
+    <%- include('../partials/user-header') %>
 
-<div class="container-fluid banner">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1>Shop</h1>
-        </div>
-    </div>
-</div>
-
-<!-- Search and Filter -->
-<div class="container-fluid search-section col-12 search-div" style=" background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
-    <div class="row justify-content-between align-items-center main" style="height: 100%;">
-        <div class="col-md-4 mt-1">
-            <!-- Small Search Bar -->
-            <div class="col-md-8 mt-1">
-              <form action="/shop" method="get">
-                  <div class="input-group">
-                      <input type="text" class="form-control"  placeholder="Search" aria-label="Search" aria-describedby="searchButton" name="search">
-                      <button class="btn btn-primary" type="submit" id="searchButton">Go</button>
-                  </div>
-              </form>
-          </div>
-        </div>
-        <div class="col-md-2 mt-3 mb-1">
-            <!-- Small Filter Dropdown for Categories -->
-            <% if (category && category.length > 0) { %>
-                <div class="form-group">
-                    <select class="form-control" id="categoryFilter">
-                        <option value="">Filter</option>
-                        <% category.forEach((categories) => { %>
-                            <option value="<%= categories._id %>"><%= categories.Name %></option>
-                        <% }) %>
-                        <option value="all">All Products</option>
-                    </select>
-                </div>
-            <% } %>
-        </div>
-    </div>
-</div>
-
-<!-- Cards -->
-<div class="container">
-    <div class="row mt-3">
-      <% if(products.length >0) { %>
-        <% products.forEach(function(product) { %>
-            <div class="col-md-3 mb-4">
-                <div class="card" style="border: none;">
-                    <a href="/product/<%= product._id %>">
-                    <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;" class="card-img-top" alt="">
-                    </a>
-                    <div class="card-body">
-                        <h5 class="card-title"><%= product.ProductName %></h5>
-                        <p class="card-text">Price: $<%= product.Price %></p>
-                        <!-- Add any additional product information here -->
-                        <div class="d-flex justify-content-between">
-                            <a href="/wishlist/<%= product._id %>" class="btn btn-sm btn btn-warning">Add to Wishlist</a>
-                            <% if (product.AvailableQuantity > 0){ %>
-                                <a href="/product/<%= product._id %>"><button class="btn-primary">View Details</button></a>
-                                <% } else {%>
-                                        <button  disabled class="btn btn-danger"><p style="font-size: smaller;">Out Of Stock</p></button>
-                                    <% } %>
-                        </div>
-                    </div>
+        <div class="container-fluid banner">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1>Shop</h1>
                 </div>
             </div>
-        <% }) }else { %>
-          <div class="col-12 text-center mt-5">
-            <img src="/assets/png-transparent-empty-cart-illustration-thumbnail-removebg-preview.png" alt="Empty Cart Image" style="max-width: 300px;">
-            <p class="text-muted mt-3">Oops! It seems there are no items that match the selected criteria.</p>
         </div>
-          <% } %>
-    </div>
-</div>
 
-<!-- Include the necessary JavaScript to handle category selection -->
-<script>
-    document.getElementById('categoryFilter').addEventListener('change', function() {
-        const selectedCategoryId = this.value;
-        if (selectedCategoryId === 'all') {
-            window.location.href = '/shop';
-        } else if (selectedCategoryId) {
-            window.location.href = '/category/' + selectedCategoryId;
-        }
-    });
-</script>
+        <!-- Search and Filter -->
+        <div class="container-fluid search-section col-12 search-div"
+            style=" background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
+            <div class="row justify-content-between align-items-center main" style="height: 100%;">
+                <div class="col-md-4 mt-1">
+                    <!-- Small Search Bar -->
+                    <div class="col-md-8 mt-1">
+                        <form action="/shop" method="get">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search" aria-label="Search"
+                                    aria-describedby="searchButton" name="search">
+                                <button class="btn btn-primary" type="submit" id="searchButton">Go</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2 mt-3 mb-1">
+                    <!-- Small Filter Dropdown for Categories -->
+                    <% if (category && category.length> 0) { %>
+                        <div class="form-group">
+                            <select class="form-control" id="categoryFilter">
+                                <option value="">Filter</option>
+                                <% category.forEach((categories)=> { %>
+                                    <option value="<%= categories._id %>">
+                                        <%= categories.Name %>
+                                    </option>
+                                    <% }) %>
+                                        <option value="all">All Products</option>
+                            </select>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+        </div>
 
-<%- include('../partials/user-footer') %>
+        <!-- Cards -->
+        <div class="container">
+            <div class="row mt-3">
+                <% if(products.length>0) { %>
+                    <% products.forEach(function(product) { %>
+                        <div class="col-md-3 mb-4">
+                            <div class="card" style="border: none;">
+                                <a href="/product/<%= product._id %>">
+                                    <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;"
+                                        class="card-img-top" alt="">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= product.ProductName %>
+                                    </h5>
+                                    <p class="card-text">Price: $<%= product.Price %>
+                                    </p>
+                                    <!-- Add any additional product information here -->
+                                    <div class="d-flex justify-content-between">
+                                        <a href="#" onclick="addToWishlist('<%= product._id %>', event)"
+                                            class="btn btn-sm btn btn-warning">Add to Wishlist</a>
+
+                                        <% if (product.AvailableQuantity> 0){ %>
+                                            <a href="/product/<%= product._id %>"><button class="btn-primary">View
+                                                    Details</button></a>
+                                            <% } else {%>
+                                                <button disabled class="btn btn-danger">
+                                                    <p style="font-size: smaller;">Out Of Stock</p>
+                                                </button>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) }else { %>
+                            <div class="col-12 text-center mt-5">
+                                <img src="/assets/png-transparent-empty-cart-illustration-thumbnail-removebg-preview.png"
+                                    alt="Empty Cart Image" style="max-width: 300px;">
+                                <p class="text-muted mt-3">Oops! It seems there are no items that match the selected
+                                    criteria.</p>
+                            </div>
+                            <% } %>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Include the necessary JavaScript to handle category selection -->
+        <script>
+            document.getElementById('categoryFilter').addEventListener('change', function () {
+                const selectedCategoryId = this.value;
+                if (selectedCategoryId === 'all') {
+                    window.location.href = '/shop';
+                } else if (selectedCategoryId) {
+                    window.location.href = '/category/' + selectedCategoryId;
+                }
+            });
+
+        </script>
+        <script>
+            function addToWishlist(productId, event) {
+                event.preventDefault(); // Prevent the default navigation behavior
+
+                fetch('/wishlist/' + productId, {
+                    method: 'POST', // Change the HTTP method to POST
+                    headers: {
+                        'Content-Type': 'application/json', // Set content type to JSON
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message) {
+                            console.log('message')
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: `${data.message}`,
+                                // footer: '<a href="">Why do I have this issue?</a>'
+                            })
+                        } else {
+
+                            console.log('Success:', data);
+                            Swal.fire('Successfully Added to Wishlist')
+                            // window.location.href = '/wishlist'
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        </script>

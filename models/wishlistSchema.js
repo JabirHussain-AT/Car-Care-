@@ -4,9 +4,7 @@ const { Schema, ObjectId } = mongoose;
 
 const wishListSchema = new Schema({
   UserId: { type: Schema.Types.ObjectId, required: true},
-  Products: [{
-    ProductId: { type: Schema.Types.ObjectId, required: true , ref:"Product" },
- }],
+  Products: {type:Array,ref:"Product"}
 })
 const wishlist = mongoose.model('wishlist', wishListSchema);
 

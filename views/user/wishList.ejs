@@ -1,94 +1,68 @@
 <%- include('../layout/user/layout') %>
-    <link rel="stylesheet" href="/stylesheet/user-cart.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <%- include('../partials/user-header') %>
+<link rel="stylesheet" href="/stylesheet/user-cart.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<%- include('../partials/user-header') %>
 
-
-        <% if(userWishList && userWishList.Products && userWishList.Products.length>0) { %>
-            <div class="container-fluid banner">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <h1>My Wishlist</h1>
-                    </div>
-                </div>
-            </div>
-            <!-- cart + summary -->
-            <section class="bg-total my-5">
-                <div class="container-fluid">
-                    <div class="row">
-                        <!-- cart -->
-                        <div class="col-md-6">
-                            <div class="card border shadow-0">
-                                <div class="m-4">
-                                    <div class="head d-flex justify-content-between">
-                                        <h6>My Wishlist (1)</h6>
-                                    </div>
-                                    <% userWishList.Products.forEach((product)=>{ %>
-                                        <div class="row gy-3 mb-4">
-                                            <div class="col-lg-8">
-                                                <div class="me-lg-5">
-                                                    <div class="d-flex">
-                                                        <img src="/uploads/<%= product.ProductId.images[0] %>"
-                                                            class="border rounded me-3"
-                                                            style="width: 96px; height: 96px" />
-                                                        <div class="">
-                                                            <a href="#" class="nav-link">
-                                                                <%= product.ProductId.ProductName %>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
-                                                <div class="float-md-end d-flex justify-content-center align-items-center">
-                                                    <!-- <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
-                              class="fas fa-heart fa-lg px-1 text-secondary"></i></a> -->
-                                                    <!-- <a href="/deleteItem/<%= product.ProductId._id %>"
-                                                        class="btn btn-light border text-danger mb-3 icon-hover-danger">
-                                                           Remove   </a> -->
-                                                           <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
-                                                            class="fa fa-trash fa-lg px-1 text-secondary g-2"></i></a>
-                                                    <a href="/deleteItem/<%= product.ProductId._id %>"
-                                                        class="btn btn-warning ml-2 border text-dark icon-hover-danger">
-                                                        Add to Cart</a>
-
-                                                    <div id="outOfStock_<%= product.ProductId._id %>"
-                                                        class="text-danger" style="display: none;">Out of Stock</div>
-
-
-                                                    <% if(cartProducts.ProductId.AvailableQuantity < 1){ %>
-                                                        <div class="text-danger">Out of Stock</div>
-                                                        <% } %>
-
-                                                            <div id="stockMessage_<%= cartProducts.ProductId._id %>"
-                                                                class="text-danger" style="display: none;">
-                                                                Only <%= cartProducts.ProductId.AvailableQuantity %>
-                                                                    items in stock
-                                                            </div>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                        <% }); %>
-
-                                </div>
-                            </div>
+<% if (userWishList && userWishList.Products && userWishList.Products.length > 0) { %>
+  <div class="container-fluid banner">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1>My Wishlist</h1>
+      </div>
+    </div>
+  </div>
+  <!-- cart + summary -->
+  <section class="bg-total my-5">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- cart -->
+        <div class="col-md-12">
+          <div class="card border shadow-0">
+            <div class="m-4">
+              <div class="head d-flex justify-content-between">
+                <h6>My Wishlist (<%= userWishList.Products.length %>)</h6>
+              </div>
+              <% userWishList.Products.forEach((product) => { %>
+                <div class="row gy-3 mb-4">
+                  <div class="col-lg-8">
+                    <div class="me-lg-5">
+                      <div class="d-flex">
+                        <% if (product.images && product.images.length > 0) { %>
+                          <img src="/uploads/<%= product.images[0] %>" class="border rounded me-3" style="width: 96px; height: 96px" />
+                        <% } %>
+                        <div class="">
+                          <a href="#" class="nav-link">
+                            <%= product.ProductName %>
+                          </a>
                         </div>
-
-
-                        <% } else { %>
-                            <div class="container mt-4">
-                                <div class="row justify-content-center">
-                                    <div class="col-md-6 text-center">
-                                        <img src="/assets/Empty Cart.png" alt="Cart Empty Image" class="img-fluid">
-                                        <h3>Wishlist is empty</h3>
-                                        <a href="/shop" class="btn btn-primary">Back to Shop</a>
-                                    </div>
-                                </div>
-                                <% } %>
-                            </div>
+                      </div>
                     </div>
+                  </div>
+                  <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                    <div class="float-md-end d-flex justify-content-center align-items-center">
+                      <a href="/removeFromWishlist/<%= product._id %>" class="btn btn-light border mt-3 px-2 icon-hover-primary"><i class="fa fa-trash fa-lg px-1 mt-3 text-secondary g-2"></i></a>
+                      <a href="/addToCart/<%= product._id %>" class="btn btn-warning ml-2 mt-3 border text-dark icon-hover-danger">Add to Cart</a>
+                      <div id="outOfStock_<%= product._id %>" class="text-danger" style="display: none;">Out of Stock</div>
+                    </div>
+                  </div>
                 </div>
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+              <% }); %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<% } else { %>
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-6 text-center">
+        <img src="/assets/Empty Cart.png" alt="Cart Empty Image" class="img-fluid">
+        <h3>Wishlist is empty</h3>
+        <a href="/shop" class="btn btn-primary">Back to Shop</a>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
