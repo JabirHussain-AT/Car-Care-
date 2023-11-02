@@ -258,6 +258,7 @@
       console.log('Razorpay Order Data:', orderData);
 
       // Use orderData to configure the Razorpay options and initiate payment
+      console.log(orderData.paymentDetials.response.order.id,"order id ")
       var options = {
         "key": "rzp_test_sVxmHMGOnZJCCm",
         "amount": orderData.paymentDetials.response.amount,
@@ -302,37 +303,39 @@
   });
 
   // Prevent form submission and handle it with AJAX
-  const payNowForm = document.getElementById('payNow');
-  payNowForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  // const payNowForm = document.getElementById('payNow');
+  // payNowForm.addEventListener('submit', async (event) => {
+  //   event.preventDefault();
 
-    const formData = new FormData(payNowForm);
-    const formObject = {};
-    formData.forEach((value, key) => {
-      formObject[key] = value;
-    });
+  //   const formData = new FormData(payNowForm);
+  //   const formObject = {};
+  //   formData.forEach((value, key) => {
+  //     formObject[key] = value;
+  //   });
 
-    try {
-      const ajaxResponse = await fetch('/checkOut', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formObject),
-      });
+  //   try {
+  //     const ajaxResponse = await fetch('/checkOut', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(formObject),
+  //     });
 
-      if (!ajaxResponse.ok) {
-        throw new Error('Failed to submit form data');
-      }
+  //     if (!ajaxResponse.ok) {
+  //       throw new Error('Failed to submit form data');
+  //     }
 
-      const responseData = await ajaxResponse.json();
-      console.log('Form Submission Response:', responseData);
+  //     const responseData = await ajaxResponse.json();
+  //     console.log('Form Submission Response:', responseData);
 
-      // Handle the response as needed
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  });
+  //     // Handle the response as needed
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  // });
+
+
   function verifyPayment(payment, order) {
     console.log('now in verifyPayment')
     $.ajax({

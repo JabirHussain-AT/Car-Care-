@@ -144,13 +144,33 @@ module.exports = {
         }
     },
     salesReport: async (req, res) => {
+        const startDate = req.query.startDate;
+        const endDate = req.query.endDate;
+        console.log(startDate,endDate,"jfsdjfjfsdjhhhsghghgg")
+
+
+
+      
+
+
+
+
+
         const generateSalesData = async () => {
             try {
                 // Fetch orders data from the database
                 const orders = await Orders.find({
-                    DeliveredDate: { $exists: false }, // Filter out delivered orders
-                    PaymentStatus: 'Paid', // Filter by payment status
-                }).populate('Products.ProductId', 'ProductName Price');
+                    DeliveredDate: { $exists: true },
+                    PaymentStatus: 'Paid',
+                    OrderedDate: {
+                        $gte: moment.utc(startDate).format("llll"),
+                        $lte: moment.utc(endDate).format("llll"),
+                    },
+                }).populate('Products.ProductId');
+                    
+             // Filter by payment status
+              
+                console.log(orders,"order is coming or not")
 
                 // Map orders data to the required format for Excel
                 return orders.map(order => {
@@ -158,8 +178,8 @@ module.exports = {
                         product: product.ProductId.ProductName,
                         quantity: product.Quantity,
                         userId: order.UserId,
-                        price: product.ProductId.Price,
-                        total: product.Quantity * product.ProductId.Price,
+                        price: product.ProductId.DiscountAmount,
+                        total: product.Quantity * product.ProductId.DiscountAmount,
                     }));
 
                     // Calculate total amount for the order
@@ -372,22 +392,27 @@ module.exports = {
         console.log(req.body)
         console.log(req.files)
         try {
-            const productType = req.body.productType
+           
 
-            const variations = []
-            console.log(req.body);
-            if (productType === 'Tyre') {
+            // const variations = []
+            // console.log(req.body);
+            // if (productType === 'Tyre') {
 
-                const tyreSize = req.body.Tyre;
+            //     const tyreSize = req.body.Tyre;
 
-                variations.push({ value: tyreSize })
-            } else if (productType === 'Oil') {
-                console.log("inside oil");
-                const oilSize = req.body.Oil;
-                variations.push({ value: oilSize })
+            //     variations.push({ value: tyreSize })
+            // } else if (productType === 'Oil') {
+            //     console.log("inside oil");
+            //     const oilSize = req.body.Oil;
+            //     variations.push({ value: oilSize })
+            // }
+            // console.log(variations);
+            if(req.body.Variation1 === '')
+            {
+                 req.body.Variation = req.body.Variation2
+            }else{
+                req.body.Variation = req.body.Variation1
             }
-            console.log(variations);
-            req.body.Variation = variations[0].value
             req.body.images = req.files.map(val => val.filename)
             req.body.Display = "Active"
             req.body.Status = "in Stock"
@@ -415,7 +440,7 @@ module.exports = {
         const { existingImage1, existingImage2, existingImage3 } = req.body
         try {
             const id = req.params.id
-            const productType = req.body.productType
+           
             let images = [];
             const existingProduct = await Product.findById(id);
             if (existingProduct) {
@@ -429,20 +454,16 @@ module.exports = {
                 }
             }
 
-            const variations = []
-            console.log(req.body);
-            if (productType === 'Tyre') {
+           
 
-                const tyreSize = req.body.Tyre;
 
-                variations.push({ value: tyreSize })
-            } else if (productType === 'Oil') {
-                console.log("inside oil");
-                const oilSize = req.body.Oil;
-                variations.push({ value: oilSize })
+
+            if(req.body.Category ==='Lubricants')
+            {
+                 req.body.Variation = req.body.Variation2
+            }else{
+                req.body.Variation = req.body.Variation1
             }
-            console.log(variations);
-            req.body.Variation = variations[0].value
 
             // req.body.images = req.files.map(val => val.filename)
             req.body.images = images
@@ -798,14 +819,14 @@ module.exports = {
             // Fetch orders data from the database for the specified date range
             console.log(moment.utc(startDate, 'llll').toISOString())
             // Convert JavaScript Date objects to the format used in MongoDB (Moment.js format)
-           
+    
             // Specify the start and end dates in JavaScript Date objects
             const orders = await Orders.find({
                 DeliveredDate: { $exists: true },
                 PaymentStatus: 'Paid',
                 OrderedDate: {
-                    $gte: moment.utc(startDate).format("llll"),
-                    $lte: moment.utc(endDate).format("llll"),
+                    $gte: moment.utc(startDate).startOf('day').format("llll"),
+                    $lte: moment.utc(endDate).endOf('day').format("llll"),
                 },
             }).populate('Products.ProductId');
             

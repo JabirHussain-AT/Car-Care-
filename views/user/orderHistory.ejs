@@ -85,7 +85,10 @@
               <% if(order.Status==="Delivered" ) { %>
                 <p>Delivered Date: <%= order.DeliveredDate %>
                 </p>
-                <p>Return Policy End At : <%= order.LastReturnDate %>
+               
+                <% if (new Date() <= moment(order.LastReturnDate, 'llll').toDate()) { %>
+                  <p>Return Policy End At : <%= order.LastReturnDate %>
+                  <% } %>
                 </p>
                 <% } else {%>
                   <p>Expected Delivery Date: <%= order.ExpectedDeliveryDate %>
@@ -175,9 +178,12 @@
                                           <a href="/cancelOrder/<%= order._id %>"><button class="btn btn-danger">Cancel
                                               Order</button></a>
                                           <% } else if(order.Status==='Delivered' ) { %>
+                                               
+                                          <% if (new Date() <= moment(order.LastReturnDate, 'llll').toDate()) { %>
                                             <a href="/returnOrder/<%= order._id %> " data-bs-toggle="modal"
                                               data-bs-target="#returnModal<%= order._id %>"><button
                                                 class="btn btn-danger">Request Return</button></a>
+                                                <% } %>
                                             <!-- Modal for order return -->
                                             <div class="modal fade" id="returnModal<%= order._id %>" tabindex="-1"
                                               role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
@@ -241,7 +247,7 @@
             <p class="container">No order history available.</p>
             <% } %>
 
-
+            
               <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
               <script>
                 async function downloadInvoice(orderId) {

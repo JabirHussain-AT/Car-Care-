@@ -1,89 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../layout/admin/layout') %>
+<%- include('../partials/admin-header-checking') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Include Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-</head>
-<style>
-    /* Custom CSS for highlighting the "Users" menu item */
-    .active {
-        background-color: lightgreen;
-    }
-    
-   
-    .active-status {
-        color: green;
-    }
-
-    .inactive-status {
-        color: red;
-    }
-</style>
-
-</style>
-
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <!-- Profile Section -->
-                <div class="text-center mt-3">
-                    <img src="/assets/img444.PNG" alt="Profile Picture" class="rounded-circle" width="80">
-                    <h4 class="mt-2">John Doe</h4>
-                    <p>Position</p>
-                </div>
-                <!-- Navigation Links -->
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/productView"><i class="fas fa-box"></i> Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/viewCategory"><i class="fas fa-list"></i> Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Orders</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#"><i class="fas fa-users"></i> Users</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-money-bill-wave"></i> Payments</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-star"></i> Reviews</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/banner"><i class="fas fa-images"></i> Banners</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/Coupons"><i class="fas fa-tags"></i> Coupons</a>
-                    </li>
-                </ul>
-                <!-- Logout Button -->
-                <div class="mt-auto">
-                    <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-            </nav>
-
+          
             <!-- Main Content -->
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                 <!-- <div class="container mt-5"><form class="form-inline my-2 my-lg-0 search-bar" action="/adminhome" method="get">
                     <input class="form-control mr-sm-2" type="search" name="searchN" placeholder="Search" aria-label="Search">
                     <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
                 </form></div> -->
                 <!-- Table -->
-                <div class="table-responsive mt-4">
+                <div class="table-responsive mt-4 ml-3 me-3">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -150,8 +75,6 @@
                             <p>No results found.</p>
                           <% } %>
                 </div>
-                
-            </main>
         </div>
        
         </div>

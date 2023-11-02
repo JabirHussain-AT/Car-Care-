@@ -54,46 +54,51 @@
                     <img src="/images/colors2.webp" alt="Color 2" class="img-thumbnail">
                     <img src="/images/colors3.webp" alt="Color 3" class="img-thumbnail"> -->
                                 <div class="form-check" style="width: 300px;">
-                                    <input class="form-check-input" type="radio" checked ="size" id="sizeSmall"
+                                    <input class="form-check-input" type="radio" checked="size" id="sizeSmall"
                                         value="small">
-                                    <label class="form-check-label" for="sizeSmall" style="font-weight: 500; width: 200px;" >
+                                    <label class="form-check-label" for="sizeSmall"
+                                        style="font-weight: 500; width: 200px;">
                                         <%= product.Variation %>
                                     </label>
-                                </div>                
-                            </div>
-                            <% if(product.variants.length >0) {%>
-                            <h5 class="mt-3" style="font-size: medium;">More Availvale Sizes : </h5>
-                            <% product.variants.forEach(variantProduct => { %>
-                               <a href="/product/<%= variantProduct._id %>" class="btn btn-sm btn-light btn-rounded" ><%= variantProduct.Variation %></a>
-                            <% }); %>
-                            <% } %>
-                            <!-- Product Actions -->
-                            <div class="product-actions">
-                                <div class="counter">
-                                    <div class="container mt-5">
-                                        <div class="row">
-
-                                            <a href="/addToCart/<%= product._id %>"><button
-                                                    class="btn btn-dark ">Add to Cart</button></a>
-                                            <button class="btn btn-warning ml-3">Add to Wishlist</button>
-                                        </div>
-                                    </div>
                                 </div>
+                            </div>
+                            <% if(product.variants.length>0) {%>
+                                <h5 class="mt-3" style="font-size: medium;">More Availvale Sizes : </h5>
+                                <% product.variants.forEach(variantProduct=> { %>
+                                    <a href="/product/<%= variantProduct._id %>"
+                                        class="btn btn-sm btn-light btn-rounded">
+                                        <%= variantProduct.Variation %>
+                                    </a>
+                                    <% }); %>
+                                        <% } %>
+                                            <!-- Product Actions -->
+                                            <div class="product-actions">
+                                                <div class="counter">
+                                                    <div class="container mt-5">
+                                                        <div class="row">
 
-                                <div class="container mt-5" style="border-top: 1px solid white;">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="justify-content-center align-items-center">
-                                                <span class="">Tags:</span>
-                                                Disk
-                                                <br>
-                                                <span class=" ">Category:</span>
-                                                Brake
+                                                            <a href="/addToCart/<%= product._id %>"><button
+                                                                    class="btn btn-dark ">Add to Cart</button></a>
+                                                            <button class="btn btn-warning ml-3">Add to
+                                                                Wishlist</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="container mt-5" style="border-top: 1px solid white;">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="justify-content-center align-items-center">
+                                                                <span class="">Tags:</span>
+                                                                Disk
+                                                                <br>
+                                                                <span class=" ">Category:</span>
+                                                                Brake
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
 
@@ -129,46 +134,60 @@
                                         <div class="row">
                                             <!-- Leave a Review Card (Full Width) -->
                                             <% if (isUserHaveRight) {%>
-                                            <div class="col-md-12 mb-4">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h2 class="card-title text-center">Leave a Review</h2>
-                                                        <form id="reviewForm" action="/submit-review" method="POST">
-                                                            <div class="form-group">
-                                                                <label for="review">Your Review:</label>
-                                                                <textarea class="form-control" id="review" name="review"
-                                                                    placeholder="Write your review here..."></textarea>
+                                                <div class="col-md-12 mb-4">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h2 class="card-title text-center">Leave a Review</h2>
+                                                            <form id="reviewForm" action="/submit-review" method="POST">
+                                                                <div class="form-group">
+                                                                    <label for="review">Your Review:</label>
+                                                                    <textarea class="form-control" id="review"
+                                                                        name="review"
+                                                                        placeholder="Write your review here..."></textarea>
+                                                                </div>
+                                                                <input type="hidden" value="<%= product._id %>"
+                                                                    name="ProductId">
+                                                                <button type="submit"
+                                                                    class="btn btn-success btn-block">Submit
+                                                                    Review</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                                    <% if (Reviews.length> 1
+                                                        ) {%>
+                                                        <% Reviews.forEach((review)=>{ %>
+                                                            <!-- Review Cards (Two Columns) -->
+                                                            <div class="col-md-6 mb-4">
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <div class="d-flex justify-content-between">
+                                                                            <h3 class="card-title"
+                                                                                    >
+                                                                                <%= review.UserId.Name%>
+                                                                            </h3>
+                                                                            <p class="text-muted">
+                                                                                <%= review.Date %>
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="card-text">
+                                                                            <p>
+                                                                                <%= review.Comment %>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <input type="hidden" value="<%= product._id %>" name="ProductId">
-                                                            <button type="submit"
-                                                                class="btn btn-success btn-block">Submit
-                                                                Review</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <% } %>
-                                    <% if (Reviews) {%>
-                                        <% Reviews.forEach((review)=>{ %>
-                                            <!-- Review Cards (Two Columns) -->
-                                            <div class="col-md-6 mb-4">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <div class="d-flex justify-content-between">
-                                                            <h3 class="card-title" style="font-size: medium;"><%= review.UserId.Name%></h3>
-                                                            <p class="text-muted">Date: <%= review.Date %></p>
-                                                        </div>
-                                                        <div class="card-text">
-                                                            <p><%= review.Comment %></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <% }) %>
-                                        <% } %>
-
-                                            <!-- Add more review cards as needed -->
-
+                                                            <% }) %>
+                                                                <% } else if(Reviews.length <1) {%>
+                                                                    <div
+                                                                        class="row justify-content-center align-items-center">
+                                                                        <div class="col-12 text-center">
+                                                                            <h4>No reviews till yet</h4>
+                                                                        </div>
+                                                                    </div>
+                                                                    <% } %>
                                         </div>
                                     </div>
 

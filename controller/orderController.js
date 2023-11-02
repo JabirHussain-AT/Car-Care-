@@ -75,10 +75,10 @@ module.exports = {
     const user = req.session.user.user;
     const userId = new mongoose.Types.ObjectId(user);
     // const returnRequests = Orders.find({Status :'Return Requested'})
-    const order = await Orders.find({ UserId: userId, Status: { $ne: "Order Attempted" } });
+    const order = await Orders.find({ UserId: userId, Status: { $ne: "Order Attempted" } }).sort({_id:-1});
     console.log(order);
     const momentFormattedDate = moment("");
-    res.render("user/orderHistory", { orderHistory: order });
+    res.render("user/orderHistory", { orderHistory: order ,moment:moment});
   },
   orderDetialedView: async (req, res) => {
     try {

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema, ObjectId } = mongoose;
 
 const CouponSchema = new Schema({
-  CouponName : {type:String,required : true},
+  CouponName : {type:String,required : true,unique:true},
   CouponCreatedDate :{ type: String},
   CouponExpiryDate: { type: String},
   CouponCode: { type: String, required: true, unique: true },

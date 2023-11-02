@@ -23,14 +23,21 @@ module.exports = {
         try{
 
             console.log(req.body)
-            req.body.CouponCreatedDate = moment(new Date()).format('llll')
-            req.body.CouponExpiryDate = moment(req.body.CouponExpiryDate).format('llll')
-            const createCoupon = await Coupon.create(req.body)
-            res.redirect('/admin/Coupons')
+            const exist = await Coupon.findOne({CouponName :req.body.CouponName })
+            if(exist !== null){
+                req.flash('uniqueErr',"its already exists.Coupon Name Must be unique")
+                res.redirect('/admin/addCoupon');
+            }else{
+
+                req.body.CouponCreatedDate = moment(new Date()).format('llll')
+                req.body.CouponExpiryDate = moment(req.body.CouponExpiryDate).format('llll')
+                const createCoupon = await Coupon.create(req.body)
+                res.redirect('/admin/Coupons')
+            }
         }catch(err){
             if (err.code === 11000) {
                 console.error('Coupon code must be unique.');
-                req.flash('uniqueErr',"its already exists.Coupon Name and Code Code Must be unique")
+                req.flash('uniqueErr',"its already exists Code Code Must be unique")
                 res.redirect('/admin/addCoupon');
               } else {
                 // Handle other errors
