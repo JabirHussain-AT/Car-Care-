@@ -314,7 +314,7 @@ module.exports = {
           });
           await couponAdd.save();
 
-          res.render("user/home", { user: true });
+         res.redirect('/home')
         } else {
           console.log("anirudh");
         }

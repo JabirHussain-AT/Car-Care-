@@ -22,10 +22,11 @@
                             <div class="col-md-6 ml-5 pl-4">
                                 <form class="form" action="/login" method="post">
                                     <div class="form-group ">
-                                        <label for="email pl-5">User name orEmail</label>
+                                        <label for="email pl-5">User name or Email</label>
                                         <div class="input-group">
-                                            <input type="email" name="email" class="form-control pr-5" id="email"
-                                                placeholder="Enter your email or username">
+                                            <input type="email" name="email"  class="form-control pr-5" id="email"
+                                            placeholder="Enter your email or username">
+                                            <span id="email-validation-msg" style="color: red;"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -114,4 +115,22 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const emailInput = document.getElementById('email');
+      const emailValidationMsg = document.getElementById('email-validation-msg');
+  
+      emailInput.addEventListener('input', function () {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isEmailValid = emailRegex.test(emailInput.value);
+  
+        if (isEmailValid) {
+          emailValidationMsg.textContent = ''; // Clear the validation message
+        } else {
+          emailValidationMsg.textContent = 'Invalid email format';
+        }
+      });
+
+    });
+  </script>
 <%- include('../partials/user-footer') %> 

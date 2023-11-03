@@ -123,6 +123,7 @@ module.exports = {
       { new: true }
     );
     console.log(order, "from return order in order controller ");
+    res.redirect('/orderHistory')
   },
   cancelOrder: async (req, res) => {
     const orderId = req.params.id; // Assuming orderId is passed in the request parameters
@@ -198,6 +199,7 @@ module.exports = {
         Status: "Delivered (Return Rejected)",
       });
       // await order.updateOne({_id:req.params.orderId},{Status:"Delivered(Return Rejected"})
+      res.redirect('/admin/manage-return-requests')
     } catch (error) {
       console.log("error in the rejecet return catch block");
       throw error;
@@ -209,6 +211,7 @@ module.exports = {
         Status: "Return Accepted",
       });
       console.log(req.params.orderId, "from accept return in order Controller");
+      res.redirect('/admin/manage-return-requests')
     } catch (error) {
       console.log("error in the accept return ", error);
     }
@@ -268,7 +271,8 @@ module.exports = {
         }
       }
       console.log("iam here", req.session)
-      const userId = req.session.user.user
+      // const userId = req.session.user.user
+      const userId =  orderUpdate.UserId
       const wallet = await Wallet.findOne({ UserId: userId })
       //   console.log(refund,"refund")
       if (wallet === null) {

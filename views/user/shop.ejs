@@ -60,21 +60,17 @@
                                     <h5 class="card-title">
                                         <%= product.ProductName %>
                                     </h5>
-                                    <p class="card-text">Price: $<%= product.Price %>
+                                    <p class="card-text">Price: <span style="color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-weight: 600;">
+                                         ₹ <%= product.DiscountAmount %>  /- </span>
+                                         <span style="color: rgba(0, 0, 0, 0.423); font-family: Arial, Helvetica, sans-serif; margin-left: 10px;">
+                                                <del>  ₹ <%= product.Price %>  /-</del> </span>
                                     </p>
                                     <!-- Add any additional product information here -->
                                     <div class="d-flex justify-content-between">
                                         <a href="#" onclick="addToWishlist('<%= product._id %>', event)"
                                             class="btn btn-sm btn btn-warning">Add to Wishlist</a>
-
-                                        <% if (product.AvailableQuantity> 0){ %>
                                             <a href="/product/<%= product._id %>"><button class="btn-primary">View
-                                                    Details</button></a>
-                                            <% } else {%>
-                                                <button disabled class="btn btn-danger">
-                                                    <p style="font-size: smaller;">Out Of Stock</p>
-                                                </button>
-                                                <% } %>
+                                                Details</button></a>
                                     </div>
                                 </div>
                             </div>

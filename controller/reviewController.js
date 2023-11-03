@@ -32,7 +32,8 @@ module.exports = {
             Comment : req.body.review,
             Date : moment(new Date()).format('ll')
         })
+       
         console.log("review Successfully saved",savedReview)
-        // res.json({success:true})
+        res.json({success:true})
     }
 }

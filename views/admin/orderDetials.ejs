@@ -46,10 +46,10 @@
       </tr>
     </thead>
     <tbody>
-      <% for(let i=order.length-1; i>=0; i--) { %>
+      <% for(let i=0; i < order.length; i++) { %>
       <tr>
         <td>
-          <%= order.length - i %>
+          <%= i+1 %>
         </td>
         <td>
           <%= order[i]._id %>

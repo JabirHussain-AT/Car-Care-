@@ -41,7 +41,9 @@
                             <h2>
                                 <%= product.ProductName %>
                             </h2>
-                            <h5 style="color: rgb(223, 15, 15); font-size: large;">Rs <%= product.Price %> /-</h5>
+                            <h5
+                                style="color: rgb(255, 0, 0); font-size: large; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+                                Rs <%= product.DiscountAmount %> /-</h5>
                             <!-- <p>Price:<span class="text-decoration-line-through">6000/-</span> 4995/-</p> -->
                             <p>
                                 <%= product.Description %>
@@ -76,11 +78,18 @@
                                                 <div class="counter">
                                                     <div class="container mt-5">
                                                         <div class="row">
-
-                                                            <a href="/addToCart/<%= product._id %>"><button
-                                                                    class="btn btn-dark ">Add to Cart</button></a>
-                                                            <button class="btn btn-warning ml-3">Add to
-                                                                Wishlist</button>
+                                                            <% if (product.AvailableQuantity> 1){ %>
+                                                                <a href="/addToCart/<%= product._id %>"><button
+                                                                        class="btn btn-dark ">Add to Cart</button></a>
+                                                                <% } else { %>
+                                                                    <button class="btn btn-danger ml-3" disabled>Out Of
+                                                                        Stock
+                                                                    </button>
+                                                                    <% } %>
+                                                                        <button
+                                                                            onclick="addToWishlist('<%= product._id %>', event)"
+                                                                            class="btn btn-warning ml-3">Add to
+                                                                            Wishlist</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -155,7 +164,7 @@
                                                     </div>
                                                 </div>
                                                 <% } %>
-                                                    <% if (Reviews.length> 1
+                                                    <% if (Reviews.length> 0
                                                         ) {%>
                                                         <% Reviews.forEach((review)=>{ %>
                                                             <!-- Review Cards (Two Columns) -->
@@ -163,8 +172,7 @@
                                                                 <div class="card">
                                                                     <div class="card-body">
                                                                         <div class="d-flex justify-content-between">
-                                                                            <h3 class="card-title"
-                                                                                    >
+                                                                            <h3 class="card-title">
                                                                                 <%= review.UserId.Name%>
                                                                             </h3>
                                                                             <p class="text-muted">
@@ -199,6 +207,7 @@
                         <% } %>
                     </div>
                     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
                         $(document).ready(function () {
                             $("h6").click(function () {
@@ -243,7 +252,31 @@
                                     .then(data => {
                                         // Handle success response
                                         console.log("Review submitted successfully", data);
-                                        // You can update the UI or show a success message
+                                        let timerInterval
+                                        Swal.fire({
+                                            title: 'Thank You ',
+                                            html: 'Successfully Submitted Your Review',
+                                            timer: 2700,
+                                            timerProgressBar: true,
+                                            didOpen: () => {
+                                                Swal.showLoading()
+                                                const b = Swal.getHtmlContainer().querySelector('b')
+                                                timerInterval = setInterval(() => {
+                                                    b.textContent = Swal.getTimerLeft()
+                                                }, 100)
+                                            },
+                                            willClose: () => {
+                                                clearInterval(timerInterval)
+                                                location.reload()
+                                            }
+                                        }).then((result) => {
+                                            /* Read more about handling dismissals below */
+                                            if (result.dismiss === Swal.DismissReason.timer) {
+                                              
+                                                // // You can update the UI or show a success message
+                                                console.log('I was closed by the timer')
+                                            }
+                                        })
                                     })
                                     .catch(error => {
                                         // Handle error
@@ -253,6 +286,43 @@
                             });
                         });
 
+                    </script>
+                    <script>
+                        function addToWishlist(productId, event) {
+                            event.preventDefault(); // Prevent the default navigation behavior
+
+                            fetch('/wishlist/' + productId, {
+                                method: 'POST', // Change the HTTP method to POST
+                                headers: {
+                                    'Content-Type': 'application/json', // Set content type to JSON
+                                },
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.message) {
+                                        console.log('message')
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: `${data.message}`,
+                                            // footer: '<a href="">Why do I have this issue?</a>'
+                                        })
+                                    } else {
+
+                                        console.log('Success:', data);
+                                        Swal.fire('Successfully Added to Wishlist')
+                                        // window.location.href = '/wishlist'
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        }
                     </script>
 
 

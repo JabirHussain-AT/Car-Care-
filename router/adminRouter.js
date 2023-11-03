@@ -99,6 +99,9 @@ router.get('/verify-return/:orderId',auth.adminTokenAuth, orderController.verify
 
 //review management 
 router.get('/review-manage',auth.adminTokenAuth,adminController.reviewManagement)
+router.get('/delete-review/:id',auth.adminTokenAuth,adminController.deleteReview)
+
+router.get('/logout',auth.adminTokenAuth,adminController.logout)
 
 
 

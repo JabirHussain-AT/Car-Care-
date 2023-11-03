@@ -7,6 +7,7 @@ const VariantConnector = require('../utilty/variantConnector')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
 const Product = require('../models/productSchema')
+const Reviews = require('../models/reviewSchema')
 const Category = require('../models/categorySchema')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -70,7 +71,7 @@ module.exports = {
                     res.cookie("adminJwt", accessToken, { maxAge: 60 * 1000 * 60 })
                     console.log("hey admin here")
                     req.session.admin = admin
-                    res.redirect('/admin/users')
+                    res.redirect('/admin/dashboard')
                 } else {
 
                     req.flash("notMatching", ' password not matching')
@@ -105,7 +106,7 @@ module.exports = {
                     },
                 },
                 {
-                    $limit: 10,
+                    $limit: 5,
                 },
                 {
                     $lookup: {
@@ -393,20 +394,6 @@ module.exports = {
         console.log(req.files)
         try {
            
-
-            // const variations = []
-            // console.log(req.body);
-            // if (productType === 'Tyre') {
-
-            //     const tyreSize = req.body.Tyre;
-
-            //     variations.push({ value: tyreSize })
-            // } else if (productType === 'Oil') {
-            //     console.log("inside oil");
-            //     const oilSize = req.body.Oil;
-            //     variations.push({ value: oilSize })
-            // }
-            // console.log(variations);
             if(req.body.Variation1 === '')
             {
                  req.body.Variation = req.body.Variation2
@@ -416,6 +403,8 @@ module.exports = {
             req.body.images = req.files.map(val => val.filename)
             req.body.Display = "Active"
             req.body.Status = "in Stock"
+            req.body. Price = Math.abs( req.body. Price)
+            req.body. DiscountAmount = Math.abs( req.body. DiscountAmount)
             const newDate = new Date()
             req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
             const uploaded = await Product.create(req.body)
@@ -591,7 +580,7 @@ module.exports = {
             // Query the database for products, skip and limit based on the pagination
             const order = await Orders.find()
                 .skip(skip)
-                .limit(perPage).lean();
+                .limit(perPage).lean().sort({_id:-1});
 
             const totalCount = await Orders.countDocuments();
             let hasNext = false;
@@ -660,9 +649,36 @@ module.exports = {
         res.render('admin/admin- orderDetials', { order: orderDetials })
 
     },
-    reviewManagement: (req, res) => {
-        const review = []
-        res.render('admin/reviewManagement', { reviews: review })
+    reviewManagement: async (req, res) => {
+        const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
+        const perPage = 10; // Number of items per page
+        const skip = (page - 1) * perPage;
+        const totalCount = await Reviews.countDocuments();
+        const review = await Reviews.find().sort({_id:-1})
+
+
+        res.render('admin/reviewManagement',{
+            reviews:review,
+            currentPage: page,
+            perPage,
+            totalCount,
+            totalPages: Math.ceil(totalCount / perPage),
+        });
+    },
+    deleteReview : async (req,res)=>{
+        try{
+
+            const reviewId = req.params.id ;
+            await Reviews.findOneAndDelete({_id:reviewId})
+            res.redirect('/admin/review-manage')
+        }catch(err){
+            console.log(err,"err in the delete review ")
+        }
+    },
+    logout: (req,res)=>{
+        req.session.admin = false;
+        res.clearCookie("adminJwt");
+        res.redirect("/admin/login");
     },
     getCount: async (req, res) => {
         try {
