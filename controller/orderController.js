@@ -76,9 +76,15 @@ module.exports = {
     const userId = new mongoose.Types.ObjectId(user);
     // const returnRequests = Orders.find({Status :'Return Requested'})
     const order = await Orders.find({ UserId: userId, Status: { $ne: "Order Attempted" } }).sort({_id:-1});
-    console.log(order);
-    const momentFormattedDate = moment("");
-    res.render("user/orderHistory", { orderHistory: order ,moment:moment});
+
+
+    // const formatedorders =order.map((order)=>{
+    //   order.OrderedDate = moment(order.OrderedDate).format('lll')
+    //   return order
+    // })
+    // console.log(order,"is it formatted or not ")
+   
+    res.render("user/orderHistory", { orderHistory:order ,moment:moment });
   },
   orderDetialedView: async (req, res) => {
     try {
@@ -88,7 +94,7 @@ module.exports = {
       );
       // console.log(orderDetials)
 
-      res.render("user/orderDetialedView", { order: orderDetials });
+      res.render("user/orderDetialedView", { order: orderDetials,moment:moment });
     } catch (err) {
       console.log(err, "err in the order detialedview");
       throw err;
@@ -133,19 +139,65 @@ module.exports = {
       console.log("Cancellll");
       const order = await Orders.findById(orderId);
 
-      //   if (!order) {
-      //     return res.status(404).json({ message: 'Order not found' });
-      //   }
-
       // Update order properties
       order.Status = "Cancelled";
       order.PaymentStatus = "Order Cancelled";
 
+      
       // Save the updated order
       const updatedOrder = await order.save();
+      
+      const walletOftheUser = Wallet.findOne({UserId : req.session.user.user})
 
+      //refund the amount paid if the order was done throgh the online payment gateway
+      if(order.PaymentMethod === "online"){
+        const wallet = await Wallet.findOne({UserId:req.session.user.user})
+        if (wallet === null) {
+          const userId = req.session.user.user
+          const newUserDoc = await Users.findOneAndUpdate({ _id: userId }, {
+            $inc: {
+              Wallet: orderUpdate.TotalAmount
+            }
+          })
+          await Wallet.create({
+            UserId: userId,
+            WalletAmount: orderUpdate.TotalAmount,
+            Transactions: [
+              {
+                Amount: orderUpdate.TotalAmount,
+                Date: new Date(),
+                State: 'In',
+                Order: orderUpdate._id
+              }
+            ],
+          })
+        } else if (wallet) {
+          const userId = req.session.user.user
+          const newUserDoc = await Users.findOneAndUpdate({ _id: userId }, {
+            $inc: {
+              Wallet: orderUpdate.TotalAmount
+            }
+          })
+  
+          console.log('new', newUserDoc);
+  
+  
+          const user = Users.findOne({ _id: userId })
+          await wallet.updateOne({
+            WalletAmount: wallet.WalletAmount + orderUpdate.TotalAmount,
+            $push: {
+              Transactions: {
+                Amount: orderUpdate.TotalAmount,
+                State: "In",
+                Date: new Date(),
+                Order: orderUpdate._id
+              }
+            }
+          })
+
+        }
+      }
       // Respond with the updated order
-      //   res.status(200).json(updatedOrder);
       const orderItems = updatedOrder.Products.map((item) => ({
         productId: item.ProductId,
         quantity: item.Quantity,
@@ -288,7 +340,7 @@ module.exports = {
           Transactions: [
             {
               Amount: orderUpdate.TotalAmount,
-              Date: moment(new Date()).format('llll'),
+              Date: new Date(),
               State: 'In',
               Order: orderUpdate._id
             }
@@ -306,14 +358,13 @@ module.exports = {
 
 
         const user = Users.findOne({ _id: userId })
-        console.log("njnm cewsxfsgayhbjsvhjwvgwvsgxvwegvavgvhwsvgavdhgvascv")
         await wallet.updateOne({
           WalletAmount: wallet.WalletAmount + orderUpdate.TotalAmount,
           $push: {
             Transactions: {
               Amount: orderUpdate.TotalAmount,
               State: "In",
-              Date: moment(new Date()).format('llll'),
+              Date: new Date(),
               Order: orderUpdate._id
             }
           }

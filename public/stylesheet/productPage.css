@@ -13,3 +13,6 @@ h6 {
 h6.active {
     color: rgb(0, 0, 0); /* Change this to your desired active color */
 }
+#img-container{
+    z-index: 1;
+}

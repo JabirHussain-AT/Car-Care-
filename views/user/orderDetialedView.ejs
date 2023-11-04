@@ -35,7 +35,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Order ID: <%= order._id %>
                                     </h5>
-                                    <p class="card-text">Placed On: <%= order.OrderedDate %>
+                                    <p class="card-text">Placed On: <%= moment(order.OrderedDate).format('llll') %>
                                     </p>
                                     <img src="/uploads/<%=product.ProductId.images[0]%>"
                                         class="card-img-top fixed-image img-fluid pl-3 ml-5 mt-3 mb-4" alt="Product Image">

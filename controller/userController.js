@@ -202,21 +202,47 @@ module.exports = {
   shop: async (req, res) => {
     const user = req.session.user;
     const category = await Category.find();
+    let products; 
 
-    let products;
+    // pagination
+    
+    const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
+    const perPage = 15; // Number of items per page
+    const skip = (page - 1) * perPage;
+    const totalCount = await Products.countDocuments({Display:"Active"});
+    // pagination ends
 
+    // If there's a search query, filter products based on it
     if (req.query.search) {
-      // If there's a search query, filter products based on it
-      products = await Products.find({
+        products = await Products.find({
         Display: "Active",
         ProductName: { $regex: new RegExp(req.query.search, "i") }, // Case-insensitive search
-      });
+      }).skip(skip).limit(perPage);
     } else {
       // If no search query, fetch all products
-      products = await Products.find({ Display: "Active" });
+      products = await Products.find({ Display: "Active" }).skip(skip).limit(perPage);
     }
 
-    res.render("user/shop", { products, user, category });
+
+  // here the sort goes
+     const {search, sort } = req.query
+     if (sort === 'price-asc') {
+     products.sort((a, b) => a.DiscountAmount - b.DiscountAmount);
+     } else if (sort === 'price-desc') {
+     products.sort((a, b) => b.DiscountAmount - a.DiscountAmount);
+     }
+  // ends
+
+
+        res.render('user/shop',{
+            products,
+            user,
+            category,
+            currentPage: page,
+            perPage,
+            totalCount,
+            totalPages: Math.ceil(totalCount / perPage),
+        });
   },
   categoryBased: async (req, res) => {
     const categoryId = req.params.id;
@@ -640,8 +666,8 @@ module.exports = {
       const newOrder = {
         UserId: userId,
         Products: ProductsInCart.Products, // Assign the products directly
-        OrderedDate: moment(new Date()).format("llll"), // Set the order date to the current date
-        ExpectedDeliveryDate: moment().add(4, "days").format("llll"),
+        OrderedDate:new Date(), // Set the order date to the current date
+        ExpectedDeliveryDate: new Date(),
         ShippedAddress: {
           Name: selectedAddress.name,
           Address: selectedAddress.address,
@@ -725,7 +751,7 @@ module.exports = {
                   Transactions: {
                     Amount: amount,
                     State: "Out",
-                    Date: moment(new Date()).format("llll"),
+                    Date: new Date(),
                     Order: orderId,
                   },
                 },

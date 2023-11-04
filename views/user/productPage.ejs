@@ -9,7 +9,7 @@
                     <div class=" col-sm-4  d-flex ">
                         <div class="product-images  col-sm-4 side-img" style="padding: 2.4vw;">
                             <!-- <ul class="exzoom_img_ul"> -->
-                            <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1"
+                            <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" id="defulatZoomingImg"
                                 class="img-thumbnail mb-2">
                             <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2"
                                 class="img-thumbnail mb-2">
@@ -22,7 +22,7 @@
                             <div id="img-container">
 
                                 <img src="/uploads/<%= product.images[0] %>" id="selectedImage" alt="Cover Image"
-                                    class="  img-fluid  " style="border: 1px solid black;">
+                                    class=" img-fluid " style="border: 1px solid black;">
                             </div>
                         </div>
                     </div>
@@ -208,8 +208,26 @@
                     </div>
                     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script src="/js/imageZoom.js"></script>
                     <script>
                         $(document).ready(function () {
+                            var options = {
+                                zoomType: 'lens',
+                                width: 400,
+                                zoomWidth: 400,
+                                offset: {
+                                    vertical: 0, horizontal: 20
+                                },
+                                onZoomIn: function () {
+                                    // Change background color during zoom in
+                                    $("#img-container").css("background-color", "#ffff");
+                                },
+                                onZoomOut: function () {
+                                    // Reset background color after zoom out
+                                    $("#img-container").css("background-color", "transparent");
+                                }
+                            };
+                            new ImageZoom(document.getElementById("img-container"), options);
                             $("h6").click(function () {
                                 $("h6").removeClass("active");
                                 $(this).addClass("active");
@@ -272,7 +290,7 @@
                                         }).then((result) => {
                                             /* Read more about handling dismissals below */
                                             if (result.dismiss === Swal.DismissReason.timer) {
-                                              
+
                                                 // // You can update the UI or show a success message
                                                 console.log('I was closed by the timer')
                                             }

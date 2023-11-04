@@ -7,7 +7,7 @@ const WalletSchema = new Schema({
     Transactions :[
         {
             Amount : {type:Number ,required:true,},
-            Date : {type:String,required : true},
+            Date : {type:Date,required : true},
             State :{type:String,required : true},
             Order : {type:Schema.Types.ObjectId,required:true}
         }

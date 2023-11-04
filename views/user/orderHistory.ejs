@@ -79,21 +79,17 @@
               </div>
               <p>Payment Method: <span>
                   <%= order.PaymentMethord %>
-                </span </p>
-              <p>Ordered Date: <%= order.OrderedDate %>
-              </p>
-              <% if(order.Status==="Delivered" ) { %>
-                <p>Delivered Date: <%= order.DeliveredDate %>
-                </p>
-               
-                <% if (new Date() <= moment(order.LastReturnDate, 'llll').toDate()) { %>
-                  <p>Return Policy End At : <%= order.LastReturnDate %>
+                </span> </p>
+                <p>Ordered Date: <%= moment(order.OrderedDate).format('llll') %></p>
+                <% if(order.Status === "Delivered") { %>
+                  <p>Delivered Date: <%= moment(order.DeliveredDate).format('llll') %></p>
+                  <% if (moment() <= moment(order.LastReturnDate, 'llll')) { %>
+                    <p>Return Policy End At: <%= moment(order.LastReturnDate).format('llll') %></p>
                   <% } %>
-                </p>
-                <% } else {%>
-                  <p>Expected Delivery Date: <%= order.ExpectedDeliveryDate %>
-                  </p>
-                  <% } %>
+                <% } else { %>
+                  <p>Expected Delivery Date: <%= moment(order.ExpectedDeliveryDate).format('llll') %></p>
+                <% } %>
+                
                     <% if (order.Status==='Delivered' ) { %>
                       <p class="text-success">Order Status: <%= order.Status %>
                       </p>
@@ -179,7 +175,7 @@
                                               Order</button></a>
                                           <% } else if(order.Status==='Delivered' ) { %>
                                                
-                                          <% if (new Date() <= moment(order.LastReturnDate, 'llll').toDate()) { %>
+                                          <% if (new Date() < order.LastReturnDate) { %>
                                             <a href="/returnOrder/<%= order._id %> " data-bs-toggle="modal"
                                               data-bs-target="#returnModal<%= order._id %>"><button
                                                 class="btn btn-danger">Request Return</button></a>

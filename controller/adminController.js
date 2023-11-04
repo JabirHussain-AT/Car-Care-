@@ -255,6 +255,7 @@ module.exports = {
         const totalCount = await Product.countDocuments();
 
         res.render('admin/admin-productView', {
+            moment,
             products,
             currentPage: page,
             perPage,
@@ -312,8 +313,7 @@ module.exports = {
         req.body.images = req.files.map(val => val.filename)
         req.body.Display = "Active"
         req.body.Status = "in Stock"
-        const newDate = new Date()
-        req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
+        req.body.UpdatedOn = new Date()
         const createdProduct = await Product.create(req.body)
         // Now Call the function to Create Connention of varients
         // console.log( createdProduct._id,"Created Product")
@@ -405,8 +405,7 @@ module.exports = {
             req.body.Status = "in Stock"
             req.body. Price = Math.abs( req.body. Price)
             req.body. DiscountAmount = Math.abs( req.body. DiscountAmount)
-            const newDate = new Date()
-            req.body.UpdatedOn = moment(newDate).format('MMMM Do YYYY, h:mm:ss a')
+            req.body.UpdatedOn = new Date()
             const uploaded = await Product.create(req.body)
             res.redirect('/admin/productView')
 
@@ -458,7 +457,7 @@ module.exports = {
             req.body.images = images
             req.body.Display = "Active"
             req.body.Status = "in Stock"
-            req.body.updateOn = moment(new Date()).format('MMMM Do YYYY, h:mm:ss a')
+            req.body.updateOn = new Date()
             const updatingProduct = await Product.findOneAndUpdate({ _id: id },
                 (req.body)
             )
@@ -583,24 +582,16 @@ module.exports = {
                 .limit(perPage).lean().sort({_id:-1});
 
             const totalCount = await Orders.countDocuments();
-            let hasNext = false;
-            let hasPrev = false;
-            if (totalCount > page) {
-                hasNext = true
-            }
-            if (page > 1) {
-                hasPrev = true;
-            }
-            // totalPages: Math.ceil(totalCount / perPage),
+          
 
             res.render('admin/orderDetials', {
+                moment,
                 order,
                 returnRequested,
                 currentPage: page,
                 perPage,
                 totalCount,
-                hasNext,
-                hasPrev,
+                totalPages: Math.ceil(totalCount / perPage),
             });
 
         }
@@ -620,8 +611,8 @@ module.exports = {
 
             // If the status is "Delivered," update the payment status to "paid"
             if (status.toLowerCase() === 'delivered') {
-                updatedOrder.DeliveredDate = moment(new Date()).format('llll')
-                updatedOrder.LastReturnDate = moment().add(14, 'days').format('llll'),
+                updatedOrder.DeliveredDate = new Date()
+                updatedOrder.LastReturnDate = new Date(),
                     updatedOrder.PaymentStatus = 'Paid';
             } else {
                 updatedOrder.PaymentStatus = 'Pending';
@@ -831,11 +822,6 @@ module.exports = {
     salesReportPdf: async (req, res) => {
         try {
             const { startDate, endDate } = req.query;
-
-            // Fetch orders data from the database for the specified date range
-            console.log(moment.utc(startDate, 'llll').toISOString())
-            // Convert JavaScript Date objects to the format used in MongoDB (Moment.js format)
-    
             // Specify the start and end dates in JavaScript Date objects
             const orders = await Orders.find({
                 DeliveredDate: { $exists: true },

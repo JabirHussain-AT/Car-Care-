@@ -1,6 +1,6 @@
 <%- include('../layout/admin/layout') %>
 <%- include('../partials/admin-header-checking') %>
-    <div class="container-" style="margin-left: 10%; width: 82% ;margin-top: 10vh;">
+    <div class="container-fluid" style="margin-left: 10%; width: 82% ;margin-top: 10vh;">
         <div class="d-flex justify-content-between align-items-center">
             <h2 style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">PRODUCT LIST</h2>
             <a href="/admin/addProduct"><button class="btn btn-primary" id="addProduct">Add Product</button></a>
@@ -18,6 +18,7 @@
             <table class="table table-bordered table-shadow mt-3">
                 <thead>
                     <tr>
+                         <th></th>
                         <th>Product</th>
                         <th>Stock</th>
                         <th>Price</th>
@@ -32,6 +33,7 @@
                 <tbody>
                     <% products.forEach(product => { %>
                         <tr>
+                          <td><img width="60px" height="auto" src="/uploads/<%= product.images[0] %>" alt=""></td>
                           <td><%= product.ProductName %></td>
                           <td><%= product.AvailableQuantity %></td>
                           <td><%= product.Price %></td>
@@ -39,7 +41,7 @@
                           <td><%= product.Status %></td>
                           <td class="<%= product.Display === 'Active' ? 'active-status' : 'inactive-status' %>"><%= product.Display %></td>
                           <td><%= product.Category %></td>
-                          <td><%= product.UpdatedOn %></td>
+                          <td><%= moment(product.UpdatedOn).format('llll') %></td>
                           <td>
                             <a href="/admin/editProduct/<%= product._id %>" class="btn btn-dark  btn-sm">Edit</a>
                            

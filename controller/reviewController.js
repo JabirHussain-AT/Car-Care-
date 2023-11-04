@@ -30,7 +30,7 @@ module.exports = {
             UserId : req.session.user.user,
             ProductId : req.body.ProductId,
             Comment : req.body.review,
-            Date : moment(new Date()).format('ll')
+            Date : new Date()
         })
        
         console.log("review Successfully saved",savedReview)

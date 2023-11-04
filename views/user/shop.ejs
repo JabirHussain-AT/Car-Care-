@@ -11,12 +11,12 @@
         </div>
 
         <!-- Search and Filter -->
-        <div class="container-fluid search-section col-12 search-div"
+        <div class="container-fluid"
             style=" background: linear-gradient(rgb(60, 138, 216),rgb(176, 213, 230));">
             <div class="row justify-content-between align-items-center main" style="height: 100%;">
                 <div class="col-md-4 mt-1">
                     <!-- Small Search Bar -->
-                    <div class="col-md-8 mt-1">
+                    <!-- <div class="col-md-8 mt-1"> -->
                         <form action="/shop" method="get">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Search" aria-label="Search"
@@ -24,9 +24,24 @@
                                 <button class="btn btn-primary" type="submit" id="searchButton">Go</button>
                             </div>
                         </form>
+                    <!-- </div> -->
+                </div>
+                <!-- sort goes here-->
+                <div class="col-md-4 mt-3 mb-1">
+                    <!-- Sorting Dropdown -->
+                    <div class="form-group">
+                        <select class="form-control" id="sortFilter">
+                            <option value="">Sort by</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <!-- Add more sorting options as needed -->
+                        </select>
                     </div>
                 </div>
-                <div class="col-md-2 mt-3 mb-1">
+
+
+                <!--  -->
+                <div class="col-md-4  mb-1">
                     <!-- Small Filter Dropdown for Categories -->
                     <% if (category && category.length> 0) { %>
                         <div class="form-group">
@@ -60,16 +75,18 @@
                                     <h5 class="card-title">
                                         <%= product.ProductName %>
                                     </h5>
-                                    <p class="card-text">Price: <span style="color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-weight: 600;">
-                                         ₹ <%= product.DiscountAmount %>  /- </span>
-                                         <span style="color: rgba(0, 0, 0, 0.423); font-family: Arial, Helvetica, sans-serif; margin-left: 10px;">
-                                                <del>  ₹ <%= product.Price %>  /-</del> </span>
+                                    <p class="card-text">Price: <span
+                                            style="color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-weight: 600;">
+                                            ₹ <%= product.DiscountAmount %> /- </span>
+                                        <span
+                                            style="color: rgba(0, 0, 0, 0.423); font-family: Arial, Helvetica, sans-serif; margin-left: 10px;">
+                                            <del> ₹ <%= product.Price %> /-</del> </span>
                                     </p>
                                     <!-- Add any additional product information here -->
                                     <div class="d-flex justify-content-between">
                                         <a href="#" onclick="addToWishlist('<%= product._id %>', event)"
                                             class="btn btn-sm btn btn-warning">Add to Wishlist</a>
-                                            <a href="/product/<%= product._id %>"><button class="btn-primary">View
+                                        <a href="/product/<%= product._id %>"><button class="btn-primary">View
                                                 Details</button></a>
                                     </div>
                                 </div>
@@ -84,6 +101,38 @@
                             </div>
                             <% } %>
             </div>
+            <!-- pagination -->
+            <% if (products && products.length> 0) { %>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <p>Showing <%= (currentPage - 1) * perPage + 1 %>
+                            - <%= Math.min(currentPage * perPage, totalCount) %> results from <%= totalCount %>
+                    </p>
+                    <ul class="pagination">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                            </li>
+                            <% } %>
+                                <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages, currentPage + 2);
+                                    i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                            </li>
+                                            <% } %>
+                    </ul>
+                </div>
+                <% } else { %>
+                    <p>No results found.</p>
+                    <% } %>
+
+                        <!--  -->
         </div>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Include the necessary JavaScript to handle category selection -->
@@ -99,6 +148,27 @@
 
         </script>
         <script>
+            // for sorting implimentation
+            document.getElementById('sortFilter').addEventListener('change', function () {
+                const selectedSortOption = this.value;
+                const currentUrl = window.location.href;
+
+                if (selectedSortOption) {
+                    const updatedUrl = appendQueryParam(currentUrl, 'sort', selectedSortOption);
+                    window.location.href = updatedUrl;
+                }
+            });
+
+            // Function to append or update a query parameter in the URL
+            function appendQueryParam(url, key, value) {
+                const urlObject = new URL(url);
+                urlObject.searchParams.set(key, value);
+                return urlObject.toString();
+            }
+
+        </script>
+        <script>
+
             function addToWishlist(productId, event) {
                 event.preventDefault(); // Prevent the default navigation behavior
 
