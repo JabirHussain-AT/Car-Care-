@@ -97,7 +97,11 @@ module.exports = {
   
     // console.log(reviews ,"reviews lets check")
     const user = req.session.user;
-    res.render("user/productPage", { product: product, user: user,Reviews : reviews ,isUserHaveRight:isInOrderHistory });
+    res.render("user/productPage", {
+       product: product,
+        user: user,Reviews : reviews ,
+        moment,
+        isUserHaveRight:isInOrderHistory });
   },
   login: (req, res) => {
     const user = req.session.user;
@@ -248,16 +252,28 @@ module.exports = {
     const categoryId = req.params.id;
     const categories = await Category.findOne({ _id: categoryId });
     const user = req.session.user;
+
+    // 
+    const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
+    const perPage = 15; // Number of items per page
+    const skip = (page - 1) * perPage;
+    const totalCount = await Products.countDocuments({Display:"Active"});
+    // 
     const category = await Category.find();
     const products = await Products.find({
       Display: "Active",
       Category: categories.Name,
-    });
+    }).skip(skip).limit(perPage)
+
     console.log(category);
     res.render("user/shop", {
       products: products,
       user: user,
       category: category,
+      currentPage: page,
+      perPage,
+      totalCount,
+      totalPages: Math.ceil(totalCount / perPage),
     });
   },
   postLogin: async (req, res) => {

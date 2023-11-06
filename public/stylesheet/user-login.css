@@ -8,6 +8,9 @@
 body{
     overflow-x: hidden;
 }
+html{
+    overflow-x: hidden;
+}
 .banner h1 {
     font-size: 2rem; /* Adjust the font size as needed */
 }
@@ -15,7 +18,7 @@ body{
 .main-layer{
     height: 100vh;
     width: 100vw;
-    background-color:#CFE6F9;
+    background-color:#1a75bf;
 }
 .signup{
  height: 60vh;
@@ -37,7 +40,8 @@ body{
     margin-left: 15vw;
 }
 .main-layer {
-    background-color:#CFE6F9;
+    background-color:#334c58;
+
     height: 100vh;
 }
 

@@ -147,14 +147,7 @@ module.exports = {
     salesReport: async (req, res) => {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
-        console.log(startDate,endDate,"jfsdjfjfsdjhhhsghghgg")
-
-
-
-      
-
-
-
+        console.log(startDate, endDate, "jfsdjfjfsdjhhhsghghgg")
 
 
         const generateSalesData = async () => {
@@ -164,14 +157,14 @@ module.exports = {
                     DeliveredDate: { $exists: true },
                     PaymentStatus: 'Paid',
                     OrderedDate: {
-                        $gte: moment.utc(startDate).format("llll"),
-                        $lte: moment.utc(endDate).format("llll"),
+                        $gte:startDate,
+                        $lte:endDate,
                     },
                 }).populate('Products.ProductId');
-                    
-             // Filter by payment status
-              
-                console.log(orders,"order is coming or not")
+
+                // Filter by payment status
+
+                console.log(orders, "order is coming or not")
 
                 // Map orders data to the required format for Excel
                 return orders.map(order => {
@@ -393,18 +386,17 @@ module.exports = {
         console.log(req.body)
         console.log(req.files)
         try {
-           
-            if(req.body.Variation1 === '')
-            {
-                 req.body.Variation = req.body.Variation2
-            }else{
+
+            if (req.body.Variation1 === '') {
+                req.body.Variation = req.body.Variation2
+            } else {
                 req.body.Variation = req.body.Variation1
             }
             req.body.images = req.files.map(val => val.filename)
             req.body.Display = "Active"
             req.body.Status = "in Stock"
-            req.body. Price = Math.abs( req.body. Price)
-            req.body. DiscountAmount = Math.abs( req.body. DiscountAmount)
+            req.body.Price = Math.abs(req.body.Price)
+            req.body.DiscountAmount = Math.abs(req.body.DiscountAmount)
             req.body.UpdatedOn = new Date()
             const uploaded = await Product.create(req.body)
             res.redirect('/admin/productView')
@@ -428,7 +420,7 @@ module.exports = {
         const { existingImage1, existingImage2, existingImage3 } = req.body
         try {
             const id = req.params.id
-           
+
             let images = [];
             const existingProduct = await Product.findById(id);
             if (existingProduct) {
@@ -442,14 +434,13 @@ module.exports = {
                 }
             }
 
-           
 
 
 
-            if(req.body.Category ==='Lubricants')
-            {
-                 req.body.Variation = req.body.Variation2
-            }else{
+
+            if (req.body.Category === 'Lubricants') {
+                req.body.Variation = req.body.Variation2
+            } else {
                 req.body.Variation = req.body.Variation1
             }
 
@@ -579,10 +570,10 @@ module.exports = {
             // Query the database for products, skip and limit based on the pagination
             const order = await Orders.find()
                 .skip(skip)
-                .limit(perPage).lean().sort({_id:-1});
+                .limit(perPage).lean().sort({ _id: -1 });
 
             const totalCount = await Orders.countDocuments();
-          
+
 
             res.render('admin/orderDetials', {
                 moment,
@@ -612,7 +603,9 @@ module.exports = {
             // If the status is "Delivered," update the payment status to "paid"
             if (status.toLowerCase() === 'delivered') {
                 updatedOrder.DeliveredDate = new Date()
-                updatedOrder.LastReturnDate = new Date(),
+                const newDate = new Date();
+                newDate.setDate(new Date().getDate() + 14);
+                updatedOrder.LastReturnDate = newDate,
                     updatedOrder.PaymentStatus = 'Paid';
             } else {
                 updatedOrder.PaymentStatus = 'Pending';
@@ -645,28 +638,28 @@ module.exports = {
         const perPage = 10; // Number of items per page
         const skip = (page - 1) * perPage;
         const totalCount = await Reviews.countDocuments();
-        const review = await Reviews.find().sort({_id:-1})
+        const review = await Reviews.find().sort({ _id: -1 })
 
 
-        res.render('admin/reviewManagement',{
-            reviews:review,
+        res.render('admin/reviewManagement', {
+            reviews: review,
             currentPage: page,
             perPage,
             totalCount,
             totalPages: Math.ceil(totalCount / perPage),
         });
     },
-    deleteReview : async (req,res)=>{
-        try{
+    deleteReview: async (req, res) => {
+        try {
 
-            const reviewId = req.params.id ;
-            await Reviews.findOneAndDelete({_id:reviewId})
+            const reviewId = req.params.id;
+            await Reviews.findOneAndDelete({ _id: reviewId })
             res.redirect('/admin/review-manage')
-        }catch(err){
-            console.log(err,"err in the delete review ")
+        } catch (err) {
+            console.log(err, "err in the delete review ")
         }
     },
-    logout: (req,res)=>{
+    logout: (req, res) => {
         req.session.admin = false;
         res.clearCookie("adminJwt");
         res.redirect("/admin/login");
@@ -819,6 +812,98 @@ module.exports = {
             console.error(err);
         }
     },
+    getCategorySales: async (req, res) => {
+        try {
+            // Fetch all orders
+            const allOrders = await Orders.find({
+                Status: {
+                    $nin: ["Returned", "Cancelled", "Rejected"]
+                }
+            });
+
+            // Extract unique product IDs from all orders
+            const allProductIds = Array.from(
+                new Set(allOrders.flatMap((order) => order.Products.map((product) => product.ProductId)))
+            );
+
+            // Fetch product details for each product ID
+            const productDetailsPromises = allProductIds.map(async (productId) => {
+                const product = await Product.findOne({ _id: productId });
+                return product; // Assuming product has a 'category' field
+            });
+
+            // Wait for all product details to be fetched
+            const productDetails = await Promise.all(productDetailsPromises);
+
+            // Calculate total sales for each category
+            const categorySalesData = await Promise.all(productDetails.map(async (product) => {
+                const category = product.Category;
+                const totalSales = await allOrders.reduce(async (totalPromise, order) => {
+                    const orderProduct = order.Products.find(orderProduct => orderProduct.ProductId.toString() === product._id.toString());
+                    if (orderProduct) {
+                        const productDetails = await Product.findOne({ _id: orderProduct.ProductId });
+                        const productPrice = productDetails ? productDetails.Price : 0;
+                        const subtotalPromise = await totalPromise + productPrice * orderProduct.Quantity;
+                        return subtotalPromise;
+                    }
+                    return totalPromise;
+                }, Promise.resolve(0)); // Initial value as a resolved promise
+
+                return { category, totalSales };
+            }));
+
+            //     result.push({ category, totalSales });
+            //     return result;
+            // }, []);
+
+            // Organize the data for the chart
+            const labels = categorySalesData.map((entry) => entry.category);
+            const data = categorySalesData.map((entry) => entry.totalSales);
+            console.log(data, "labels is this")
+
+            // Send the data as a response
+            res.json({ labels, data });
+        } catch (error) {
+            console.error("Error fetching category sales:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+
+    },
+     getpaymentSales: async (req, res) => {
+            try {
+                // Fetch all orders
+                const allOrders = await Orders.find({
+                    Status: {
+                        $nin: ["Returned", "Cancelled", "Rejected"]
+                    }
+                });
+        
+                // Calculate total sales for each payment method
+                const paymentSalesData = allOrders.reduce((result, order) => {
+                    const paymentMethod = order.PaymentMethod;
+        
+                    // Find or create an entry for the payment method in the result
+                    const entry = result.find((item) => item.paymentMethod === paymentMethod);
+                    if (entry) {
+                        entry.totalSales += order.TotalAmount; // Assuming TotalAmount field represents the sale amount
+                    } else {
+                        result.push({ paymentMethod, totalSales: order.TotalAmount });
+                    }
+        
+                    return result;
+                }, []);
+        
+                // Organize the data for the chart
+                const labels = paymentSalesData.map((entry) => entry.paymentMethod);
+                const data = paymentSalesData.map((entry) => entry.totalSales);
+        
+                // Send the data as a response
+                res.json({ labels, data });
+            } catch (error) {
+                console.error("Error fetching payment sales:", error);
+                res.status(500).json({ error: "Internal Server Error" });
+            }
+        },
     salesReportPdf: async (req, res) => {
         try {
             const { startDate, endDate } = req.query;
@@ -831,12 +916,12 @@ module.exports = {
                     $lte: moment.utc(endDate).endOf('day').format("llll"),
                 },
             }).populate('Products.ProductId');
-            
+
 
             const totalAmountSum = orders.reduce((sum, order) => sum + order.TotalAmount, 0);
             // console.log(orders, "orders are this again")
 
-            pdfMaker.downloadPdf(req, res, orders, startDate, endDate,totalAmountSum)
+            pdfMaker.downloadPdf(req, res, orders, startDate, endDate, totalAmountSum)
 
         } catch (err) {
             console.error(err);

@@ -19,7 +19,7 @@ const OrdersSchema = new Schema({
    }],
   OrderedDate: { type: Date, required: true },
   DeliveredDate: { type: Date },
-  LastReturnDate: { type: String },
+  LastReturnDate: { type: Date },
   ExpectedDeliveryDate: { type: Date },
   Status: { type: String, required: true ,default:'Order Attempted'},
   ShippedAddress :{type: ShippedAddressSchema,required : true},

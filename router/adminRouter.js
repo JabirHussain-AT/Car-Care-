@@ -29,6 +29,14 @@ router.get('/count-orders-by-day',auth.adminTokenAuth,adminController.getCount)
 router.get('/count-orders-by-month',auth.adminTokenAuth,adminController.getCount)
 router.get('/count-orders-by-year',auth.adminTokenAuth,adminController.getCount)
 
+router.get('/categorySales-by-day',auth.adminTokenAuth,adminController.getCategorySales)
+router.get('/categorySales-by-month',auth.adminTokenAuth,adminController.getCategorySales)
+router.get('/categorySales-by-year',auth.adminTokenAuth,adminController.getCategorySales)
+
+router.get('/paymentSales-by-day',auth.adminTokenAuth,adminController.getpaymentSales)
+router.get('/paymentSales-by-month',auth.adminTokenAuth,adminController.getpaymentSales)
+router.get('/paymentSales-by-year',auth.adminTokenAuth,adminController.getpaymentSales)
+
 router.get('/addCategory',adminController.addCatogory)
 router.post('/addCategory',upload.single('Images',1),adminController.postaddCategory)
 

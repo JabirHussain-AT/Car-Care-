@@ -176,7 +176,7 @@
                                                                                 <%= review.UserId.Name%>
                                                                             </h3>
                                                                             <p class="text-muted">
-                                                                                <%= review.Date %>
+                                                                                <%=  moment(review.Date).format('ll') %>
                                                                             </p>
                                                                         </div>
                                                                         <div class="card-text">

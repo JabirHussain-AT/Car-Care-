@@ -2,6 +2,7 @@ const Users = require('../models/userSchema')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
 const Product = require('../models/productSchema')
+const Cart = require('../models/cartSchema')
 const Coupon = require('../models/couponSchema')
 const CouponHistory = require('../models/couponHistorySchema')
 const Category = require('../models/categorySchema')
@@ -74,6 +75,8 @@ module.exports = {
                         // console.log(momentDate.isBefore(currentDate),"nokkaam")
                         if (!momentDate.isBefore(currentDate)) {
                             couponExist.Users.push(user);
+                            const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue},{upsert:true})
+                           
                             await couponExist.save();
                             res.json({
                                 status: true,
