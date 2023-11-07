@@ -237,6 +237,9 @@ AvailableQuantity %>" />
                   const increaseButtons = document.querySelectorAll(".increase-quantity");
                   const couponCheckButton = document.getElementById('couponCheck');
                   const couponCodeInput = document.querySelector('input[name="couponCode"]');
+                  let couponAmount
+                  let minCouponAmount
+
 
 
 
@@ -273,6 +276,56 @@ AvailableQuantity %>" />
 
                     // Increase total amount by tax
                     // totalAmount += taxAmount;no need for increase i think
+                    if (couponAmount) {
+                      totalAmount -= couponAmount
+                    }
+                    if ((totalAmount + couponAmount) <= minCouponAmount) {
+                       Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!"
+                      }).then(async (result) => {
+                        if (result.isConfirmed) {
+                          const couponCodeInput = document.querySelector('input[name="couponCode"]');
+                          const couponCode = couponCodeInput.value.trim();
+                          const response = await fetch("/removeCouponapplied", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({couponCode }),
+                      });
+
+                      if (response.ok) {
+                          
+                      const couponAmountCell = document.getElementById('couponAmountCell');
+                      const zero = 0.00
+                      couponAmountCell.textContent = `Rs - ${zero.toFixed(2)}`;
+                      console.log(totalAmount,"total amount")
+                      totalAmount += couponAmount
+                      console.log(totalAmount,"total amount after coam")
+                      totalAmountCell.value = `Rs ${totalAmount.toFixed(2)}`;
+                      hiddenTotalAmount.value = totalAmount.toFixed(2);
+                        }
+                      } else {
+                        console.error("Error updating quantity:", response.statusText);
+                      }
+                          Swal.fire({
+                            title: "Deleted!",
+                            text: "Your file has been deleted.",
+                            icon: "success"
+                          });
+                        });
+                      
+                    }
+
+                    // console.log("is it coming or not ",couponAmount)
+
+                    const couponAmountCell = document.getElementById('couponAmountCell');
                     const totalAmountCell = document.getElementById('totalAmountCell');
                     const placeOrderButton = document.getElementById('placeOrderButton');
                     const taxAmountCell = document.getElementById('TaxAmountCell');
@@ -397,8 +450,8 @@ AvailableQuantity %>" />
 
                           if (data) {
                             const couponAmountCell = document.getElementById('couponAmountCell');
-
-                            const couponAmount = parseFloat(data.couponAmount);
+                            minCouponAmount = parseFloat(data.minAmount)
+                            couponAmount = parseFloat(data.couponAmount);
                             const totalAmountCell = document.getElementById('totalAmountCell');
                             const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
 
@@ -457,8 +510,9 @@ AvailableQuantity %>" />
                           const data = await response.json();
 
                           if (data.status) {
-                            // console.log(data.response.couponAmount,"ill")
-                            const couponAmount = parseFloat(data.couponAmount);
+                            minCouponAmount = parseFloat(data.minAmount)
+                            // console.log(minCouponAmount,"ill")
+                            couponAmount = parseFloat(data.couponAmount);
                             const totalAmountCell = document.getElementById('totalAmountCell');
                             const hiddenTotalAmount = document.getElementById('hiddenTotalAmount');
 

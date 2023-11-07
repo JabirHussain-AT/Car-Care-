@@ -43,12 +43,14 @@ module.exports = {
                         req.session.user = user;
                         const userData = await User.findOne({ _id: user.user })
                         console.log("inside token", user)
+                        if(userData){
                         if (userData.Status === "Active") {
                             res.redirect('/home');
                         }else{
                             // res.redirect('/login')
                             next()
                         }
+                    }
                     }
                 })
     

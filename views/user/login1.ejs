@@ -1,187 +1,119 @@
 <%- include('../layout/user/layout') %>
-    <link rel="stylesheet" href="/stylesheet/login1.css">
-<%- include('../partials/user-nv-header') %> 
-<body id="particles-js"></body>
-<div class="animated bounceInDown">
-  <div class="container">
-    <span class="error animated tada" id="msg"></span>
-    <form name="form1" class="box" onsubmit="return checkStuff()">
-      <h4>Admin<span>Dashboard</span></h4>
-      <h5>Sign in to your account.</h5>
-      <input type="text" name="email" placeholder="Email" autocomplete="off">
-      <i class="typcn typcn-eye" id="eye"></i>
-      <input type="password" name="password" placeholder="Passsword" id="pwd" autocomplete="off">
-      <label>
-        <input type="checkbox">
-        <span></span>
-        <small class="rmb">Remember me</small>
-      </label>
-      <a href="#" class="forgetpass">Forget Password?</a>
-      <input type="submit" value="Sign in" class="btn1">
-    </form>
-    <a href="#" class="dnthave">Don’t have an account? Sign up</a>
-  </div>
-  <div class="footer">
-    <span>Made with <i class="fa fa-heart pulse"></i> <a href="https://www.google.de/maps/place/Augsburger+Puppenkiste/@48.360357,10.903245,17z/data=!3m1!4b1!4m2!3m1!1s0x479e98006610a511:0x73ac6b9f80c4048f"><a href="https://codepen.io/lordgamer2354">By Anees Khan</a></span>
-  </div>
+<link rel="stylesheet" href="/stylesheet/user-login.css">
+<!-- --> <%- include('../partials/user-header') %>
+<div class="container-fluid banner-login">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>Login</h1>
+        </div>
+    </div>
 </div>
+
+<!-- 1 layer of login -->
+<section class="vh-100">
+  <div class="container py-5 h-100">
+    <div class="row d-flex align-items-center justify-content-center h-100">
+      <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+        <% if(locals.message.error){ %>
+          <p style="color: red;"><%= message.error %></p>
+      <% } %>
+    
+      <% if(locals.message){ %>
+          <p style="color: red;"><%= message.warning %></p>
+      <% } %>
+      <% if(locals.message){ %>
+          <p style="color: red;"><%= message.banned %></p>
+      <% } %>
+      <% if(locals.message){ %>
+          <p style="color: red;"><%= message.notMatching %></p>
+      <% } %>
+        <form  action="/login" method="post">
+          <!-- Email input -->
+          <div class="form-outline mb-4">
+            <input type="email" id="form1Example13" name="email" class="form-control form-control-lg" />
+            <label class="form-label"  for="form1Example13">Email address</label>
+            <span id="email-validation-msg" style="color: red;"></span>
+          </div>
+
+          <!-- Password input -->
+          <div class="form-outline mb-4">
+            <input type="password" id="form1Example23" class="form-control form-control-lg" />
+            <label class="form-label" name="password" for="form1Example23">Password</label>
+          </div>
+
+          <div class="d-flex  align-items-center mb-4">
+            <!-- Checkbox -->
+            <div>
+              <!-- <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+              <label class="form-check-label" for="form1Example3"> Remember me </label> -->
+              <a href="#!">Forgot password?</a>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center">
+             <p style="font-size: small;">Don't you have an account? <a href="/signup"><u>Sign IN</u></a></p>
+          </div>
+          <!-- Submit button -->
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+
+        </form>
+      </div>
+      <div class="col-md-8 col-lg-7 col-xl-6">
+        <img src="/assets/tools.png"
+          class="img-fluid" alt="Phone image">
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container-fluid mt-5 sl">
+  <div class="row" style="height: 100%;">
+      <!-- Card 1 -->
+      <div class="col-md-4">
+          <div class="card cd-sl">
+              <!-- <img src="image1.jpg" class="card-img-top" alt="Image 1"> -->
+              <div class="card-body mt-5">
+                  <h4 class="card-title">Free Delivery</h4>
+                  <p class="card-text text-secondary">Card 1 Subtitle</p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-md-4">
+          <div class="card cd-sl">
+              <!-- <img src="image2.jpg" class="card-img-top" alt="Image 2"> -->
+              <div class="card-body mt-5">
+                  <h4 class="card-title">14 Days Return</h4>
+                  <p class="card-text text-secondary">For all oders over $50, consectetur adipim scing elit.</p>
+              </div>
+          </div>
+      </div>
+      <!-- card 3 -->
+      <div class="col-md-4">
+          <div class="card cd-sl">
+              <!-- <img src="image3.jpg" class="card-img-top" alt="Image 3"> -->
+              <div class="card-body mt-5">
+                  <h4 class="card-title">Secure Payment</h4>
+                  <p class="card-text text-secondary">100% secure payment, consectetur adipim scing elit.</p>
+              </div>
+          </div>
+      </div>
+  </div>
 <script>
-    var pwd = document.getElementById('pwd');
-var eye = document.getElementById('eye');
+    document.addEventListener('DOMContentLoaded', function () {
+        const emailInput = document.getElementById('email');
+        const emailValidationMsg = document.getElementById('email-validation-msg');
 
-eye.addEventListener('click',togglePass);
+        emailInput.addEventListener('input', function () {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmailValid = emailRegex.test(emailInput.value);
 
-function togglePass(){
+            if (isEmailValid) {
+                emailValidationMsg.textContent = ''; // Clear the validation message
+            } else {
+                emailValidationMsg.textContent = 'Invalid email format';
+            }
+        });
 
-   eye.classList.toggle('active');
-
-   (pwd.type == 'password') ? pwd.type = 'text' : pwd.type = 'password';
-}
-
-// Form Validation
-
-function checkStuff() {
-  var email = document.form1.email;
-  var password = document.form1.password;
-  var msg = document.getElementById('msg');
-  
-  if (email.value == "") {
-    msg.style.display = 'block';
-    msg.innerHTML = "Please enter your email";
-    email.focus();
-    return false;
-  } else {
-    msg.innerHTML = "";
-  }
-  
-   if (password.value == "") {
-    msg.innerHTML = "Please enter your password";
-    password.focus();
-    return false;
-  } else {
-    msg.innerHTML = "";
-  }
-   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (!re.test(email.value)) {
-    msg.innerHTML = "Please enter a valid email";
-    email.focus();
-    return false;
-  } else {
-    msg.innerHTML = "";
-  }
-}
-
-// ParticlesJS
-
-// ParticlesJS Config.
-particlesJS("particles-js", {
-  "particles": {
-    "number": {
-      "value": 60,
-      "density": {
-        "enable": true,
-        "value_area": 800
-      }
-    },
-    "color": {
-      "value": "#ffffff"
-    },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
-      },
-      "polygon": {
-        "nb_sides": 5
-      },
-      "image": {
-        "src": "img/github.svg",
-        "width": 100,
-        "height": 100
-      }
-    },
-    "opacity": {
-      "value": 0.1,
-      "random": false,
-      "anim": {
-        "enable": false,
-        "speed": 1,
-        "opacity_min": 0.1,
-        "sync": false
-      }
-    },
-    "size": {
-      "value": 6,
-      "random": false,
-      "anim": {
-        "enable": false,
-        "speed": 40,
-        "size_min": 0.1,
-        "sync": false
-      }
-    },
-    "line_linked": {
-      "enable": true,
-      "distance": 150,
-      "color": "#ffffff",
-      "opacity": 0.1,
-      "width": 2
-    },
-    "move": {
-      "enable": true,
-      "speed": 1.5,
-      "direction": "top",
-      "random": false,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 1200
-      }
-    }
-  },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": false,
-        "mode": "repulse"
-      },
-      "onclick": {
-        "enable": false,
-        "mode": "push"
-      },
-      "resize": true
-    },
-    "modes": {
-      "grab": {
-        "distance": 400,
-        "line_linked": {
-          "opacity": 1
-        }
-      },
-      "bubble": {
-        "distance": 400,
-        "size": 40,
-        "duration": 2,
-        "opacity": 8,
-        "speed": 3
-      },
-      "repulse": {
-        "distance": 200,
-        "duration": 0.4
-      },
-      "push": {
-        "particles_nb": 4
-      },
-      "remove": {
-        "particles_nb": 2
-      }
-    }
-  },
-  "retina_detect": true
-});
+    });
 </script>
+<%- include('../partials/user-footer') %>

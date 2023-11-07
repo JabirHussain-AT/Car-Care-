@@ -9,7 +9,8 @@ const CartSchema = new Schema({
      ProductId: { type: String, required: true , ref:"Product" },
      Quantity: { type: Number, required: true },
   }],
-  couponAmount:{type :Number}
+  couponAmount:{type :Number},
+  couponCode :{type:String}
 });
 
 const Cart = mongoose.model('Cart', CartSchema);

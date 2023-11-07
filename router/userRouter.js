@@ -114,6 +114,7 @@ router.post('/verify-payment',auth.userTokenAuth,paymentController.verifypayment
 //coupon validation
 router.post('/validateCoupon',auth.userTokenAuth,couponController.validateCoupon) 
 
+router.post('/removeCouponapplied',auth.userTokenAuth,couponController.removeAppliedCoupon)
 //return order
 router.post('/returnRequest/:id',auth.userTokenAuth,orderController.returnOrder) 
 

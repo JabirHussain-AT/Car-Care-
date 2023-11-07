@@ -74,12 +74,13 @@ module.exports = {
                         const currentDate = moment();
                         // console.log(momentDate.isBefore(currentDate),"nokkaam")
                         if (!momentDate.isBefore(currentDate)) {
-                            couponExist.Users.push(user);
-                            const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue},{upsert:true})
+                            const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue,couponCode:couponExist.CouponCode},{upsert:true})
+                            // couponExist.Users.push(user);//////////////////////////////////////////////////////////////////
                            
-                            await couponExist.save();
+                            // await couponExist.save()///////////////////////////////////////////////////////////////////////////;
                             res.json({
                                 status: true,
+                                minAmount:couponExist.MinOrderAmount,
                                 couponAmount: couponExist.CouponValue
                             })
                             //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
@@ -98,7 +99,7 @@ module.exports = {
                 }
             } else {
                 const couponUsed = await CouponHistory.findOne({ UserId: user, CouponCode: CouponCode })
-                console.log(couponUsed, "uamanfuafiasj")
+                console.log(couponUsed, "coupon used or not ")
                 if (couponUsed !== null) {
                     if (couponUsed.Status === 'Not Used') {
                         // console.log(couponExist)
@@ -108,10 +109,12 @@ module.exports = {
                             const currentDate = moment();
                             // console.log(momentDate.isBefore(currentDate),"nokkaam")
                             if (!momentDate.isBefore(currentDate)) {
-                                couponUsed.Status = "Used"
-                                couponUsed.save()
+                                // couponUsed.Status = "Used"////////////////////////////////////////////////////
+                                // couponUsed.save()/////////////////////////////////////////////////////////////
+                                const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue,couponCode:couponExist.CouponCode},{upsert:true})
                                 res.json({
                                     status: true,
+                                    minAmount:couponExist.MinOrderAmount,
                                     couponAmount: couponExist.CouponValue
                                 })
                                 //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
@@ -147,6 +150,22 @@ module.exports = {
                 status: false,
                 message: `This is not valid Coupon`
             })
+        }
+    },
+    removeAppliedCoupon : async (req,res)=>{
+        try{
+
+            console.log(req.body,"coupon code recieved or not here")
+            const coupon = await Coupon.findOne({CouponCode:req.body.couponCode})
+            const userId = req.session.user.user
+            const updatedCart = await Cart.updateOne(
+                { UserId: userId },
+                { $unset: { couponAmount: 1, couponCode: 1 } }
+              
+            );
+            res.json()
+        }catch(err){
+            console.log(err,"err in the remove appplied coupion")
         }
     },
     deleteCoupon: async (req, res) => {

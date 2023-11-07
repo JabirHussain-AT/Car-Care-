@@ -55,6 +55,12 @@
 
                                 </div>
                             </div>
+                            <div class="row col-md-12 ml-2 mb-2 justify-content-center">
+                                <h4>Referral Code:</h4>
+                                <h4 class="text-primary">localhost/:3002/<%= user.ReferralCode %></h4>
+                                <!-- Use a Font Awesome icon for copy action -->
+                                <i class="fas fa-copy" style="cursor: pointer; margin-left: 5px;" onclick="copyReferralCode()"></i>
+                            </div>
                         </div>
                      
                         <!--  -->
@@ -305,6 +311,18 @@
                     }
                 }
             });
+        </script>
+        <script>
+            function copyReferralCode() {
+                const referralCode = document.querySelector('.text-primary');
+                const tempInput = document.createElement('input');
+                tempInput.value = referralCode.textContent;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                alert('Referral code copied to clipboard!');
+            }
         </script>
         
 

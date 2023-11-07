@@ -5,6 +5,7 @@ const Products = require("../models/productSchema");
 const Category = require("../models/categorySchema");
 const Orders = require("../models/orderSchema");
 const Wallet = require('../models/walletHistorySchema')
+const Coupon = require('../models/couponSchema')
 const Cart = require("../models/cartSchema");
 const CouponHistory = require("../models/couponHistorySchema");
 const bcrypt = require("bcrypt");
@@ -28,11 +29,28 @@ module.exports = {
     res.render("user/orderDetials");
   },
   orderSuccess: async (req, res) => {
-    //  console.log(latestOrder,"latestOrder")
-    // console.log(req.params.id);
     try {
       const userId = req.session.user.user
+      const userCart = await Cart.findOne({UserId : userId})
+      if(!userCart){res.redirect('/shop')}
+
       const latestOrder = await Orders.findOne({ _id: req.params.id })
+      //make it coupon applied 
+      if(userCart?.couponCode){
+        const couponExist = await Coupon.findOne({ CouponCode: userCart?.couponCode })
+        if(couponExist !== null){
+          if (couponExist.CouponIssuedTo === 'public') {
+            
+           couponExist.Users.push(userId);
+           await couponExist.save()
+          }else{
+            const couponUsed = await CouponHistory.findOne({ UserId: userId, CouponCode: userCart?.couponCode })
+            couponUsed.Status = "Used"
+            couponUsed.save()
+          }
+        }
+      }
+      
 
       const orderItems = latestOrder.Products.map((item) => ({
         productId: item.ProductId,
