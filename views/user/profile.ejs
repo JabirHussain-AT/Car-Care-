@@ -4,78 +4,97 @@
             <% if(message.nomatch) { %>
                 <div class="alert alert-danger" role="alert">
                     <%= message.nomatch %>
-                  </div>
-                  <% } %>
-                  <% if(message.wrongOld) { %>
-                    <div class="alert alert-danger" role="alert">
-                        <%= message.wrongOld %>
-                      </div>
-                      <% } %>
-                      <% if(message.success) { %>
-                        <div class="alert alert-success" role="alert">
-                            <%= message.success %>
-                          </div>
-                          <% } %>
-                          <% if(message.profileUpdated) { %>
-                            <div class="alert alert-success" role="alert">
-                                <%= message.profileUpdated %>
-                              </div>
-                              <% } %>
-            <div class="main-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card mt-3">
-                            <div class="card-body text-center">
-                                <img src="/assets/unknown profile.jpg" alt="Admin"
-                                    class="rounded-circle p-1 " width="110">
-                                    <% if(user) { %>
-                                <div class="mt-3">
-                                    <h4><%= user.Name %></h4>
-                                    <!-- <p class="text-secondary mb-1">Full Stack Developer</p>
+                </div>
+                <% } %>
+                    <% if(message.wrongOld) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= message.wrongOld %>
+                        </div>
+                        <% } %>
+                            <% if(message.success) { %>
+                                <div class="alert alert-success" role="alert">
+                                    <%= message.success %>
+                                </div>
+                                <% } %>
+                                    <% if(message.profileUpdated) { %>
+                                        <div class="alert alert-success" role="alert">
+                                            <%= message.profileUpdated %>
+                                        </div>
+                                        <% } %>
+                                            <div class="main-body">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="card mt-3">
+                                                            <div class="card-body text-center">
+                                                                <img src="/assets/unknown profile.jpg" alt="Admin"
+                                                                    class="rounded-circle p-1 " width="110">
+                                                                <% if(user) { %>
+                                                                    <div class="mt-3">
+                                                                        <h4>
+                                                                            <%= user.Name %>
+                                                                        </h4>
+                                                                        <!-- <p class="text-secondary mb-1">Full Stack Developer</p>
                             <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <!--  -->
-                           <!--  -->
-                          
-                           <div class="card">
-                            <div class="card-body">
-                                <div class="row col-md-12 ml-2 mb-2 justify-content-center">
-                                  
-                                        <h4>Wallet Balance :</h4>
-                                        <h4 class="text-success">₹ <%= user.Wallet %> /-</h4> 
-                                   
-                                </div>   
-                                
-                                <div class="d-flex justify-content-center">
-                                    <a href="/view-wallet-history"><button type="button" class="btn btn-outline-secondary px-4">View Wallet History</button></a>  
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <!--  -->
+                                                        <!--  -->
 
-                                </div>
-                            </div>
-                            <div class="row col-md-12 ml-2 mb-2 justify-content-center">
-                                <h4>Referral Code:</h4>
-                                <h4 class="text-primary">localhost/:3002/<%= user.ReferralCode %></h4>
-                                <!-- Use a Font Awesome icon for copy action -->
-                                <i class="fas fa-copy" style="cursor: pointer; margin-left: 5px;" onclick="copyReferralCode()"></i>
-                            </div>
-                        </div>
-                     
-                        <!--  -->
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Full Name</h6>
-                                    </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <form action="/profile" method="post">
-                                            <input type="text" class="form-control" name="Name" value="<%= user.Name %>">
-                                    </div>
-                                </div>
-                                <!-- <div class="row mb-3">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div
+                                                                    class="row col-md-12 ml-2 mb-2 justify-content-center">
+
+                                                                    <h4>Wallet Balance :</h4>
+                                                                    <h4 class="text-success">₹ <%= user.Wallet %> /-
+                                                                    </h4>
+
+                                                                </div>
+
+                                                                <div class="d-flex justify-content-center">
+                                                                    <a href="/view-wallet-history"><button type="button"
+                                                                            class="btn btn-outline-secondary px-4">View
+                                                                            Wallet History</button></a>
+
+                                                                </div>
+                                                            </div>
+                                                            <a class="btn text-dark d-flex-column  border-0">
+                                                                <div class="wallet-header">
+                                                                    Refer to your friends and earn Rs:100 in each.
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Your referral link : </h6>
+                                                                    <h6 class="text-primary" id="referral-link">
+                                                                        localhost:3002/signup/<%=user._id%>
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="p-4">
+                                                                    <button id="copyButton"
+                                                                        class="fa fa-copy fa-xl  border-0"></button>
+                                                                </div>
+                                                                <span id="copySuccessMessage"
+                                                                    class="d-none fw-bold text-success"> Text copied to
+                                                                    clipboard! </span>
+                                                            </a>
+                                                        </div>
+
+                                                        <!--  -->
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-sm-3">
+                                                                        <h6 class="mb-0">Full Name</h6>
+                                                                    </div>
+                                                                    <div class="col-sm-9 text-secondary">
+                                                                        <form action="/profile" method="post">
+                                                                            <input type="text" class="form-control"
+                                                                                name="Name" value="<%= user.Name %>">
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Phone</h6>
                             </div>
@@ -83,132 +102,158 @@
                                 <input type="text" class="form-control" value="(239) 816-9029">
                             </div>
                         </div> -->
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Mobile</h6>
-                                    </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" name="MobNo" value="<%= user.MobNo %>">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3"></div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <button type="submit" class="btn btn-primary px-4">Save Changes </button>
-                                        </form>
-                                        <% } %>
-                                        <button type="submit" class="btn btn-info px-4 ml-5" data-bs-toggle="modal"
-                                            data-bs-target="#changePasswordModal">Change Password </button>
-                                           <a href="/logout"><button type="button" class="btn btn-secondary px-4">Logout </button></a>
-                                          
-                                    </div>
-                                   
+                                                                <div class="row mb-3">
+                                                                    <div class="col-sm-3">
+                                                                        <h6 class="mb-0">Mobile</h6>
+                                                                    </div>
+                                                                    <div class="col-sm-9 text-secondary">
+                                                                        <input type="text" class="form-control"
+                                                                            name="MobNo" value="<%= user.MobNo %>">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-3"></div>
+                                                                    <div class="col-sm-9 text-secondary">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary px-4">Save Changes
+                                                                        </button>
+                                                                        </form>
+                                                                        <% } %>
+                                                                            <button type="submit"
+                                                                                class="btn btn-info px-4 ml-5"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#changePasswordModal">Change
+                                                                                Password </button>
+                                                                            <a href="/logout"><button type="button"
+                                                                                    class="btn btn-secondary px-4">Logout
+                                                                                </button></a>
 
-                                </div>
-                            </div>
-                        </div>
-                        <!--  -->
-                     
-                        <!--  -->
-                        <div class="row justify-content-center">
-                            <div class="col-lg-4 col-md-6 col-sm-6  col-12">
-                                <a class="text-decoration-none" href="/orderHistory">
-                                    <div class="card text-center  mb-3" style="width: 40vh;  background: linear-gradient(to right, #b7da7e, #c1d0d1);; height: 30vh;">
-                                        <div class="card-header">
-                                            <img src="/assets/order-box-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body ">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                                Orders History
-                                               
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                                <a class="text-decoration-none" href="/cart">
-                                    <div class="card text-center text-bg-dark mb-3" style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
-                                        <div class="card-header">
-                                            <img src="/assets/cart-card-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                                Cart
-                                                
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                                <a class="text-decoration-none" href="/Address">
-                                    <div class="card text-center text-bg-dark mb-3" style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;"">
-                                        <div class="card-header">
-                                            <img src="/assets/address-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                                Address 
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-6  col-12">
-                                <a class="text-decoration-none" href="">
-                                    <div class="card text-center text-bg-dark mb-3" style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
-                                        <div class="card-header">
-                                            <img src="/assets/wishlist-card-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                                Wishlist
-                                               
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-6  col-12">
-                                <a class="text-decoration-none" href="">
-                                    <div class="card text-center text-bg-dark mb-3"style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
-                                        <div class="card-header">
-                                            <img src="/assets/review-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                              My ReviewS 
-                                                
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-6  col-12">
-                                <a class="text-decoration-none" href="">
-                                    <div class="card text-center text-bg-dark mb-3" style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
-                                        <div class="card-header">
-                                            <img src="/assets/account-removebg-preview.png" class="img-fluid" style="width: 10vh;"
-                                                alt="">
-                                        </div>
-                                        <div class="card-body">
-                                            <h2 class="tickerTimes text-dark" style="font-family: 'Times New Roman', Times, serif;">
-                                               Account Settings
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                                                    </div>
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--  -->
+
+                                                        <!--  -->
+                                                        <div class="row justify-content-center">
+                                                            <div class="col-lg-4 col-md-6 col-sm-6  col-12">
+                                                                <a class="text-decoration-none" href="/orderHistory">
+                                                                    <div class="card text-center  mb-3"
+                                                                        style="width: 40vh;  background: linear-gradient(to right, #b7da7e, #c1d0d1);; height: 30vh;">
+                                                                        <div class="card-header">
+                                                                            <img src="/assets/order-box-removebg-preview.png"
+                                                                                class="img-fluid" style="width: 10vh;"
+                                                                                alt="">
+                                                                        </div>
+                                                                        <div class="card-body ">
+                                                                            <h2 class="tickerTimes text-dark"
+                                                                                style="font-family: 'Times New Roman', Times, serif;">
+                                                                                Orders History
+
+                                                                            </h2>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <a class="text-decoration-none" href="/cart">
+                                                                    <div class="card text-center text-bg-dark mb-3"
+                                                                        style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
+                                                                        <div class="card-header">
+                                                                            <img src="/assets/cart-card-removebg-preview.png"
+                                                                                class="img-fluid" style="width: 10vh;"
+                                                                                alt="">
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <h2 class="tickerTimes text-dark"
+                                                                                style="font-family: 'Times New Roman', Times, serif;">
+                                                                                Cart
+
+                                                                            </h2>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                                                                <a class="text-decoration-none" href="/Address">
+                                                                    <div class="card text-center text-bg-dark mb-3"
+                                                                        style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;"">
+                                        <div class=" card-header">
+                                                                        <img src="/assets/address-removebg-preview.png"
+                                                                            class="img-fluid" style="width: 10vh;"
+                                                                            alt="">
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <h2 class="tickerTimes text-dark"
+                                                                            style="font-family: 'Times New Roman', Times, serif;">
+                                                                            Address
+                                                                        </h2>
+                                                                    </div>
+                                                            </div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-6 col-sm-6  col-12">
+                                                            <a class="text-decoration-none" href="">
+                                                                <div class="card text-center text-bg-dark mb-3"
+                                                                    style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
+                                                                    <div class="card-header">
+                                                                        <img src="/assets/wishlist-card-removebg-preview.png"
+                                                                            class="img-fluid" style="width: 10vh;"
+                                                                            alt="">
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <h2 class="tickerTimes text-dark"
+                                                                            style="font-family: 'Times New Roman', Times, serif;">
+                                                                            Wishlist
+
+                                                                        </h2>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-6 col-sm-6  col-12">
+                                                            <a class="text-decoration-none" href="">
+                                                                <div class="card text-center text-bg-dark mb-3"
+                                                                    style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
+                                                                    <div class="card-header">
+                                                                        <img src="/assets/review-removebg-preview.png"
+                                                                            class="img-fluid" style="width: 10vh;"
+                                                                            alt="">
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <h2 class="tickerTimes text-dark"
+                                                                            style="font-family: 'Times New Roman', Times, serif;">
+                                                                            My ReviewS
+
+                                                                        </h2>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-6 col-sm-6  col-12">
+                                                            <a class="text-decoration-none" href="">
+                                                                <div class="card text-center text-bg-dark mb-3"
+                                                                    style="width: 40vh;   background: linear-gradient(to right, #b7da7e, #c1d0d1); height: 30vh;">
+                                                                    <div class="card-header">
+                                                                        <img src="/assets/account-removebg-preview.png"
+                                                                            class="img-fluid" style="width: 10vh;"
+                                                                            alt="">
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <h2 class="tickerTimes text-dark"
+                                                                            style="font-family: 'Times New Roman', Times, serif;">
+                                                                            Account Settings
+                                                                        </h2>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        </div>
         </div>
         <!-- Change Password Modal -->
         <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
@@ -221,41 +266,50 @@
                     </div>
                     <div class="modal-body">
                         <% if(message.nomatch) { %>
-                        <div class="alert alert-danger" role="alert">
-                            <%= message.nomatch %>
-                          </div>
-                          <% } %>
-                        <form action="/changePassword" method="post">
-                            <div class="mb-3">
-                                <label for="oldPassword" class="form-label">Old Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="oldPasswordToggle" style="background-color: rgba(212, 214, 216, 0.889);">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                </div>
+                            <div class="alert alert-danger" role="alert">
+                                <%= message.nomatch %>
                             </div>
-                            <div class="mb-3">
-                                <label for="newPassword" class="form-label">New Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="newPasswordToggle" style="background-color: rgba(212, 214, 216, 0.889);">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                    <button type="button" class="btn btn-outline-secondary" id="confirmPasswordToggle" style="background-color: rgba(212, 214, 216, 0.889);">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Change Password</button>
-                        </form>
+                            <% } %>
+                                <form action="/changePassword" method="post">
+                                    <div class="mb-3">
+                                        <label for="oldPassword" class="form-label">Old Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="oldPassword"
+                                                name="oldPassword" required>
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                id="oldPasswordToggle"
+                                                style="background-color: rgba(212, 214, 216, 0.889);">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="newPassword"
+                                                name="newPassword" required>
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                id="newPasswordToggle"
+                                                style="background-color: rgba(212, 214, 216, 0.889);">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="confirmPassword"
+                                                name="confirmPassword" required>
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                id="confirmPasswordToggle"
+                                                style="background-color: rgba(212, 214, 216, 0.889);">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -281,30 +335,30 @@
                 const oldPasswordInput = document.getElementById('oldPassword');
                 const newPasswordInput = document.getElementById('newPassword');
                 const confirmPasswordInput = document.getElementById('confirmPassword');
-        
+
                 // Get the corresponding toggle buttons and initial icon classes
                 const toggleButtons = {
                     oldPassword: document.getElementById('oldPasswordToggle'),
                     newPassword: document.getElementById('newPasswordToggle'),
                     confirmPassword: document.getElementById('confirmPasswordToggle')
                 };
-        
+
                 // Toggle password visibility
                 function togglePasswordVisibility(input, toggleButton) {
                     const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
                     input.setAttribute('type', type);
-        
+
                     // Update the button icon based on the password visibility
                     const iconClass = type === 'password' ? 'fa-eye' : 'fa-eye-slash';
                     toggleButton.innerHTML = `<i class="fa ${iconClass}"></i>`;
                 }
-        
+
                 // Attach click event listeners to toggle buttons
                 for (const key in toggleButtons) {
                     if (Object.hasOwnProperty.call(toggleButtons, key)) {
                         const toggleButton = toggleButtons[key];
                         const inputField = document.getElementById(key);
-        
+
                         toggleButton.addEventListener('click', function () {
                             togglePasswordVisibility(inputField, toggleButton);
                         });
@@ -313,17 +367,26 @@
             });
         </script>
         <script>
-            function copyReferralCode() {
-                const referralCode = document.querySelector('.text-primary');
-                const tempInput = document.createElement('input');
-                tempInput.value = referralCode.textContent;
+            document.getElementById("copyButton").addEventListener("click", function () {
+                const referralLink = document.getElementById("referral-link").textContent;
+
+                const tempInput = document.createElement("input");
+                tempInput.value = referralLink;
                 document.body.appendChild(tempInput);
+
                 tempInput.select();
-                document.execCommand('copy');
+                document.execCommand("copy");
+
                 document.body.removeChild(tempInput);
-                alert('Referral code copied to clipboard!');
-            }
+
+                const successMessage = document.getElementById("copySuccessMessage");
+                successMessage.classList.remove("d-none");
+
+                setTimeout(function () {
+                    successMessage.classList.add("d-none");
+                }, 3000);
+            });
         </script>
-        
+
 
         <%- include('../layout/user/footer') %>

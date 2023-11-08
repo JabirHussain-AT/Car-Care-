@@ -40,7 +40,7 @@ html{
     margin-left: 15vw;
 }
 .main-layer {
-    background-color:#334c58;
+    background:linear-gradient(160deg,rgb(95, 94, 94),rgb(46, 159, 188));
 
     height: 100vh;
 }

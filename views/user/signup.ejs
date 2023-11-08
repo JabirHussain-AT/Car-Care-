@@ -5,9 +5,9 @@
         <!-- 1 st div layer -->
         <div class="container-fluid main-layer">
             <div class="row justify-content-center align-items-center" style="height: auto;">
-                <div class="col-md-3.5  rounded signup signup-form">
+                <div class="col-md-3.5  rounded signup">
                     <!-- Content for the left column -->
-                    <div class="p-3">
+                    <div class="p-3 ml-3">
                         <h2>Register</h2>
                         <p style="font-size: small;">Already have an account? <a href="/login"><u>LOG IN</u></a></p>
                         <% if (message) { %>
@@ -17,7 +17,7 @@
                             <% } %>
                                 <div class="container-fluid">
                                     <div class="row justify-content-center" style="height: 100%;">
-                                        <div class="col-md-6 ml-5 pl-4">
+                                        <div class="col-md-6 ml-3 pl-4">
                                             <form action="/verifyEmail" method="get" style="margin-left: -9vw;">
                                                 <div class="form-group">
                                                     <label for="email pl-5">Email</label>
@@ -34,7 +34,12 @@
                                                         Email</button>
                                                 </div>
                                             </form>
-                                            <form class="form" action="/signup" method="post">
+                                            <% if (locals.referedUser) {%>
+                                                <form class="form" action="/signup/<%= referedUser %>" method="post">
+                                                <% } else { %>
+                                                    <form class="form" action="/signup" method="post">
+                                                    <% } %>
+                                           
                                                 <div class="form-group ">
 
 
@@ -60,20 +65,20 @@
                                                         placeholder="Confirm new password">
                                                 </div>
                                                 <% if(locals.message.error){ %>
-                                                    <p style="color: red; font-size: 10px ;">
-                                                        <%= message.error %>
-                                                    </p>
+                                                    <div class="alert alert-danger" role="alert">
+                                                        <%= message.error %> 
+                                                      </div>
                                                     <% } %>
                                                         <% if(locals.message.banned){ %>
-                                                            <p style="color: red; font-size: 10px ;">
+                                                            <div class="alert alert-danger" role="alert">
                                                                 <%= message.banned %>
-                                                            </p>
+                                                              </div>
                                                             <% } %>
                                                                 <!-- tick -->
                                                                 <div class="container">
                                                                     <div class="row" style="height: auto;">
                                                                         <div class="col-md-12">
-                                                                            <div class="form-check">
+                                                                            <div class="form-check" style="margin-left: -12px;">
                                                                                 <input class="form-check-input" required
                                                                                     type="checkbox"
                                                                                     id="subscribeCheckbox">

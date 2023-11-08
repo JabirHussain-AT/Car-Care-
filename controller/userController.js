@@ -281,6 +281,7 @@ module.exports = {
       // const Email = req.body.email
       const userData = await Users.findOne({ Email: req.body.email });
       console.log(userData);
+      if(userData !== null ){
       if (userData.Status === "Active") {
         if (userData !== null) {
           const bcryptPass = await bcrypt.compare(
@@ -313,8 +314,14 @@ module.exports = {
         req.flash("banned", "you are Banned");
         res.redirect("/login");
       }
+    }else{
+      console.log("userdata is banned ");
+        req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
+        res.redirect("/login");
+
+    }
     } catch (error) {
-      req.flash("warning", " username or password not matching");
+      req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
       res.redirect("/login");
       console.log("one error occured");
       throw error;
@@ -323,14 +330,28 @@ module.exports = {
 
   getSignup: (req, res) => {
     const user = req.session.user;
+
     // const error = req.session.error
-    res.render("user/signup", {
-      message: req.flash(),
-      email: req.session.email,
-      user: user,
-    });
+    if (req.params.id) {
+      // Pass the parameter to the client-side by rendering it in the HTML
+      res.render("user/signup", {
+          message: req.flash(),
+          email: req.session.email,
+          user: user,
+          referedUser: req.params.id,  // Pass the parameter to the template
+      });
+  } else {
+      res.render("user/signup", {
+          message: req.flash(),
+          email: req.session.email,
+          user: user,
+      });
+    }
   },
   postSignup: async (req, res) => {
+    if(req.params.id){
+      console.log(req.params.id,"referal code user is here")
+    }
     req.body.Email = req.session.email;
     if (req.body.Password === req.body.confirmPassword) {
       try {

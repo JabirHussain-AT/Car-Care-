@@ -24,13 +24,13 @@ body{
     background-color:#CFE6F9;
 }
 .signup{
- height: 60vh;
- width: 80vw;
+ /* height: 60vh;
+ width: 80vw; */
  margin-top: 10vh;
- background:transparent
+ background:red
 }
 .signup-form{
-    height: 88vh;
+    /* height: 88vh; */
     width: auto;
     background-color: rgb(255, 255, 255);
     margin-right: 10vh;
@@ -52,7 +52,8 @@ body{
 }
 
 .signup {
-    margin-top: 20px;
+    margin-top: 60px;
+    background: #fff;
 }
 
 .v-email {

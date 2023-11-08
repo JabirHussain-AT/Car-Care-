@@ -25,6 +25,9 @@ router.post('/profile',auth.userTokenAuth,userController.postProfile)
 router.get('/signup',auth.userExist,userController.getSignup)
 router.post('/signup',userController.postSignup)
 
+router.get('/signup/:id',auth.userExist,userController.getSignup)
+router.post('/signup/:id',userController.postSignup)
+
 //product page
 router.get('/product/:id',auth.userTokenAuth,userController.getproduct)
 
