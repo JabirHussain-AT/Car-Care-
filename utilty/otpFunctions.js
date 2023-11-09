@@ -8,7 +8,7 @@ module.exports = {
     generateOTP : () => {
         return `${Math.floor(1000 + Math.random() * 9000)}`;
     },
-    sendOTP :async (req,res,email,otpToBeSent)=>{
+    sendOTP :async (req,res,email,otpToBeSent,referalId)=>{
         try{
             const transporter = nodemailer.createTransport({
                 port: 465,
@@ -47,8 +47,12 @@ module.exports = {
             }
             console.log('Success');
         });
+        if(referalId){
+            res.render('user/emailverification',{error:req.session.error,user:req.session.user,referedUser:referalId});
+        }else{
 
-        res.render('user/emailverification',{error:req.session.error,user:req.session.user});
+            res.render('user/emailverification',{error:req.session.error,user:req.session.user});
+        }
     }catch (error) {
         console.error(error);
         // res.status(500).send("Error sending OTP");
@@ -102,7 +106,7 @@ module.exports = {
        
     }
     },
-    resendOTP : async (req,res,email,otpToBeSent)=>{
+    resendOTP : async (req,res,email,otpToBeSent,referalId)=>{
         try{
             const transporter = nodemailer.createTransport({
                 port: 465,
@@ -141,8 +145,12 @@ module.exports = {
             }
             console.log('Success');
         });
-
-        res.render('user/emailverification',{error:req.session.error});
+        if(referalId){
+            res.render('user/emailverification',{error:req.session.error,referedUser:referalId});
+        }else{
+            res.render('user/emailverification',{error:req.session.error});
+        }
+       
     }catch (error) {
         console.error(error);
         res.status(500).send("Error sending Otp");

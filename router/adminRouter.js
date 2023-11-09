@@ -7,6 +7,7 @@ const bannerController = require('../controller/bannerController')
 const couponController = require('../controller/couponController')
 const auth = require('../middlewares/adminAuth')
 const orderController = require('../controller/orderController')
+const offerController = require('../controller/offerController.js')
 
 
 //admin users 
@@ -40,6 +41,9 @@ router.get('/paymentSales-by-year',auth.adminTokenAuth,adminController.getpaymen
 router.get('/addCategory',adminController.addCatogory)
 router.post('/addCategory',upload.single('Images',1),adminController.postaddCategory)
 
+//add category offer
+router.post('/addCategoryOffer',auth.adminTokenAuth,offerController.addCategoryOffer)
+
 router.get('/editCategory/:id',auth.adminTokenAuth,adminController.editCategory)
 router.post('/editCategory/:id',upload.single('Images',1),adminController.postEditCategory)
 
@@ -69,6 +73,13 @@ router.put('/order/update-status/:orderId',adminController.updateStatus)
 router.get('/order/details/:orderId',adminController.orderViewMore)
 
 router.get('/banner',auth.adminTokenAuth,bannerController.banner)
+
+//offers referal and category
+router.post('/add-referal-Offers',auth.adminTokenAuth,offerController.addReferaloffers)
+router.post('/edit-referal-offer/:id',auth.adminTokenAuth,offerController.editReferaloffers)
+router.get('/offers',auth.adminTokenAuth,offerController.offers)
+router.get('/offers/:id',auth.adminTokenAuth,offerController.changeStatusOfoffers)
+
 
 router.get('/addBanner',auth.adminTokenAuth,bannerController.addBanner)
 router.post('/addBanner',auth.adminTokenAuth,upload.fields([

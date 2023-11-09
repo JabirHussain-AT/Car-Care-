@@ -22,6 +22,7 @@ const { Mongoose } = require("../config/dbconnection");
 const { getDefaultHighWaterMark } = require("nodemailer/lib/xoauth2");
 const onlinePayment = require("../utilty/onlinePayment");
 const invoice = require("../utilty/invoiceCreater");
+const ReferalOffer = require("../models/referalOfferSchema");
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -41,14 +42,20 @@ module.exports = {
     res.render("user/home", { user: user, Banner: banner });
   },
   profile: async (req, res) => {
-    const userid = req.session.user.user;
-    const user = await Users.findOne({ _id: userid });
-    const wallet = await Wallet.findOne({ UserId: userid });
-    res.render("user/profile", {
+    try{
+      const userid = req.session.user.user;
+      const user = await Users.findOne({ _id: userid });
+      const wallet = await Wallet.findOne({ UserId: userid });
+      const ReferalAmount = await ReferalOffer.find()
+      res.render("user/profile", {
       user: user,
       message: req.flash(),
       Wallet: wallet,
+      ReferalAmount
     });
+    }catch(err){
+      console.log(err,"error in the catch of profile")
+    }
   },
   postProfile: async (req, res) => {
     try {
@@ -124,7 +131,11 @@ module.exports = {
         console.log(req.query.email);
         req.session.email = email;
         otpToBeSent = otpFunctions.generateOTP();
-        const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
+        if(req.params.id){
+          const result = otpFunctions.sendOTP(req, res, email, otpToBeSent,req.params.id);
+        }else{
+          const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
+        }
       }
     } catch (error) {
       console.log("error in the verify email");
@@ -160,7 +171,12 @@ module.exports = {
       if (otp == dbOTP) {
         // Redirect to the landing page upon successful OTP validation
         req.session.OtpValid = true;
-        res.redirect("/signup");
+        if(req.params.id){
+        res.redirect(`/signup/${req.params.id}`);
+        }else{
+
+          res.redirect("/signup");
+        }
       } else {
         // Invalid OTP
         req.session.error = "The OTP is invalid.";
@@ -194,7 +210,12 @@ module.exports = {
             expiresAt: Date.now() + duration * 360 * 1000,
           }
         );
-        const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent);
+        if(req.params.id){
+          const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent,req.params.id);
+        }else{
+
+          const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent);
+        }
       }
       // Mail data
     } catch (error) {
@@ -334,6 +355,7 @@ module.exports = {
     // const error = req.session.error
     if (req.params.id) {
       // Pass the parameter to the client-side by rendering it in the HTML
+      console.log(req.params.id,"referal iddd")
       res.render("user/signup", {
           message: req.flash(),
           email: req.session.email,
@@ -350,7 +372,14 @@ module.exports = {
   },
   postSignup: async (req, res) => {
     if(req.params.id){
+      const userId = new mongoose.Types.ObjectId(req.params.id)
       console.log(req.params.id,"referal code user is here")
+      const referedUser = await Users.findOne(userId)
+      if(referedUser){
+        const ReferalAmount = await ReferalOffer.findOne()
+        await Users.updateOne({ _id: userId }, { $inc: { Wallet: ReferalAmount.Amount } }).exec();
+        console.log("Wallet updated successfully");
+      }
     }
     req.body.Email = req.session.email;
     if (req.body.Password === req.body.confirmPassword) {

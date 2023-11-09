@@ -1,0 +1,383 @@
+<%- include('../layout/admin/layout') %>
+    <%- include('../partials/admin-header-checking') %>
+        <!-- Main Content -->
+        <main role="main" class="col-md-12 ml-sm-auto px-4">
+            <div class="container-fluid" style="margin-left: 10%; width: 82%; margin-top: 6%;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Referal Offers</h2>
+                    <% if (ReferalOffers && ReferalOffers.length> 0) { %>
+                        <a href="#" data-toggle="modal" data-target="#editReferalModal" class="btn btn-dark btn-sm">Edit
+                            Referal Offer</a>
+                        <% } else { %>
+                            <a href="#" data-toggle="modal" data-target="#addReferalModal">
+                                <button class="btn btn-primary" id="addProduct">Add Referal Offer</button>
+                            </a>
+                            <% } %>
+                </div>
+
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered table-shadow mt-3">
+                        <thead>
+                            <tr>
+                                <th>Referal Amount</th>
+                                <th>Referred User Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% ReferalOffers.forEach(ReferalOffer=> { %>
+                                <tr>
+                                    <td>
+                                        <%= ReferalOffer.Amount %>
+                                    </td>
+                                    <td>
+                                        <%= ReferalOffer.Amount_For_Referal_Used %>
+                                    </td>
+                                    <td
+                                        class="<%= ReferalOffer.Status === 'Active' ? 'active-status' : 'inactive-status' %>">
+                                        <%= ReferalOffer.Status %>
+                                    </td>
+                                    <td>
+                                        <% if (ReferalOffer.Status==="Active" ) { %>
+                                            <a href="/admin/offers/<%= ReferalOffer._id %>"
+                                                class="pl-3 pr-3 mt-1 btn btn-warning btn-sm">Hide</a>
+                                            <% } else { %>
+                                                <a href="/admin/offers/<%= ReferalOffer._id %>"
+                                                    class="pl-3 pr-3 mt-1 btn btn-warning btn-sm">Visible</a>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <!-- category offers -->
+                                
+                                <!-- Edit Referal Modal -->
+                                <div class="modal fade" id="editReferalModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="editReferalModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editReferalModalLabel">Edit Referal Offer
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/admin/edit-referal-offer/<%= ReferalOffer._id %>"
+                                                    method="POST">
+                                                    <div class="form-group">
+                                                        <label for="editAmount">Referal Amount:</label>
+                                                        <input type="text" class="form-control" id="editAmount"
+                                                            name="Amount" value="<%= ReferalOffer.Amount %>" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="referredAmount">Referred User Amount:</label>
+                                                        <input type="text"
+                                                            value="<%= ReferalOffer.Amount_For_Referal_Used %>"
+                                                            class="form-control" id="referredAmount"
+                                                            name="Amount_For_Referal_Used" required>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="status">Status:</label>
+                                                        <select class="form-control" id="status"
+                                                            value="<%= ReferalOffer.Status %>" name="Status" required>
+                                                            <option value="Active">Active</option>
+                                                            <option value="Inactive">Inactive</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- Add other fields for editing as needed -->
+
+                                                    <button type="submit" class=" mt-3 btn btn-primary">Save
+                                                        Changes</button>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Edit Referal Modal -->
+                                <div class="modal fade" id="editReferalModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="editReferalModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editReferalModalLabel">Edit Referal Offer
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/admin/edit-referal-offer" method="POST">
+                                                    <div class="form-group">
+                                                        <label for="editAmount">Referal Amount:</label>
+                                                        <input type="text" class="form-control"
+                                                            value="<%= ReferalOffer.Amount %>" id="editAmount"
+                                                            name="editAmount" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="referredAmount">Referred User Amount:</label>
+                                                        <input type="text" class="form-control"
+                                                            value="<%= ReferalOffer.Amount_For_Referal_Used %>"
+                                                            id="referredAmount" name="Amount_For_Referal_Used" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="status">Status:</label>
+                                                        <select class="form-control" id="status" name="Status" required>
+                                                            <option value="Active" <%=ReferalOffer.Status==='Active'
+                                                                ? 'selected' : '' %>>Active</option>
+                                                            <option value="Inactive" <%=ReferalOffer.Status==='Inactive'
+                                                                ? 'selected' : '' %>>Inactive</option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- Add other fields for editing as needed -->
+                                                    <button type="submit" class="mt-3 btn btn-primary">Save
+                                                        Changes</button>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                    <div class="table-responsive">
+        
+                        <div class="d-flex justify-content-between align-items-center">
+                          <h2>Category offers</h2>
+                          <a
+                            class="btn btn-dark btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addCategoryOfferModal"
+                            >+ Add category offer</a
+                          >
+                        </div>
+                        <table id="table" class="table overflow-scroll">
+                          <thead>
+                            <tr>
+                              <th class="border text-center-in-table">Category Name</th>
+                              <th class="border text-center-in-table">Expiry date</th>
+                              <th class="border text-center-in-table">Discount Amount</th>
+                              <th class="border text-center-in-table">EDIT</th>
+                              <th class="border text-center-in-table">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% categoryOffers.forEach(function(offer) { %>
+                            <tr>
+                              <td class="border text-center-in-table">
+                                <%=offer.CategoryName.Name%>
+                              </td>
+                              <td class="border text-center-in-table"><%=offer.expiryDate%></td>
+                              <td class="border text-center-in-table">
+                                ₹<%=offer.Amount%>
+                              </td>
+                              <td class="border text-center-in-table">
+                                <a href="/admin/edit-offer/">
+                                  <i class="fas fa-pencil d-flex justify-content-center"></i>
+                                </a>
+                              </td>
+                              <% if(offer.Status === "Active"){%>
+                              <td class="border text-center-in-table">
+                                <button class="btn btn-outline-success" onclick="showConfirmationDialog('<%=offer._id%>','Deactivate')">
+                                  <i class="fas fa-unlock d-flex justify-content-center"></i>
+                                </button>
+                              </td>
+                              <% } else {%>
+                              <td class="border text-center-in-table">
+                                    <button class="btn btn-outline-danger" onclick="showConfirmationDialog('<%=offer._id%>','Activate')">
+                                      <i class="fas fa-lock d-flex justify-content-center"></i>
+                                    </button>
+                                  </td>
+                              <%}%>
+                            </tr>
+                            <%})%>
+                          </tbody>
+                        </table>
+                      </div>
+                </div>
+
+                <!-- * perPage -->
+            </div>
+
+            <!-- Add Referal Modal -->
+            <!-- Add Referal Modal -->
+            <div class="modal fade" id="addReferalModal" tabindex="-1" role="dialog"
+                aria-labelledby="addReferalModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addReferalModalLabel">Add Referal Offer</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/add-referal-Offers" method="POST">
+                                <div class="form-group">
+                                    <label for="amount">Referal Amount:</label>
+                                    <input type="text" class="form-control" id="amount" name="Amount" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="referredAmount">Referred User Amount:</label>
+                                    <input type="text" class="form-control" id="referredAmount"
+                                        name="Amount_For_Referal_Used" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="status">Status:</label>
+                                    <select class="form-control" id="status" name="Status" required>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class=" mt-3 btn btn-primary">Add Offer</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Category Offer -->
+            <div class="modal fade" id="addCategoryOfferModal" tabindex="-1"
+                aria-labelledby="addCategoryOfferModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCategoryOfferModalLabel">
+                                Add Category Offer
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/admin/addCategoryOffer" method="post">
+                                <div class="mb-3">
+                                    <label for="category">Category:</label>
+                                    <select class="form-select bg-light" id="category" name="CategoryName" required>
+                                        <option value="" selected disabled>Select a category</option>
+                                        <% categories.forEach(function(category) { %>
+                                            <option value="<%=category._id%>">
+                                                <%=category.Name%>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                                    <input type="date" class="form-control" id="expiryDate" name="expiryDate"
+                                        required />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="offerPrice" class="form-label">Discount Amount</label>
+                                    <input type="number" class="form-control" id="offerPrice" name="Amount"
+                                        placeholder="Enter discount amount" required />
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           </main> 
+
+
+
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                function showConfirmationDialog(offerId, status) {
+                    console.log(status);
+                    Swal.fire({
+                        title: 'Confirmation',
+                        text: `Are you sure you want to ${status} this offer?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('inside confirmed', status);
+                            if (status === 'Activate') {
+                                enableOffer(offerId)
+                            } else if (status === 'Deactivate') {
+                                disableOffer(offerId);
+                            } else {
+                                return
+                            }
+                        }
+                    });
+                }
+                async function disableOffer(offerId) {
+                    console.log('called disable', status);
+                    let response = await fetch(`/admin/offers/disableAndEnableOffer/${offerId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'Inactive'
+                        })
+                    });
+                    if (response) {
+                        console.log(response.success);
+                        const data = await response.json()
+                        if (data) {
+                            location.reload();
+                        } else {
+                            alert("Failed to disable the Offer");
+                        }
+                    } else {
+                        alert("Failed to disable the Offer");
+                    }
+                }
+                async function enableOffer(offerId) {
+                    console.log('called enable');
+                    let response = await fetch(`/admin/offers/disableAndEnableOffer/${offerId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'Active'
+                        })
+                    });
+                    if (response) {
+                        const data = response.json()
+                        if (data) {
+                            location.reload();
+                        } else {
+                            alert("Failed to enable the Offer");
+                        }
+                    } else {
+                        alert("Failed to enable the Offer");
+                    }
+                }
+            </script>
+
+
+
+            <!-- Include Bootstrap JS and jQuery (optional) -->
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            </body>
+
+            </html>

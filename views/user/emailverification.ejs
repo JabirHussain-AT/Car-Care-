@@ -29,7 +29,11 @@
     <div class="card">
         <h3 class="card-title">OTP Verification</h3>
         <p class="card-subtitle mb-2 text-muted">Please enter the OTP sent to your email.</p>
-        <form action="/verifyEmail" method="post">
+       <% if(locals.referedUser) {%>
+            <form action="/verifyEmail/<%= referedUser %>" method="post">
+        <% } else {%>
+            <form action="/verifyEmail" method="post">
+        <% } %>
         <input type="text" class="form-control mb-3"  name="otp" placeholder="Enter OTP">
         <button class="btn btn-primary btn-block" type="submit">Verify</button>
     </form>
@@ -37,8 +41,11 @@
             <p style="color: red;"><%= error %></p>
       <%  } %>
       <div class="d-flex"> <p class="text-info">OTP will be expired in : <p id="timer">02:00</p></p></div>
-    
+      <% if(locals.referedUser) {%>
+        <div id="resendOtp" style="display: none;"><p class="mt-3">Didn't receive the email? <a href="/resendOtp/<%= referedUser%> " class="card-link">Resend OTP</a></p></div>
+    <% } else {%>
         <div id="resendOtp" style="display: none;"><p class="mt-3">Didn't receive the email? <a href="/resendOtp" class="card-link">Resend OTP</a></p></div>
+    <% } %>
     </div>
     </div>
 </div>

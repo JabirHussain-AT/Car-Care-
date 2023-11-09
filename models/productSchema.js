@@ -66,6 +66,9 @@ const ProductSchema = new Schema({
       variants :{
         type:Array,
         ref:"Product"
+      },
+      IsInCategoryOffer :{
+        type:Boolean
       }
    
     

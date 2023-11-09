@@ -25,8 +25,12 @@ router.post('/profile',auth.userTokenAuth,userController.postProfile)
 router.get('/signup',auth.userExist,userController.getSignup)
 router.post('/signup',userController.postSignup)
 
+// referal time routers
 router.get('/signup/:id',auth.userExist,userController.getSignup)
 router.post('/signup/:id',userController.postSignup)
+router.get('/verifyEmail/:id',userController.verifyEmail)
+router.post('/verifyEmail/:id',userController.otpAuth)
+router.get('/resendOtp/:id',userController.resendOtp)
 
 //product page
 router.get('/product/:id',auth.userTokenAuth,userController.getproduct)
