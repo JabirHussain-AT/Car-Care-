@@ -43,6 +43,9 @@ router.post('/addCategory',upload.single('Images',1),adminController.postaddCate
 
 //add category offer
 router.post('/addCategoryOffer',auth.adminTokenAuth,offerController.addCategoryOffer)
+router.post('/editCategoryOffer/:id',auth.adminTokenAuth,offerController.editCategoryOffer)
+router.post('/editCategoryOfferStatus/:id',auth.adminTokenAuth,offerController.editCategoyOfferStatus)
+
 
 router.get('/editCategory/:id',auth.adminTokenAuth,adminController.editCategory)
 router.post('/editCategory/:id',upload.single('Images',1),adminController.postEditCategory)

@@ -49,7 +49,7 @@
                                     </td>
                                 </tr>
                                 <!-- category offers -->
-                                
+
                                 <!-- Edit Referal Modal -->
                                 <div class="modal fade" id="editReferalModal" tabindex="-1" role="dialog"
                                     aria-labelledby="editReferalModalLabel" aria-hidden="true">
@@ -153,59 +153,120 @@
                         </tbody>
                     </table>
                     <div class="table-responsive">
-        
+
                         <div class="d-flex justify-content-between align-items-center">
-                          <h2>Category offers</h2>
-                          <a
-                            class="btn btn-dark btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addCategoryOfferModal"
-                            >+ Add category offer</a
-                          >
+                            <h2>Category offers</h2>
+                            <a class="btn btn-dark btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#addCategoryOfferModal">+ Add category offer</a>
                         </div>
                         <table id="table" class="table overflow-scroll">
-                          <thead>
-                            <tr>
-                              <th class="border text-center-in-table">Category Name</th>
-                              <th class="border text-center-in-table">Expiry date</th>
-                              <th class="border text-center-in-table">Discount Amount</th>
-                              <th class="border text-center-in-table">EDIT</th>
-                              <th class="border text-center-in-table">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <% categoryOffers.forEach(function(offer) { %>
-                            <tr>
-                              <td class="border text-center-in-table">
-                                <%=offer.CategoryName.Name%>
-                              </td>
-                              <td class="border text-center-in-table"><%=offer.expiryDate%></td>
-                              <td class="border text-center-in-table">
-                                ₹<%=offer.Amount%>
-                              </td>
-                              <td class="border text-center-in-table">
-                                <a href="/admin/edit-offer/">
-                                  <i class="fas fa-pencil d-flex justify-content-center"></i>
-                                </a>
-                              </td>
-                              <% if(offer.Status === "Active"){%>
-                              <td class="border text-center-in-table">
-                                <button class="btn btn-outline-success" onclick="showConfirmationDialog('<%=offer._id%>','Deactivate')">
-                                  <i class="fas fa-unlock d-flex justify-content-center"></i>
-                                </button>
-                              </td>
-                              <% } else {%>
-                              <td class="border text-center-in-table">
-                                    <button class="btn btn-outline-danger" onclick="showConfirmationDialog('<%=offer._id%>','Activate')">
-                                      <i class="fas fa-lock d-flex justify-content-center"></i>
-                                    </button>
-                                  </td>
-                              <%}%>
-                            </tr>
-                            <%})%>
-                          </tbody>
+                            <thead>
+                                <tr>
+                                    <th class="border text-center-in-table">Category Name</th>
+                                    <th class="border text-center-in-table">Expiry date</th>
+                                    <th class="border text-center-in-table">Discount Amount</th>
+                                    <th class="border text-center-in-table">EDIT</th>
+                                    <th class="border text-center-in-table">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% categoryOffers.forEach(function(offer) { %>
+                                    <tr>
+                                        <td class="border text-center-in-table">
+                                            <%=offer.CategoryName.Name%>
+                                        </td>
+                                        <td class="border text-center-in-table">
+                                            <%=offer.expiryDate%>
+                                        </td>
+                                        <td class="border text-center-in-table">
+                                            ₹<%=offer.Amount%>
+                                        </td>
+                                        <td class="border text-center-in-table">
+                                            <a href="#" data-toggle="modal"
+                                                data-target="#editCategoryOfferModal<%= offer._id %>">
+                                                <i class="fas fa-pencil d-flex justify-content-center"></i>
+                                            </a>
+                                        </td>
+                                        <% if(offer.Status==="Active" ){%>
+                                            <td class="border text-center-in-table">
+                                                <button class="btn btn-outline-success"
+                                                    onclick="showConfirmationDialog('<%=offer._id%>','Active')">
+                                                    <i class="fas fa-unlock d-flex justify-content-center"></i>
+                                                </button>
+                                            </td>
+                                            <% } else {%>
+                                                <td class="border text-center-in-table">
+                                                    <button class="btn btn-outline-danger"
+                                                        onclick="showConfirmationDialog('<%=offer._id%>','Inactive')">
+                                                        <i class="fas fa-lock d-flex justify-content-center"></i>
+                                                    </button>
+                                                </td>
+                                                <%}%>
+                                    </tr>
+                                    <!-- Edit Category Offer Modal -->
+                                    <div class="modal fade" id="editCategoryOfferModal<%= offer._id %>" tabindex="-1"
+                                        role="dialog" aria-labelledby="editCategoryOfferModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editCategoryOfferModalLabel">Edit
+                                                        Category Offer</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Form for editing category offer -->
+                                                    <form action="/admin/editCategoryOffer/<%= offer._id %>"
+                                                        method="post">
+                                                        <div class="mb-3">
+                                                            <label for="editCategory">Category:</label>
+                                                            <select class="form-select bg-light" id="editCategory"
+                                                                name="CategoryName" required>
+                                                                <!-- Populate options based on your categories -->
+                                                                <% categories.forEach(function(category) { %>
+                                                                    <option value="<%= category._id %>"
+                                                                        <%=(category._id===offer.CategoryName._id)
+                                                                        ? 'selected' : '' %>><%= category.Name
+                                                                            %>
+                                                                    </option>
+                                                                    <% }); %>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="editExpiryDate" class="form-label">Expiry
+                                                                Date</label>
+                                                            <input type="date" class="form-control" id="editExpiryDate"
+                                                                name="expiryDate" value="<%= offer.expiryDate %>" />
+
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="editOfferPrice" class="form-label">Discount
+                                                                Amount</label>
+                                                            <input type="number" class="form-control"
+                                                                id="editOfferPrice" name="Amount"
+                                                                value="<%= offer.Amount %>"
+                                                                placeholder="Enter discount amount" required />
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-primary">Save
+                                                            Changes</button>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%})%>
+                            </tbody>
                         </table>
-                      </div>
+                    </div>
                 </div>
 
                 <!-- * perPage -->
@@ -296,88 +357,91 @@
                     </div>
                 </div>
             </div>
-           </main> 
+        </main>
 
 
 
 
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                function showConfirmationDialog(offerId, status) {
-                    console.log(status);
-                    Swal.fire({
-                        title: 'Confirmation',
-                        text: `Are you sure you want to ${status} this offer?`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            console.log('inside confirmed', status);
-                            if (status === 'Activate') {
-                                enableOffer(offerId)
-                            } else if (status === 'Deactivate') {
-                                disableOffer(offerId);
-                            } else {
-                                return
-                            }
-                        }
-                    });
-                }
-                async function disableOffer(offerId) {
-                    console.log('called disable', status);
-                    let response = await fetch(`/admin/offers/disableAndEnableOffer/${offerId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status: 'Inactive'
-                        })
-                    });
-                    if (response) {
-                        console.log(response.success);
-                        const data = await response.json()
-                        if (data) {
-                            location.reload();
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function showConfirmationDialog(offerId, status) {
+                console.log(status);
+                const temp = status === "Active" ? "Inactive" : "Active";
+
+                Swal.fire({
+                    title: 'Confirmation',
+                    text: `Are you sure you want to ${temp} this offer?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log('inside confirmed', status);
+                        if (status === 'Active') {
+                            enableOffer(offerId)
+                        } else if (status === 'Inactive') {
+                            disableOffer(offerId);
                         } else {
-                            alert("Failed to disable the Offer");
+                            return
                         }
+                    }
+                });
+            }
+            async function disableOffer(offerId) {
+                console.log('called disable', status);
+                let response = await fetch(`/admin/editCategoryOfferStatus/${offerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'Inactive'
+                    })
+                });
+                if (response) {
+                    console.log(response.success);
+                    const data = await response.json()
+                    if (data) {
+                        location.reload();
                     } else {
                         alert("Failed to disable the Offer");
                     }
+                } else {
+                    alert("Failed to disable the Offer");
                 }
-                async function enableOffer(offerId) {
-                    console.log('called enable');
-                    let response = await fetch(`/admin/offers/disableAndEnableOffer/${offerId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            status: 'Active'
-                        })
-                    });
-                    if (response) {
-                        const data = response.json()
-                        if (data) {
-                            location.reload();
-                        } else {
-                            alert("Failed to enable the Offer");
-                        }
+            }
+            async function enableOffer(offerId) {
+                console.log('called enable');
+                let response = await fetch(`/admin/editCategoryOfferStatus/${offerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'Active'
+                    })
+                });
+                if (response) {
+                    const data = response.json()
+                    if (data) {
+                        location.reload();
                     } else {
                         alert("Failed to enable the Offer");
                     }
+                } else {
+                    alert("Failed to enable the Offer");
                 }
-            </script>
+            }
+
+        </script>
 
 
 
-            <!-- Include Bootstrap JS and jQuery (optional) -->
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-            </body>
+        <!-- Include Bootstrap JS and jQuery (optional) -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </body>
 
-            </html>
+        </html>

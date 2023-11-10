@@ -84,7 +84,7 @@ module.exports = {
                     const categoryOfferToapplay = await categoryOffer.findOne({
                     CategoryName:req.body.CategoryName,
                     Status:'Active',
-                    expiryDate: {$gte: currentDate}
+                    // expiryDate: {$gte: currentDate}
                     }).populate('CategoryName')
                     if(categoryOfferToapplay){
 
@@ -101,6 +101,58 @@ module.exports = {
                  }catch(err){
                      console.log(err,"err in the edit categoryoffer")
                  }
+            },
+            editCategoryOffer:  async (req,res)=>{
+                try {
+                    const updatedCategoryOffer = req.body;
+            
+                    // Check if req.body has expiryDate, and if not, retrieve the existing one
+                    if (!req.body.expiryDate) {
+                        const existingCategoryOffer = await categoryOffer.findOne({ _id: req.params.id });
+                        updatedCategoryOffer.expiryDate = existingCategoryOffer.expiryDate;
+                    }
+                    console.log(1)
+                    // Ensure that CategoryName is a valid ObjectId
+                    if (updatedCategoryOffer?.CategoryName) {
+                        updatedCategoryOffer.CategoryName = new mongoose.Types.ObjectId(updatedCategoryOffer.CategoryName);
+                    }
+                    console.log(2)
+                    // Retrieve the existing category offer
+                    const existingCategoryOffer = await categoryOffer.findOne({ _id: req.params.id }).populate('CategoryName');
+            
+                    // Update the category offer
+                    await categoryOffer.findOneAndUpdate({ _id: req.params.id }, updatedCategoryOffer);
+                    console.log(3)
+                    // Adjust product discounts
+                    const productsToUpdate = await Products.find({ Category: existingCategoryOffer.CategoryName.Name });
+                    for (const product of productsToUpdate) {
+                        // Calculate the new discount amount
+                        const newDiscountAmount = product.DiscountAmount + existingCategoryOffer.Amount - req.body.Amount;
+                       
+                        // Update the product discount amount
+                        await Products.updateOne({ _id: product._id }, { $set: { DiscountAmount: newDiscountAmount } });
+                        
+                    }
+                  res.redirect('/admin/offers')
+                }
+                     catch(err){
+                    console.log(err,"err in the edit edit category offer")
+                }
+            },
+            editCategoyOfferStatus :  async (req,res)=>{
+                try{
+                    console.log("wasdfgbhjnhrfgjh")
+                   const CategoryOffer= await categoryOffer.findOne({_id:req.params.id})
+                   if (CategoryOffer) {
+                    const newStatus = CategoryOffer.Status === "Active" ? "Inactive" : "Active";     
+                    await categoryOffer.findOneAndUpdate({ _id: req.params.id }, { Status: newStatus });
+                    console.log(CategoryOffer)
+                    res.json({success:true})
+                  }
+                  
+                }catch(err){
+                    console.log(err,"err in the edit referal offer")
+                }
             }
             
     }

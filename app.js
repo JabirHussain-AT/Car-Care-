@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const nodemailer =require('nodemailer')
 const flash = require('express-flash')
+const cronJob = require('./utilty/cronJob'); 
 require('./config/dbconnection')
 require("dotenv").config();
 
@@ -14,6 +15,7 @@ app.set('view engine', 'ejs')
 
 app.set('views', path.join(__dirname,'views'))
 
+cronJob.start();
 console.log(__dirname);
 app.use(express.static('public'))
 app.use(express.urlencoded({extended:true}))
