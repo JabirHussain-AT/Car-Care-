@@ -23,7 +23,6 @@ module.exports = {
     postaddCoupons: async (req, res) => {
         try{
 
-            console.log(req.body)
             const exist = await Coupon.findOne({CouponName :req.body.CouponName })
             if(exist !== null){
                 req.flash('uniqueErr',"its already exists.Coupon Name Must be unique")
@@ -55,10 +54,9 @@ module.exports = {
     validateCoupon: async (req, res) => {
         const CouponCode = req.body.couponCode
         const user = req.session.user.user
-        // console.log(req.body)
-        console.log(CouponCode, "is here")
+
         const couponExist = await Coupon.findOne({ CouponCode: CouponCode })
-        // console.log(CouponCode)
+
 
         if (couponExist !== null) {
             if (couponExist.CouponIssuedTo === 'public') {
@@ -75,15 +73,11 @@ module.exports = {
                         // console.log(momentDate.isBefore(currentDate),"nokkaam")
                         if (!momentDate.isBefore(currentDate)) {
                             const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue,couponCode:couponExist.CouponCode},{upsert:true})
-                            // couponExist.Users.push(user);//////////////////////////////////////////////////////////////////
-                           
-                            // await couponExist.save()///////////////////////////////////////////////////////////////////////////;
                             res.json({
                                 status: true,
                                 minAmount:couponExist.MinOrderAmount,
                                 couponAmount: couponExist.CouponValue
                             })
-                            //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
                         } else {
                             res.json({
                                 status: false
@@ -99,25 +93,19 @@ module.exports = {
                 }
             } else {
                 const couponUsed = await CouponHistory.findOne({ UserId: user, CouponCode: CouponCode })
-                console.log(couponUsed, "coupon used or not ")
                 if (couponUsed !== null) {
                     if (couponUsed.Status === 'Not Used') {
-                        // console.log(couponExist)
 
                         if (couponExist.MinOrderAmount <= req.body.subtotalAmount) {
                             const momentDate = moment(couponExist.CouponExpiryDate);
                             const currentDate = moment();
-                            // console.log(momentDate.isBefore(currentDate),"nokkaam")
                             if (!momentDate.isBefore(currentDate)) {
-                                // couponUsed.Status = "Used"////////////////////////////////////////////////////
-                                // couponUsed.save()/////////////////////////////////////////////////////////////
                                 const userCart = await Cart.findOneAndUpdate({UserId : user},{couponAmount:couponExist.CouponValue,couponCode:couponExist.CouponCode},{upsert:true})
                                 res.json({
                                     status: true,
                                     minAmount:couponExist.MinOrderAmount,
                                     couponAmount: couponExist.CouponValue
                                 })
-                                //    const couponStatus = await CouponHistory.findOneAndUpdate({UserId:user,CouponCode:CouponCode})
                             } else {
                                 res.json({
                                     status: false
@@ -155,7 +143,6 @@ module.exports = {
     removeAppliedCoupon : async (req,res)=>{
         try{
 
-            console.log(req.body,"coupon code recieved or not here")
             const coupon = await Coupon.findOne({CouponCode:req.body.couponCode})
             const userId = req.session.user.user
             const updatedCart = await Cart.updateOne(
@@ -172,10 +159,9 @@ module.exports = {
         try {
             const coupon = req.params.couponId
             const result = await Coupon.findOneAndDelete({ _id: coupon })
-            console.log(result, "deleted")
 
             if (result) {
-                console.log(`Coupon ${coupon} deleted successfully`);
+                // console.log(`Coupon ${coupon} deleted successfully`);
                 req.flash("CouponDeleted", "Coupon Deleted Successfully");
                 res.redirect('/admin/Coupons');
             }

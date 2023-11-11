@@ -26,7 +26,6 @@ module.exports = {
         // console.log(req.body);
         // console.log(req.file);
         try {
-            console.log()
             if(req.files['carouselImage1'] &&
             req.files['carouselImage2'] &&
             req.files['carouselImage3']){
@@ -64,10 +63,7 @@ module.exports = {
             // Find the existing enabled banner
             const existingBanner = await Banner.findOne({ Status: "Enabled" });
             const bannerId = new mongoose.Types.ObjectId(req.params.bannerID)
-            console.log(existingBanner._id)
-            console.log(bannerId)
             if (existingBanner._id == bannerId) {
-                console.log("ANirudh")
                 req.flash("existing", "Its the current Status")
                 res.redirect('/admin/banner')
             }
@@ -84,7 +80,6 @@ module.exports = {
                 { new: true } // Return the updated document
             );
 
-            // console.log("Activated Banner:", banner);
             req.flash("BannerUpdated", "Banner Updated Successfully")
             res.redirect('/admin/banner')
         } catch (error) {
@@ -95,10 +90,9 @@ module.exports = {
     deleteBanner: async (req, res) => {
         const banner = req.params.bannerID
         const result = await Banner.findOneAndDelete({ _id: banner })
-        console.log(result, "deleted")
 
         if (result) {
-            console.log(`Banner ${banner} deleted successfully`);
+            // console.log(`Banner ${banner} deleted successfully`);
             req.flash("BannerDeleted", "Banner Deleted Successfully");
             res.redirect('/admin/banner');
         }

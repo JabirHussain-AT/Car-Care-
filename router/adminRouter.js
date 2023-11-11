@@ -96,7 +96,7 @@ router.post('/addBanner',auth.adminTokenAuth,upload.fields([
 router.post('/activate-banner/:bannerID',auth.adminTokenAuth,bannerController.activateBanner)
 router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
 
-// router.post('/delete-banner/:bannerID',auth.adminTokenAuth,bannerController.deleteBanner)
+
 
 //delete coupon
 router.post('/delete-coupon/:couponId',auth.adminTokenAuth,couponController.deleteCoupon)

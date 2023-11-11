@@ -29,7 +29,6 @@ module.exports = {
         const userId = req.session.user.user
         // const test  = await Wallet.find()
         const wallet = await Wallet.findOne({UserId:userId})
-        console.log(wallet,"wallet in wallet controller")
         res.render('user/walletHistory',{Wallet:wallet})
     }
 }

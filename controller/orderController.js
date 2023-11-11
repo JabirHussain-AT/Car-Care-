@@ -140,13 +140,11 @@ module.exports = {
     res.download(filePath, `invoice.pdf`);
   },
   returnOrder: async (req, res) => {
-    // console.log(req.params.id,"order id in return",req.body.returnReason);
     const order = await Orders.findByIdAndUpdate(
       { _id: req.params.id },
       { Status: "Return Requested", returnReason: req.body.returnReason },
       { new: true }
     );
-    console.log(order, "from return order in order controller ");
     res.redirect('/orderHistory')
   },
   cancelOrder: async (req, res) => {
@@ -154,7 +152,7 @@ module.exports = {
 
     try {
       // Find the order by ID
-      console.log("Cancellll");
+
       const order = await Orders.findById(orderId);
 
       // Update order properties
@@ -242,7 +240,7 @@ module.exports = {
             { _id: product._id },
             { $set: { AvailableQuantity: product.AvailableQuantity } }
           );
-          console.log("quantity added");
+
         }
       }
       //   console.log(orderItems,"blank")
@@ -259,19 +257,16 @@ module.exports = {
     const order = await Orders.find({
       Status: { $in: ["Return Requested", "Return Accepted"] },
     });
-    console.log(order, "from the manage return in order controller");
     res.render("admin/returnRequests", { orders: order });
   },
   rejectReturn: async (req, res) => {
     try {
-      console.log(req.params.orderId, "from reject return in order Controller");
       const order = await Orders.findByIdAndUpdate(req.params.orderId, {
         Status: "Delivered (Return Rejected)",
       });
       // await order.updateOne({_id:req.params.orderId},{Status:"Delivered(Return Rejected"})
       res.redirect('/admin/manage-return-requests')
     } catch (error) {
-      console.log("error in the rejecet return catch block");
       throw error;
     }
   },
@@ -280,38 +275,28 @@ module.exports = {
       const order = await Orders.findByIdAndUpdate(req.params.orderId, {
         Status: "Return Accepted",
       });
-      console.log(req.params.orderId, "from accept return in order Controller");
+
       res.redirect('/admin/manage-return-requests')
     } catch (error) {
-      console.log("error in the accept return ", error);
+
     }
   },
 
   viewReturnProducts: async (req, res) => {
     const orderId = req.params.orderId;
-    console.log(
-      req.params.orderId,
-      "from view Products in return in order Controller"
-    );
     const orderDetials = await Orders.findOne({ _id: orderId }).populate(
       "Products.ProductId"
     );
-    // console.log(orderDetials)
     res.render("admin/admin- orderDetials", { order: orderDetials });
   },
   verifyReturn: async (req, res) => {
     try {
 
-      const orderId = req.params.orderId;
-      console.log(
-        req.params.orderId,
-        "from verify Products in return in order Controller"
-      );
+      const orderId = req.params.orderId;;
       const orderUpdate = await Orders.findByIdAndUpdate(orderId, {
         Status: "Returned",
         PaymentStatus: "Refunded"
       });
-      console.log(orderUpdate, "updated");
       //On the time of return products reupdating the stock
       const orderItems = orderUpdate.Products.map((item) => ({
         productId: item.ProductId,
@@ -337,14 +322,11 @@ module.exports = {
             { _id: product._id },
             { $set: { AvailableQuantity: product.AvailableQuantity } }
           );
-          console.log("quantity added");
         }
       }
-      console.log("iam here", req.session)
       // const userId = req.session.user.user
       const userId =  orderUpdate.UserId
       const wallet = await Wallet.findOne({ UserId: userId })
-      //   console.log(refund,"refund")
       if (wallet === null) {
         const userId = req.session.user.user
         const newUserDoc = await Users.findOneAndUpdate({ _id: userId }, {
@@ -372,7 +354,6 @@ module.exports = {
           }
         })
 
-        console.log('new', newUserDoc);
 
 
         const user = Users.findOne({ _id: userId })
@@ -387,7 +368,6 @@ module.exports = {
             }
           }
         })
-        // const updated = await Wallet.findOne({UserId:userId})
 
       }
       res.redirect('/admin/manage-return-requests')

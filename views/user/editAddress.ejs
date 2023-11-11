@@ -93,7 +93,7 @@
   <%})%>
   
 
-<div class="container">
+<div class="container-fluid" style="background: linear-gradient(rgb(137, 189, 232),white);">
     <% if(message.updated ){ %>
         <div class="alert alert-success" role="alert">
             <%= message.updated %>
@@ -114,12 +114,12 @@
                         <%= message.added %>
                       </div>
                       <% } %>
-    <h1 class="text-center tickerTimes">User Addresses</h1>
+    <h1 class="text-center" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">User Addresses</h1>
     <%if(user.Address.length > 0){%>
-      <% user.Address.forEach(function(Address) { %>
-    <div class="row">  
-        <div class="col-md-6">
-            <div class="card text-bg-dark mb-4">
+      <div class="col-md-12">
+          <div class="row justify-content-center align-items-center">  
+          <% user.Address.forEach(function(Address) { %>
+          <div class="card col-md-5 m-3 shadow text-bg-dark mb-4" style="font-family: 'Times New Roman', Times, serif;">
                 <div class="card-body">
                     <h5 class="card-title"><%=Address.Name%></h5>
                     <p class="card-text"><%=Address.address%></p>
@@ -133,9 +133,9 @@
                        <a href="/deleteAddress/<%= Address._id %>" class=" ml-5 btn btn-sm btn-secondary">Delete</a>
                 </div>
             </div>
+            <%})%>
         </div>
-    </div>
-    <%})%>
+      </div>
     <%}else{%>
       <!-- <h1 class="text-center tickerTimes">User Addresses</h1> -->
       <div class="row">

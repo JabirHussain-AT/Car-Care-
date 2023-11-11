@@ -29,17 +29,50 @@ module.exports = {
     try {
       const user = req.session.user;
       const banner = await Banner.findOne({ Status: "Enabled" });
-      console.log(banner.kjvjxnvjvkfkv);
       res.render("user/landingPage", { Banner: banner });
     } catch (err) {
       throw err;
     }
   },
   home: async (req, res) => {
-    const category = await Category.find();
-    const user = req.session.user;
-    const banner = await Banner.findOne({ Status: "Enabled" });
-    res.render("user/home", { user: user, Banner: banner });
+    try{
+      const category = await Category.find();
+      const bestSeller = await Orders.aggregate([
+        {
+            $unwind: "$Products",
+        },
+        {
+            $group: {
+                _id: "$Products.ProductId",
+                totalCount: { $sum: "$Products.Quantity" },
+            },
+        },
+        {
+            $sort: {
+                totalCount: -1,
+            },
+        },
+        {
+            $limit: 4,
+        },
+        {
+            $lookup: {
+                from: "products",
+                localField: "_id",
+                foreignField: "_id",
+                as: "productDetails",
+            },
+        },
+        {
+            $unwind: "$productDetails",
+        },
+    ]);
+      const user = req.session.user;
+      const banner = await Banner.findOne({ Status: "Enabled" });
+      res.render("user/home", { user: user, Banner: banner ,bestSeller});
+    }catch(err){
+      throw err
+    }
   },
   profile: async (req, res) => {
     try{
@@ -60,7 +93,6 @@ module.exports = {
   postProfile: async (req, res) => {
     try {
       const { MobNo, Name } = req.body;
-      // console.log(req.body)
       const userid = req.session.user.user;
       const updatedUser = await Users.findByIdAndUpdate(
         userid,
@@ -75,16 +107,9 @@ module.exports = {
     }
   },
   getproduct: async (req, res) => {
-    console.log(req.params.id);
     const _id = req.params.id;
-    console.log(req.session.user,"user")
     const product = await Products.findOne({ _id }).populate('variants');
-    console.log(product,"product")
     const reviews = await Reviews.find({ProductId:_id}).populate('UserId')
-    // const userOrderHistory = await Orders.find({UserId:req.session.user.user})
-    // console.log(userOrderHistory,"order history")
-    // here i want to check this particlar product is in the order history of the user with status of the order must be delivered,returned ,deliverd(Return Rejected)
-    // Delivered(Return Requested),Delivered(Return Accepted),Returned
     const userOrderHistory = await Orders.find({
       UserId: req.session.user.user,
       'Products.ProductId': _id,
@@ -99,10 +124,6 @@ module.exports = {
       },
     });
     const isInOrderHistory = userOrderHistory.length > 0;
-
-    console.log('Is in order history:', isInOrderHistory);
-  
-    // console.log(reviews ,"reviews lets check")
     const user = req.session.user;
     res.render("user/productPage", {
        product: product,
@@ -128,7 +149,6 @@ module.exports = {
         res.redirect("/signup");
       } else {
         const email = req.query.email;
-        console.log(req.query.email);
         req.session.email = email;
         otpToBeSent = otpFunctions.generateOTP();
         if(req.params.id){
@@ -146,8 +166,6 @@ module.exports = {
     try {
       let { otp } = req.body;
 
-      // Ensure an OTP record exists for the email
-      console.log(req.session.email);
       const matchedOTPrecord = await OTP.findOne({ email: req.session.email });
 
       if (!matchedOTPrecord) {
@@ -164,9 +182,6 @@ module.exports = {
 
       // Compare the hashed OTP from the database with the provided OTP
 
-      // const hashedOTP = matchedOTPrecord.otp;
-      // const validOTP = await bcrypt.compare(otp, hashedOTP);
-      console.log(otp);
       const dbOTP = matchedOTPrecord.otp;
       if (otp == dbOTP) {
         // Redirect to the landing page upon successful OTP validation
@@ -180,7 +195,6 @@ module.exports = {
       } else {
         // Invalid OTP
         req.session.error = "The OTP is invalid.";
-        console.log("INVALIIIIIIEDD");
         req.flash("error", "OTP IS INVALID");
         res.render("user/emailverification", {
           error: req.session.error,
@@ -198,7 +212,6 @@ module.exports = {
     try {
       const matchedOTPrecord = await OTP.findOne({ email: req.session.email });
       if (matchedOTPrecord) {
-        console.log("OKAY ANO");
         email = req.session.email;
         const duration = 1;
         let otpToBeSent = await otpFunctions.generateOTP();
@@ -286,7 +299,6 @@ module.exports = {
       Category: categories.Name,
     }).skip(skip).limit(perPage)
 
-    console.log(category);
     res.render("user/shop", {
       products: products,
       user: user,
@@ -301,7 +313,6 @@ module.exports = {
     try {
       // const Email = req.body.email
       const userData = await Users.findOne({ Email: req.body.email });
-      console.log(userData);
       if(userData !== null ){
       if (userData.Status === "Active") {
         if (userData !== null) {
@@ -310,7 +321,6 @@ module.exports = {
             userData.Password
           );
           if (bcryptPass) {
-            console.log("user is fine");
             const accessToken = jwt.sign(
               { user: userData._id },
               process.env.ACCESS_TOKEN_SECRET,
@@ -318,7 +328,6 @@ module.exports = {
             );
             res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
             req.session.user = userData.id;
-            console.log(req.session.user);
             // res.render('user/home', { user: true })
             res.redirect("/home");
           } else {
@@ -326,17 +335,14 @@ module.exports = {
             res.redirect("/login");
           }
         } else {
-          console.log("userdata is null ");
           req.flash("error", "invalid email");
           res.redirect("/login");
         }
       } else {
-        console.log("userdata is banned ");
         req.flash("banned", "you are Banned");
         res.redirect("/login");
       }
     }else{
-      console.log("userdata is banned ");
         req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
         res.redirect("/login");
 
@@ -344,7 +350,6 @@ module.exports = {
     } catch (error) {
       req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
       res.redirect("/login");
-      console.log("one error occured");
       throw error;
     }
   },
@@ -355,7 +360,6 @@ module.exports = {
     // const error = req.session.error
     if (req.params.id) {
       // Pass the parameter to the client-side by rendering it in the HTML
-      console.log(req.params.id,"referal iddd")
       res.render("user/signup", {
           message: req.flash(),
           email: req.session.email,
@@ -373,12 +377,10 @@ module.exports = {
   postSignup: async (req, res) => {
     if(req.params.id){
       const userId = new mongoose.Types.ObjectId(req.params.id)
-      console.log(req.params.id,"referal code user is here")
       const referedUser = await Users.findOne(userId)
       if(referedUser){
         const ReferalAmount = await ReferalOffer.findOne()
         await Users.updateOne({ _id: userId }, { $inc: { Wallet: ReferalAmount.Amount } }).exec();
-        console.log("Wallet updated successfully");
       }
     }
     req.body.Email = req.session.email;
@@ -388,7 +390,6 @@ module.exports = {
         req.body.Password = bcrypt.hashSync(req.body.Password, 10);
         const userData = await Users.create(req.body);
 
-        console.log(userData);
         if (userData) {
           const accessToken = jwt.sign(
             { user: userData._id },
@@ -398,7 +399,6 @@ module.exports = {
           res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
 
           req.session.user = userData._id;
-          console.log(req.session.user);
           const couponAdd = new CouponHistory({
             UserId: req.session.user,
             Status: "Not Used",
@@ -407,9 +407,7 @@ module.exports = {
           await couponAdd.save();
 
          res.redirect('/home')
-        } else {
-          console.log("anirudh");
-        }
+        } 
       } catch (error) {
         console.log(error);
         if (error.code === 11000) {
@@ -477,8 +475,6 @@ module.exports = {
     try {
       const newPass = req.body.newPass;
       const ConfirmPass = req.body.ConfirmPass;
-      console.log(req.body);
-      console.log(req.session.userEmail);
       if (newPass === ConfirmPass) {
         const Password = bcrypt.hashSync(req.body.newPass, 10);
         await Users.updateOne(
@@ -494,20 +490,15 @@ module.exports = {
       }
     } catch (error) {
       throw error;
-      console.log("error on setting new pass");
     }
   },
   changePassword: async (req, res) => {
     const user = req.session.user.user;
     const User = await Users.findOne({ _id: user });
-    console.log(req.body, "jabir");
     const { oldPassword, newPassword, confirmPassword } = req.body;
-    console.log(User.Password, "osos");
     if (newPassword === confirmPassword) {
       const bcryptPass = await bcrypt.compare(oldPassword, User.Password);
-      // console.log(bcryptPass)
       if (bcryptPass) {
-        // console.log("njnum varatee....")
         const Password = bcrypt.hashSync(newPassword, 10);
         await Users.updateOne(
           { _id: user },
@@ -518,7 +509,6 @@ module.exports = {
         req.flash("success", "Password Changed Successfully");
         res.redirect("/profile");
       }
-      //    console.log(User.Password)
     } else {
       req.flash("nomatch", "Entered Passwords Not Matching");
       res.redirect("/profile");
@@ -526,11 +516,10 @@ module.exports = {
   },
   addAddress: async (req, res) => {
     try {
-      console.log("iam here in add address");
       res.render("user/addAddress");
     } catch (error) {
       throw error;
-      console.log("error in the  addAddress Catch");
+    
     }
   },
   checkout: async (req, res) => {
@@ -543,21 +532,18 @@ module.exports = {
       }
       const user = await Users.findOne({ _id: userId });
       const wallet = await Wallet.findOne({UserId:userid})
-      //   console.log("from checkout",user);
       res.render("user/checkOut", { user: user ,Wallet:wallet});
     } catch (error) {
       throw error;
-      console.log("error in the  checkout catch");
     }
   },
 
   postaddAddress: async (req, res) => {
-    console.log(req.body);
+
     const userid = req.session.user.user;
 
     const userId = new mongoose.Types.ObjectId(userid);
     // const user = await Users.findOne({_id:userId})
-    console.log(userId);
 
     const { Name, address, city, state, zip, mobileNumber } = req.body;
 
@@ -579,12 +565,10 @@ module.exports = {
         // Save the user document
         await user.save();
 
-        console.log("Address added successfully");
         req.flash("added", "Address added successfully");
         res.redirect("/Address");
         //   res.status(200).send('Address added successfully');
       } else {
-        console.log("User not found");
         res.status(404).send("User not found");
       }
     } catch (error) {
@@ -594,12 +578,10 @@ module.exports = {
     }
   },
   postCheckAddAddress: async (req, res) => {
-    console.log(req.body);
     const userid = req.session.user.user;
 
     const userId = new mongoose.Types.ObjectId(userid);
     // const user = await Users.findOne({_id:userId})
-    console.log(userId);
 
     const { Name, address, city, state, zip, mobileNumber } = req.body;
 
@@ -621,12 +603,11 @@ module.exports = {
         // Save the user document
         await user.save();
 
-        console.log("Address added successfully");
         req.flash("added", "Address added successfully");
         res.redirect("/checkOut");
         //   res.status(200).send('Address added successfully');
       } else {
-        console.log("User not found");
+
         res.status(404).send("User not found");
       }
     } catch (error) {
@@ -638,7 +619,6 @@ module.exports = {
   editAddress: async (req, res) => {
     const userid = req.session.user.user;
     const User = await Users.findOne({ _id: userid });
-    //   console.log(User.Address,"user is availabe in the editaddress")
     res.render("user/editAddress", { user: User, message: req.flash() });
   },
   postEditAddress: async (req, res) => {
@@ -668,19 +648,17 @@ module.exports = {
           // Save the updated user document
           await user.save();
 
-          console.log("Address updated successfully");
+
           req.flash("updated", "Address updated successfully");
           res.redirect("/Address");
           //   res.status(200).send('Address updated successfully');
         } else {
-          console.log("Address not found");
           req.flash("notFound", "Address not found");
           res.redirect("/Address");
           //   res.status(404).send('Address not found');
         }
       } else {
         console.log("User not found");
-        // res.status(404).send('User not found');
       }
     } catch (error) {
       console.error("Error updating address:", error.message);
@@ -700,8 +678,6 @@ module.exports = {
 
         // Save the updated user document
         await user.save();
-
-        console.log("Address deleted successfully");
         // res.status(200).send('Address deleted successfully');
         req.flash("deleted", "Address deleted Successfully");
         res.redirect("/Address");
@@ -720,9 +696,7 @@ module.exports = {
   //   },
 
   postCheckOut: async (req, res) => {
-    console.log("orderPlaced", req.body);
     const { selectedAddress, paymentMethod } = req.body;
-    // console.log(paymentMethod,"karthik pp  here ")
     const userId = new mongoose.Types.ObjectId(req.session.user.user);
     const ProductsInCart = await Cart.findOne({ UserId: userId });
 
@@ -748,36 +722,6 @@ module.exports = {
         // Add other properties as needed
       };
       const createdOrder = await Orders.create(newOrder);
-      // console.log(createdOrder);
-      //we are making empty the cart
-     
-//  await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
-      // console.log(createdOrder.Products,"huehfuefuilwe")
-
-      // const orderItems = createdOrder.Products.map((item) => ({
-      //   productId: item.ProductId,
-      //   quantity: item.Quantity,
-      // }));
-
-
-      // console.log(orderItems, "blank");
-
-      // // Retrieve products based on the product IDs
-      // const products = await Products.find({
-      //   _id: { $in: orderItems.map((item) => item.productId) },
-      // });
-      // // Update stock quantities in the database
-      // for (const orderItem of orderItems) {
-      //   const product = products.find((product) =>
-      //     orderItem.productId.equals(product._id)
-      //   );
-      //   if (product) {
-      //     product.AvailableQuantity -= orderItem.quantity;
-      //     // Update stock quantity in the database for this product
-      //     await Products.updateOne(
-      //       { _id: product._id },
-      //       { $set: { AvailableQuantity: product.AvailableQuantity } }
-      //     );
           const user = await Users.findOne({ _id: req.session.user.user });
         // }
         if (req.body.paymentMethod === "COD") {
@@ -822,7 +766,6 @@ module.exports = {
                   },
                 },
               });
-            //   console.log(updated.WalletAmount,"fudfhuiehfuehfyuehfcyujfhyujedyhuslu")
             const newUPdated = await Wallet.findOne({ UserId: user._id })
               await user.updateOne({
                 Wallet: newUPdated.WalletAmount,

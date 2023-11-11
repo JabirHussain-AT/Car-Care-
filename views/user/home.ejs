@@ -81,22 +81,6 @@
                             <!-- /////////////////// -->
                             <div class=" ">
                                 <div class="container-fluid">
-                                    <!-- The first one  -->
-                                    <!-- <div class="container-fluid banner-container"> -->
-                                    <!-- <div class="row">
-                    <div class="col-md-6 align-items-center">
-                        <div class=" align-items-center justify-content-center text">
-                            <p class="whiteTitle">Car Care <span class="span">Products</span></p>
-                            <p class="pl-1 subtext">All Major Brands Available</p>
-                            <a class="btn btn-info button" href="">Shop Now</a>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 pt-4 d-none d-md-block">
-                        <img class="img-fluid" style="height: 100%;" src="/assets/img1_banner-removebg-preview.png"
-                            alt="image">
-                    </div>
-                </div> -->
                                     <!--  -->
                                 </div>
 
@@ -104,7 +88,8 @@
                            
 
                                 <!-- Third layer -->
-                                <div class="container-fluid gradient-background ">
+                                <% if(bestSeller && bestSeller.length > 0) {%>
+                                <div class="container-fluid gradient-background " style="padding-left: 0px;">
                                     <div class="container-fluid   justify-content-center tl">
                                         <div class="text-center" style="margin-right: 5vh;">
                                             <p class="pt-3 head-tl">Top Picks for You</p>
@@ -115,74 +100,113 @@
                                                 products.</p>
                                         </div>
                                         <!-- cards -->
-
-
                                         <div class="row container-fluid ml-3" style="height: 100%;">
+                                            <% bestSeller.forEach((product)=>{ %>
                                             <div class="col-lg-3 col-md-6 mb-4">
+                                                
                                                 <div class="card card-tl ">
                                                     <!-- Add the "bg-primary" class for a blue background -->
-                                                    <img class="img-fluid mt-5 pt-2" width="80%"
-                                                        src="/assets/diesel_fileter-removebg-preview.png"
-                                                        class="card-img-top" alt="Image 1">
+                                                    <a href="/product/<%= product.productDetails._id %>"><img class="img-fluid mt-5 pt-2" width="80%"
+                                                        src="/uploads/<%= product.productDetails.images[0] %>"
+                                                        class="card-img-top" alt="Image 1"> </a>
                                                     <div class="card-body">
-                                                        <h4 class="card-title">Diesel Filter</h4>
-                                                        <p class="card-text">Part No : 98-9700-344-3
-                                                            Mahindra:Accessories</p>
-                                                        <p class="card-text price">Rs 2500.00</p>
+                                                        <h5 class="card-title"><%= product.productDetails.ProductName %></h5>
+                                                        <p class="card-text"><%= product.productDetails.Category %></p>
+                                                        <p class="card-text price">Rs <%= product.productDetails.DiscountAmount %> .00/-</p>
                                                     </div>
                                                 </div>
+                                            </a>
                                             </div>
-                                            <div class="col-lg-3 col-md-6 mb-4 tp ">
-                                                <div class="card card-tl">
-                                                    <!-- Add the "bg-primary" class for a blue background -->
-                                                    <img class="img-fluid mt-3" width="80%"
-                                                        src="/assets/disk-removebg-preview.png" class="card-img-top"
-                                                        alt="Image 2">
-                                                    <div class="card-body">
-                                                        <h4 class="card-title">Brake System</h4>
-                                                        <p class="card-text">Part No : 9-897999-674632 Shop:Al fareed
-                                                            Spares</p>
-                                                        <p class="card-text price">Rs 25,112.00</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 mb-4">
-                                                <div class="card card-tl">
-                                                    <!-- Add the "bg-primary" class for a blue background -->
-                                                    <img class="img-fluid" width="80%"
-                                                        src="/assets/tyre-removebg-preview.png" class="card-img-top"
-                                                        alt="Image 3">
-                                                    <div class="card-body">
-                                                        <h4 class="card-title">MRF 6.00-16</h4>
-                                                        <p class="card-text">Part No:12-489-373272 Mahindra : Jeep M50
-                                                        </p>
-                                                        <p class="card-text price">Rs 4829.99</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 mb-4 tp">
-                                                <div class="card card-tl">
-                                                    <!-- Add the "bg-primary" class for a blue background -->
-                                                    <img class="img-fluid mb-5 pb-2" width="80%"
-                                                        src="/assets/snipping-removebg-preview.png" class="card-img-top"
-                                                        alt="Image 4">
-                                                    <div class="card-body">
-                                                        <h4 class="card-title">Car LED Headlights</h4>
-                                                        <p class="card-text">Part No :8947-2682-234 Shop:LED HUB</p>
-                                                        <p class="card-text price">RS 1434.99</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="d-flex justify-content-center container-fluid col-lg-12 col-md-12 mb-12">
-                                                <div class="text-center d-flex justify-content-center">
-                                                    <a href="#" class="text-dark text-bold mr-5"><u>View More</u></a>
-                                                </div>
-                                            </div>
-
-                                        </div>
+                                            <% }) %>
+                                            
+                                       
 
                                     </div>
+                                    <% } else {%>
+                                        <div class="container-fluid gradient-background ">
+                                            <div class="container-fluid   justify-content-center tl">
+                                                <div class="text-center" style="margin-right: 5vh;">
+                                                    <p class="pt-3 head-tl">Top Picks for You</p>
+                                                    <p class=" text-secondary s-head-tl">Find a bright ideal to suit your taste
+                                                        with our great
+                                                        selection
+                                                        of
+                                                        products.</p>
+                                                </div>
+                                                <!-- cards -->
+        
+                                                <div class="row container-fluid ml-3" style="height: 100%;">
+                                                    <div class="col-lg-3 col-md-6 mb-4">
+                                                        <a href="/shop" style="text-decoration: none;">
+                                                        <div class="card card-tl ">
+                                                            <!-- Add the "bg-primary" class for a blue background -->
+                                                            <img class="img-fluid mt-5 pt-2" width="80%"
+                                                                src="/assets/diesel_fileter-removebg-preview.png"
+                                                                class="card-img-top" alt="Image 1">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title">Diesel Filter</h4>
+                                                                <p class="card-text">Part No : 98-9700-344-3
+                                                                    Mahindra:Accessories</p>
+                                                                <p class="card-text price">Rs 2500.00</p>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6 mb-4 tp ">
+                                                        <div class="card card-tl">
+                                                            <!-- Add the "bg-primary" class for a blue background -->
+                                                            <img class="img-fluid mt-3" width="80%"
+                                                                src="/assets/disk-removebg-preview.png" class="card-img-top"
+                                                                alt="Image 2">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title">Brake System</h4>
+                                                                <p class="card-text">Part No : 9-897999-674632 Shop:Al fareed
+                                                                    Spares</p>
+                                                                <p class="card-text price">Rs 25,112.00</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6 mb-4">
+                                                        <div class="card card-tl">
+                                                            <!-- Add the "bg-primary" class for a blue background -->
+                                                            <img class="img-fluid" width="80%"
+                                                                src="/assets/tyre-removebg-preview.png" class="card-img-top"
+                                                                alt="Image 3">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title">MRF 6.00-16</h4>
+                                                                <p class="card-text">Part No:12-489-373272 Mahindra : Jeep M50
+                                                                </p>
+                                                                <p class="card-text price">Rs 4829.99</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6 mb-4 tp">
+                                                        <div class="card card-tl">
+                                                            <!-- Add the "bg-primary" class for a blue background -->
+                                                            <img class="img-fluid mb-5 pb-2" width="80%"
+                                                                src="/assets/snipping-removebg-preview.png" class="card-img-top"
+                                                                alt="Image 4">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title">Car LED Headlights</h4>
+                                                                <p class="card-text">Part No :8947-2682-234 Shop:LED HUB</p>
+                                                                <p class="card-text price">RS 1434.99</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="d-flex justify-content-center container-fluid col-lg-12 col-md-12 mb-12">
+                                                        <div class="text-center d-flex justify-content-center">
+                                                            <a href="/shop" class="text-dark text-bold mr-5"><u>View More</u></a>
+                                                        </div>
+                                                    </div>
+        
+                                                </div>
+        
+                                            </div>
+
+
+
+                                        <% } %>
                                     <!--Fourth Layer-->
                                     <div class="fl container-fluid d-none d-lg-block">
                                         <div class="container">
@@ -195,8 +219,8 @@
                                                 <div class="col-md-3 align-items-center justify-content-center">
                                                     <h5>New Arrivals</h5>
                                                     <p class="fl-title">SHELL ENGINE OIL</p>
-                                                    <p>Price: $XX.XX</p>
-                                                    <a href="#" class="btn btn-secondary">Shop Now</a>
+                                                    <p>Price: Rs 1979.00</p>
+                                                    <a href="/shop" class="btn btn-secondary">Shop Now</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -278,6 +302,8 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <%- include('../partials/user-footer') %>
                             <!-- <footer>
 
         </footer>
@@ -288,4 +314,3 @@
 </body>
 
 </html> -->
-                            <% include('../partials/user-footer') %>

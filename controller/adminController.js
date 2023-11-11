@@ -60,16 +60,13 @@ module.exports = {
                 res.redirect('/admin/addAdmin')
             }
             //admin
-            console.log(req.body)
             const Email = req.body.Email
             const admin = await Admin.findOne({ Email: Email })
             if (admin) {
                 Password = await bcrypt.compare(req.body.Password, admin.Password)
                 if (admin.Email === req.body.Email && Password) {
-                    console.log('admin is fine');
                     const accessToken = jwt.sign({ user: admin._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
                     res.cookie("adminJwt", accessToken, { maxAge: 60 * 1000 * 60 })
-                    console.log("hey admin here")
                     req.session.admin = admin
                     res.redirect('/admin/dashboard')
                 } else {
@@ -120,7 +117,6 @@ module.exports = {
                     $unwind: "$productDetails",
                 },
             ]);
-            console.log(bestSeller, 'JHijediufuier')
             const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
             const perPage = 10; // Number of items per page
             const skip = (page - 1) * perPage;
@@ -147,7 +143,6 @@ module.exports = {
     salesReport: async (req, res) => {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
-        console.log(startDate, endDate, "jfsdjfjfsdjhhhsghghgg")
 
 
         const generateSalesData = async () => {
@@ -163,8 +158,6 @@ module.exports = {
                 }).populate('Products.ProductId');
 
                 // Filter by payment status
-
-                console.log(orders, "order is coming or not")
 
                 // Map orders data to the required format for Excel
                 return orders.map(order => {
@@ -267,7 +260,6 @@ module.exports = {
             }
             else {
                 await Product.updateOne({ _id: id }, { Display: 'Active' })
-                // console.log(productStatus);
                 res.redirect('/admin/productView')
             }
         }
@@ -280,28 +272,24 @@ module.exports = {
     addVariants: async (req, res) => {
         const id = req.params.productId
         const product = await Product.findOne({ _id: id })
-        // console.log(Product);
         res.render('admin/addVarient', { product: product })
     },
     postaddVarient: async (req, res) => {
-        console.log(req.body, "req.body")
-        console.log(req.files, "req.files")
-
         const productType = req.body.productType
 
         const variations = []
-        console.log(req.body);
+      
         if (productType === 'Tyre') {
 
             const tyreSize = req.body.Tyre;
 
             variations.push({ value: tyreSize })
         } else if (productType === 'Oil') {
-            console.log("inside oil");
+            
             const oilSize = req.body.Oil;
             variations.push({ value: oilSize })
         }
-        console.log(variations);
+   
         req.body.Variation = variations[0].value
         req.body.images = req.files.map(val => val.filename)
         req.body.Display = "Active"
@@ -309,7 +297,6 @@ module.exports = {
         req.body.UpdatedOn = new Date()
         const createdProduct = await Product.create(req.body)
         // Now Call the function to Create Connention of varients
-        // console.log( createdProduct._id,"Created Product")
         const mainProductId = new mongoose.Types.ObjectId(req.params.productId)
         const connected = variantConnector.VariantConnector(mainProductId, createdProduct._id)
 
@@ -321,17 +308,17 @@ module.exports = {
         try {
 
             const id = req.params.id
-            console.log(req.params.id);
+   
             const userData = await Users.findById(id)
-            console.log(userData);
+           
             if (userData.Status === "Active") {
                 await Users.updateOne({ _id: id }, { Status: 'Deactivated' })
                 req.session.destroy()
-                console.log(userData);
+              
                 res.redirect('/admin/users')
             } else {
                 await Users.updateOne({ _id: id }, { Status: 'Active' })
-                console.log(userData);
+               
                 res.redirect('/admin/users')
             }
         } catch (error) {
@@ -348,24 +335,9 @@ module.exports = {
         if (req.body.Password === req.body.ConfirmPassword) {
 
             try {
-                //         const userStatus = await Users.findOne({Email:req.body.email})
-                // if(userStatus. == "Active" )
-                // {
                 req.body.Password = bcrypt.hashSync(req.body.Password, 10)
                 const AdminData = await Admin.create(req.body)
-                console.log(AdminData);
-                // if (userData) {
-                //     const accessToken = jwt.sign({ user: userData._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 60 * 60 })
-                //     res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 })
-                //     console.log("ivde ethi ?")
-                //     res.render('user/landingPage', { user: true })
-                // } else {
-                //     console.log("anirudh");
-                // }
-                // }else{
-                //     req.flash('banned','sorry you are banned by the admin')
-                //     res.redirect('/signup')
-                // }
+                res.redirect('/admin/dashboard')
             } catch (error) {
                 console.log(error);
                 if (error.code === 11000) {
@@ -383,8 +355,6 @@ module.exports = {
         res.render('admin/admin-addProduct')
     },
     postAddProduct: async (req, res) => {
-        console.log(req.body)
-        console.log(req.files)
         try {
 
             if (req.body.Variation1 === '') {
@@ -410,13 +380,10 @@ module.exports = {
     editProduct: async (req, res) => {
         const id = req.params.id
         const product = await Product.findOne({ _id: id })
-        console.log(Product);
         res.render('admin/admin-editProduct', { product: product })
     },
     postEditProduct: async (req, res) => {
-        console.log(req.params.id);
-        console.log(req.body)
-        console.log(req.files)
+
         const { existingImage1, existingImage2, existingImage3 } = req.body
         try {
             const id = req.params.id
@@ -462,7 +429,7 @@ module.exports = {
         }
     },
     addCatogory: (req, res) => {
-        console.log("yes");
+   
         res.render('admin/addCatogory', { message: req.flash() })
     },
     postaddCategory: async (req, res) => {
@@ -473,11 +440,9 @@ module.exports = {
                 req.flash("Category", "Category Already Exists..")
                 res.redirect('/admin/addCategory')
             } else {
-
-                console.log(req.file, "file upload")
                 req.body.Images = req.file.filename
 
-                console.log(req.body.Images)
+
                 const uploaded = await Category.create({
                     Name: Name,
                     Images: req.body.Images
@@ -523,7 +488,7 @@ module.exports = {
             }
             else {
                 await Category.updateOne({ _id: id }, { Display: "Active" })
-                // console.log(productStatus);
+
                 res.redirect('/admin/viewCategory')
             }
 
@@ -537,7 +502,6 @@ module.exports = {
         try {
             const id = req.params.id
             const catogory = await Category.findOne({ _id: id })
-            console.log(catogory, "is it here?")
             res.render('admin/editCategory', { category: catogory })
         } catch (error) {
             console.log("error in the edit category catch")
@@ -547,7 +511,6 @@ module.exports = {
     postEditCategory: async (req, res) => {
         try {
             const id = req.params.id
-            console.log(req.file)
             const update = await Category.findOneAndUpdate({
                 _id: id
             }, {
@@ -629,8 +592,7 @@ module.exports = {
     orderViewMore: async (req, res) => {
         const orderId = req.params.orderId
         const orderDetials = await Orders.findOne({ _id: orderId }).populate("Products.ProductId")
-        // console.log(orderDetials)
-        res.render('admin/admin- orderDetials', { order: orderDetials })
+        res.render('admin/admin- orderDetials', { order: orderDetials,moment })
 
     },
     reviewManagement: async (req, res) => {
@@ -678,16 +640,13 @@ module.exports = {
             let labels;
             let data;
             let Count;
-            console.log('outside')
             orders.forEach((order) => {
-                console.log('inside')
                 const orderDate = moment(order.OrderedDate, "ddd, MMM D, YYYY h:mm A");
                 const dayMonthYear = orderDate.format("YYYY-MM-DD");
                 const monthYear = orderDate.format("YYYY-MM");
                 const year = orderDate.format("YYYY");
 
                 if (req.url === "/count-orders-by-day") {
-                    console.log("count");
                     // Count orders by day
                     if (!orderCountsByDay[dayMonthYear]) {
                         orderCountsByDay[dayMonthYear] = order.TotalAmount;
@@ -724,7 +683,6 @@ module.exports = {
                         moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
                     );
                     data = ordersByDay.map((entry) => entry.count);
-                    // console.log(data,"data",ordersByDay,"orderby day")
                 } else if (req.url === "/count-orders-by-month") {
                     // Count orders by month-year
                     if (!orderCountsByMonthYear[monthYear]) {
@@ -804,8 +762,7 @@ module.exports = {
                     data = ordersByYear.map((entry) => entry.count);
                 }
             });
-            console.log(data);
-            console.log(labels)
+
 
             res.json({ labels, data, Count });
         } catch (err) {
@@ -857,9 +814,9 @@ module.exports = {
             // }, []);
 
             // Organize the data for the chart
-            const labels = categorySalesData.map((entry) => entry.category);
+            const uniqueLabels = Array.from(new Set(categorySalesData.map(entry => entry.category)));
+            const labels =uniqueLabels;
             const data = categorySalesData.map((entry) => entry.totalSales);
-            console.log(data, "labels is this")
 
             // Send the data as a response
             res.json({ labels, data });
@@ -912,14 +869,13 @@ module.exports = {
                 DeliveredDate: { $exists: true },
                 PaymentStatus: 'Paid',
                 OrderedDate: {
-                    $gte: moment.utc(startDate).startOf('day').format("llll"),
-                    $lte: moment.utc(endDate).endOf('day').format("llll"),
+                    $gte: startDate,
+                    $lte: endDate
                 },
             }).populate('Products.ProductId');
 
 
             const totalAmountSum = orders.reduce((sum, order) => sum + order.TotalAmount, 0);
-            // console.log(orders, "orders are this again")
 
             pdfMaker.downloadPdf(req, res, orders, startDate, endDate, totalAmountSum)
 

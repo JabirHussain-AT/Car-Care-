@@ -9,24 +9,17 @@ const Users = require('../models/userSchema');
 
 module.exports = {
     verifypayment: async (req, res) => {
-        // console.log("verify payment : => ", req.body)
         const orderId = new mongoose.Types.ObjectId(req.body.order._id)
         let hmac = crypto.createHmac("sha256", 'ZMT0RhFuSsolnItPCtDxNqzv')
-        console.log(req.body.payment.razorpay_payment_id, 'payment id:', req.body.payment.razorpay_order_id)
 
         hmac.update(req.body.payment.razorpay_order_id + '|' + req.body.payment.razorpay_payment_id)
         hmac = hmac.digest('hex')
-        console.log("Generated HMAC:", hmac)
-
         if (hmac === req.body.payment.razorpay_signature) {
-            console.log("HMAC validation success")
 
             const orderId = new mongoose.Types.ObjectId(req.body.order._id)
-            // console.log('Order ID:', req.body.order._id)
 
             try {
                 const updateOrderDocument = await Order.findByIdAndUpdate(orderId, { PaymentStatus: "Paid" })
-                // console.log('Order update success:', updateOrderDocument)
                 const userId = req.session.user.user
                 const user = await Users.findOne({_id:userId})
                 const content = "Succesfully placed your Order .it will be shipped with 1 working day .for more queries connect with our team 9007972782"
@@ -37,7 +30,6 @@ module.exports = {
                 res.json({ success: false })
             }
         } else {
-            console.log('HMAC validation failed');
             const order = await Order.findOne(orderId)
             const orderItems = order.Products.map(item => ({
                 productId: item.ProductId,
@@ -58,7 +50,6 @@ module.exports = {
 
                     // Update stock quantity in the database for this product
                     await Products.updateOne({ _id: product._id }, { $set: { AvailableQuantity: product.AvailableQuantity } });
-                    console.log("quantity added return bracuse payment failed")
                 }
             }
             res.json({ failure: true })

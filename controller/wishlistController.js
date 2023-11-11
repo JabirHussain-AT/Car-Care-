@@ -28,7 +28,6 @@ module.exports = {
         try {
             const user = new mongoose.Types.ObjectId(req.session.user.user)
             const userWishList = await wishList.findOne({ UserId: user }).populate('Products')
-            console.log(userWishList,"kklklk")
             res.render('user/wishList', { userWishList })
         } catch (err) {
             console.log(err, "err in the wishlist catch")
@@ -44,7 +43,6 @@ module.exports = {
                   item.equals(productId)
                 );
                 if (sameItem) {
-                  console.log(`Item already exists in the wishlist.`);
                   const response ={
                     success:false,
                     message : `Item already exists in the wishlist.`
@@ -58,7 +56,6 @@ module.exports = {
                   );
                 }
               } else {
-                console.log(`user wishlist not found`);
                 const wishlist = new wishList({
                   UserId: userId,
                   Products: [productId],
@@ -71,7 +68,6 @@ module.exports = {
               };
               res.json(response);
             } catch (error) {
-              console.log(error, "error happened");
             }
           },
           RemoveFromWishList : async (req,res)=>{
@@ -88,7 +84,6 @@ module.exports = {
                     },
                 }
                 );
-                console.log("hiii")
                 res.redirect("/wishlist");
               } catch (error) {
                 console.log(error, "error happened");

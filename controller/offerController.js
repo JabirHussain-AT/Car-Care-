@@ -76,7 +76,6 @@ module.exports = {
             },
             addCategoryOffer : async (req,res)=>{
                 try{
-                    console.log(req.body.CategoryName)
                     req.body.CategoryName = new mongoose.Types.ObjectId(req.body.CategoryName)
                     req.body.Status = "Active"
                     const addedCategory = await categoryOffer.create(req.body)
@@ -111,18 +110,15 @@ module.exports = {
                         const existingCategoryOffer = await categoryOffer.findOne({ _id: req.params.id });
                         updatedCategoryOffer.expiryDate = existingCategoryOffer.expiryDate;
                     }
-                    console.log(1)
                     // Ensure that CategoryName is a valid ObjectId
                     if (updatedCategoryOffer?.CategoryName) {
                         updatedCategoryOffer.CategoryName = new mongoose.Types.ObjectId(updatedCategoryOffer.CategoryName);
                     }
-                    console.log(2)
                     // Retrieve the existing category offer
                     const existingCategoryOffer = await categoryOffer.findOne({ _id: req.params.id }).populate('CategoryName');
             
                     // Update the category offer
                     await categoryOffer.findOneAndUpdate({ _id: req.params.id }, updatedCategoryOffer);
-                    console.log(3)
                     // Adjust product discounts
                     const productsToUpdate = await Products.find({ Category: existingCategoryOffer.CategoryName.Name });
                     for (const product of productsToUpdate) {
@@ -141,12 +137,10 @@ module.exports = {
             },
             editCategoyOfferStatus :  async (req,res)=>{
                 try{
-                    console.log("wasdfgbhjnhrfgjh")
                    const CategoryOffer= await categoryOffer.findOne({_id:req.params.id})
                    if (CategoryOffer) {
                     const newStatus = CategoryOffer.Status === "Active" ? "Inactive" : "Active";     
                     await categoryOffer.findOneAndUpdate({ _id: req.params.id }, { Status: newStatus });
-                    console.log(CategoryOffer)
                     res.json({success:true})
                   }
                   

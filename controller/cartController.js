@@ -30,22 +30,14 @@ module.exports = {
     addtoCart: async (req, res) => {
         try {
             const product_id = req.params.id
-            // console.log(product_id, 'from act')
-
             const user = new mongoose.Types.ObjectId(req.session.user.user)
-
-            // console.log(user, "from anirudh")
-            console.log(user, "its from add to cart")
             const cart = await Cart.findOne({ UserId: user })
 
             if (cart) {
-                // console.log("saferr");
                 const userid = user.user
 
                 const existing = cart.Products.find((product) => product.ProductId === (product_id))
                 if (existing) {
-                    // console.log("iam here")
-
                     await Cart.findOneAndUpdate(
                         { "UserId": user, "Products.ProductId": product_id },
                         { $inc: { "Products.$.Quantity": 1 } }
@@ -60,7 +52,7 @@ module.exports = {
                 }
 
             } else {
-                console.log("i am in cart else");
+              
                 const quantity = 1
                 await Cart.create({
                     TotalAmount: 0,
@@ -72,8 +64,7 @@ module.exports = {
             res.redirect('/cart')
         } catch (error) {
             throw error
-            console.log("add to cart");
-            res.redirect('/cart')
+            
         }
     },
     deleteFromCart: async (req, res) => {
@@ -84,7 +75,6 @@ module.exports = {
             { $pull: { "Products": { ProductId: product_id } } },
             { new: true }
         );
-        console.log("delete : ", updatedCart)
         res.redirect('/cart')
     },
     updatingQuantity: async (req, res) => {
@@ -119,13 +109,11 @@ module.exports = {
         }
     },
     confirmStock: async (req, res) => {
-        // console.log("called confirm stock");
         try {
 
             const userId = req.session.user.user
             const userCart = await Cart.findOne({ UserId: userId })
             const outOfStockProducts = []
-            // console.log(ConfirmStock,"confirm stock")
 
             for (const cartProduct of userCart.Products) {
                 const product = await Products.findById(cartProduct.ProductId);

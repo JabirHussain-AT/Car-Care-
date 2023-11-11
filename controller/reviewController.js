@@ -25,15 +25,12 @@ const invoice = require("../utilty/invoiceCreater");
 
 module.exports = {
     submitReview  : async (req,res)=>{
-        console.log("in submit review reached ",req.body.review,req.body.ProductId)
         const savedReview = await Reviews.create({
             UserId : req.session.user.user,
             ProductId : req.body.ProductId,
             Comment : req.body.review,
             Date : new Date()
         })
-       
-        console.log("review Successfully saved",savedReview)
         res.json({success:true})
     }
 }

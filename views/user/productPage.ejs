@@ -1,7 +1,7 @@
 <%- include('../layout/user/layout') %>
     <link rel="stylesheet" href="/stylesheet/productPage.css">
     <%- include('../partials/user-header')%>
-        <div class="container-fluid" style="background-color:#c2bfbf;">
+        <div class="container-fluid" style="background-color:#c2bfbf; padding-left: 0px;">
             <div class="row">
                 <!-- Product Images -->
                 <% if(product) { %>
@@ -118,7 +118,7 @@
                                 <h6 class="active" id="descriptionTab">Description</h6>
                             </div>
                             <div class="col-md-4">
-                                <h6>Additional informations</h3>
+                                <h6 id="additionalInfoTab">Additional informations</h3>
                             </div>
                             <div class="col-md-4">
                                 <h6 id="reviewsTab">Reviews</h6>
@@ -137,6 +137,36 @@
                                     conditions.
                                     Mirage AT MR-172 265/65 R17 Lateral sipes
                                     also help in improving mud snow and wet qualities.</p>
+                                <div id="additionalInfoText" style="display: none;">
+                                    <!-- Include your additional information content here -->
+                                    <div class="container mt-2">
+                                        <div class="row">
+                                            <div class="col-md-12 mb-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h2 class="card-title text-center">Additional Information</h2>
+                                                        <!-- Add your additional information content here -->
+                                                        <ul>
+                                                            <li>
+                                                                <%= product.Specification1 %>
+                                                            </li>
+                                                            <li>
+                                                                <%= product.Specification2 %>
+                                                            </li>
+                                                            <li>
+                                                                <%= product.Specification3 %>
+                                                            </li>
+                                                            <li>
+                                                                <%= product.Specification4 %>
+                                                            </li>
+                                                        </ul>
+                                                        <!-- Add more information as needed -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div id="reviewsText" style="display: none;">
                                     <!-- Include your review content here -->
                                     <div class="container mt-2">
@@ -176,7 +206,7 @@
                                                                                 <%= review.UserId.Name%>
                                                                             </h3>
                                                                             <p class="text-muted">
-                                                                                <%=  moment(review.Date).format('ll') %>
+                                                                                <%= moment(review.Date).format('ll') %>
                                                                             </p>
                                                                         </div>
                                                                         <div class="card-text">
@@ -206,6 +236,7 @@
                         </div>
                         <% } %>
                     </div>
+            </div>
                     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script src="/js/imageZoom.js"></script>
@@ -234,9 +265,15 @@
 
                                 if ($(this).attr('id') === 'descriptionTab') {
                                     $("#descriptionText").show();
+                                    $("#additionalInfoText").hide();
+                                    $("#reviewsText").hide();
+                                } else if ($(this).attr('id') === 'additionalInfoTab') {
+                                    $("#descriptionText").hide();
+                                    $("#additionalInfoText").show();
                                     $("#reviewsText").hide();
                                 } else if ($(this).attr('id') === 'reviewsTab') {
                                     $("#descriptionText").hide();
+                                    $("#additionalInfoText").hide();
                                     $("#reviewsText").show();
                                 }
                             });
@@ -342,6 +379,5 @@
                                 });
                         }
                     </script>
-
-
                     <%- include('../partials/user-footer')%>
+                    
