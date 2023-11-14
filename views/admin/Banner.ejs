@@ -21,9 +21,11 @@
     <% } %>
 
     <h2 class="mb-4">Current Banner</h2>
+    <% if (currentBanner) { %>
     <div class="mb-4">
         <img src="/uploads/<%= currentBanner.Image %>" alt="Current Banner" class="img-fluid" style="max-height: 200px;">
     </div>
+    <% } %>
 
     <h2 class="mb-4">All Banners</h2>
     <div class="table-responsive ">

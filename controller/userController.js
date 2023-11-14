@@ -384,6 +384,11 @@ module.exports = {
       }
     }
     req.body.Email = req.session.email;
+    console.log(req.session.email , "lets check that ")
+    if(req.session.email === undefined){
+      req.flash("error", "please verify your email first");
+      res.redirect('/signup')
+    }
     if (req.body.Password === req.body.confirmPassword) {
       try {
         //

@@ -59,27 +59,27 @@
             <form action="/editAddress/<%=Address._id %>" method="post">
               <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="Name" value="<%=Address.Name%>"  id="fullName<%=Address._id%>" placeholder="Enter your full name" required>
+                <input type="text" class="form-control" name="Name" value="<%=Address.Name%>"  id="fullName<%=Address._id%>" placeholder="Enter your full name" pattern="^\S.*$" title="No white spaces allowed"  required>
               </div>
               <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" name="address" value="<%=Address.address%>" id="address<%=Address._id%>" placeholder="Enter your address" required>
+                <input type="text" class="form-control" name="address" value="<%=Address.address%>" id="address<%=Address._id%>" placeholder="Enter your address" pattern="^\S.*$" title="No white spaces allowed"  required>
               </div>
               <div class="mb-3">
                 <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city<%=Address._id%>" name="city" value="<%=Address.city%>"  placeholder="Enter your city" required>
+                <input type="text" class="form-control" id="city<%=Address._id%>" name="city" value="<%=Address.city%>"  placeholder="Enter your city" pattern="^\S.*$" title="No white spaces allowed"  required>
               </div>
               <div class="mb-3">
                 <label for="pincode" class="form-label">Pincode</label>
-                <input type="text" class="form-control" id="pincode<%=Address._id%>" name="zip" value="<%=Address.zip%>" placeholder="Enter your pincode" required>
+                <input type="text" class="form-control" id="pincode<%=Address._id%>" name="zip" value="<%=Address.zip%>" placeholder="Enter your pincode" pattern="\d{6}" title="Must be 6 digits numeric pin number" required>
               </div>
               <div class="mb-3">
                 <label for="state" class="form-label">State</label>
-                <input type="text" class="form-control" id="state<%=Address._id%>" name="state" value="<%=Address.state%>" placeholder="Enter your state" required>
+                <input type="text" class="form-control" id="state<%=Address._id%>" name="state" value="<%=Address.state%>" placeholder="Enter your state"  pattern="^\S.*$" title="No white spaces allowed" required>
               </div>
               <div class="mb-3">
                 <label for="mobileNumber" class="form-label">Mobile Number</label>
-                <input type="tel" class="form-control" id="mobileNumber<%=Address._id%>" name="mobileNumber" value="<%=Address.mobileNumber%>" placeholder="Enter your mobile number" required>
+                <input type="tel" class="form-control" id="mobileNumber<%=Address._id%>" name="mobileNumber" value="<%=Address.mobileNumber%>" pattern="\d{10}" title="Must be 10 digits Mobile Number" placeholder="Enter your mobile number" required>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>

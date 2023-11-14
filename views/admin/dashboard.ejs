@@ -34,8 +34,8 @@
                         <h2 class="card-header"
                             style="font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Number
                             of Sales</h2>
-                        <div class="card-body mt-4 pt-4">
                             <canvas id="salesGraphCount"></canvas>
+                        <div class="card-body mt-4 pt-4">
                         </div>
                     </div>
                 </div>
@@ -51,11 +51,12 @@
                         <h2 class="card-header"
                             style="font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
                             Category Based Sales</h2>
-                        <div class="card-body">
-
                             <canvas id="categoryBasedSales"></canvas>
+                        <!-- <div class="card-body">
 
-                        </div>
+                            
+
+                        </div> -->
                     </div>
                 </div>
                 <!--  -->
@@ -68,9 +69,9 @@
                             style="font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
                             Payment Based Sales
                             Analysis</h2>
+                            <canvas id="paymentBasedSales"></canvas>
                         <div class="card-body">
 
-                            <canvas id="paymentBasedSales"></canvas>
 
                         </div>
                     </div>
@@ -462,7 +463,7 @@
                                 {
                                     label: "Sales",
                                     data: catogorySales.data,
-                                    backgroundColor: barColors,
+                                    backgroundColor: "green",
                                     borderColor: "rgba(75, 192, 192, 1)",
                                     borderWidth: 4,
                                 },
@@ -522,7 +523,7 @@
                     if (window.myChart4) {
                         window.myChart4.destroy();
                     }
-                    const barColors = ["blue", "green", "white", "orange", "brown"]
+                    const barColors = ["blue", "blue", "blue", "orange", "brown"]
                     window.myChart4 = new Chart(payment, {
                         type: "bar",
                         data: {

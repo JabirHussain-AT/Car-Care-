@@ -41,9 +41,9 @@
                                                                             </div>
                                                                             <div class="col-sm-9 text-secondary">
                                                                                 <form action="/profile" method="post">
-                                                                                    <input type="text"
+                                                                                    <input type="text" required
                                                                                         class="form-control" name="Name"
-                                                                                        value="<%= user.Name %>">
+                                                                                        value="<%= user.Name %>"  pattern="^\S.*$" title="No white spaces allowed">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -51,9 +51,9 @@
                                                                                 <h6 class="mb-0">Mobile</h6>
                                                                             </div>
                                                                             <div class="col-sm-9 text-secondary">
-                                                                                <input type="text" class="form-control"
+                                                                                <input type="tel" class="form-control"
                                                                                     name="MobNo"
-                                                                                    value="<%= user.MobNo %>">
+                                                                                    value="<%= user.MobNo %>"  pattern="\d{10}" title="Mobile number must contain exactly 10 digits">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -107,14 +107,16 @@
                                                                 </div>
                                                             </div>
                                                             <a class="btn text-dark d-flex-column  border-0">
+                                                                <% if (ReferalAmount && ReferalAmount.length > 0) {%>
                                                                 <div class="wallet-header">
                                                                     Refer to your friends and earn
                                                                     <%=ReferalAmount[0].Amount %> in each.
                                                                 </div>
+                                                                <% } %>
                                                                 <div>
                                                                     <h6>Your referral link : </h6>
                                                                     <h6 class="text-primary mt-4" id="referral-link">
-                                                                        localhost:3002/signup/<%=user._id%>
+                                                                        caarcare.shop/signup/<%=user._id%>
                                                                     </h6>
                                                                 </div>
                                                                 <div class="p-4">

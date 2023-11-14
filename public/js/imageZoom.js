@@ -5,7 +5,7 @@ $(document).ready(function(){
         zoomType: 'lens',
         width: 400,
         zoomWidth: 400,
-        offset: {vertical: 0, horizontal: 20
+        offset: {vertical: 0, horizontal: -580
         },
         onZoomIn: function () {
             // Change background color during zoom in

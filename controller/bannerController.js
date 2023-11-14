@@ -40,7 +40,7 @@ module.exports = {
                 Carosel: carosal,
                 Date: new Date(),
             })
-            
+          
             await newBanner.save();
             res.redirect('/admin/banner')
         }else{
@@ -84,7 +84,7 @@ module.exports = {
             res.redirect('/admin/banner')
         } catch (error) {
             // console.error("Error activating banner:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+            res.status(500).json({ error: "Internal Server Error " });
         }
     },
     deleteBanner: async (req, res) => {

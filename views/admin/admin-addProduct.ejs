@@ -13,28 +13,28 @@
                                 <div class="form-group">
                                     <label for="productName">Product Name:</label>
                                     <input type="text" name="ProductName" class="form-control bg-light" id="productName"
-                                        placeholder="Enter product name" required />
+                                        placeholder="Enter product name" pattern="^\S.*$" title="No white spaces allowed" required />
                                 </div><br>
 
                                 <div class="form-group">
                                     <label for="productDescription">Product Description:</label>
                                     <textarea class="form-control bg-light" name="Description" id="productDescription"
-                                        rows="4" placeholder="Enter product description" required></textarea>
+                                        rows="4" placeholder="Enter product description" pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="productSpecification">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="" id="productSpecification1"
+                                    <textarea class="form-control bg-light"  pattern="^\S.*$" title="No white spaces allowed" name="" id="productSpecification1"
                                         placeholder="Enter product Specification" required></textarea>
                                     <label for="productSpecification2">Product Specification:</label>
                                     <textarea class="form-control bg-light" name="" id="productSpecification"
-                                        placeholder="Enter product Specification" required></textarea>
+                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification3">Product Specification:</label>
                                     <textarea class="form-control bg-light" name="" id="productSpecification"
-                                        placeholder="Enter product Specification" required></textarea>
+                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification4">Product Specification:</label>
                                     <textarea class="form-control bg-light" name="" id="productSpecification"
-                                        placeholder="Enter product Specification" required></textarea>
+                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                 </div>
                                 <br>
 
@@ -121,7 +121,7 @@
                                     <div class="form-group">
                                         <label for="quantity">Quantity:</label>
                                         <input type="number" name="AvailableQuantity" class="form-control bg-light"
-                                            id="quantity" placeholder="Enter quantity" required />
+                                            id="quantity" placeholder="Enter quantity"  pattern="^\S.*$" title="No white spaces allowed" required />
                                     </div>
                                 </div>
 
