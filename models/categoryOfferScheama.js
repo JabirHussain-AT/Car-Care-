@@ -4,7 +4,7 @@ const { Schema, ObjectId } = mongoose;
 
 const categoryOfferSchema = new Schema({
   CategoryName:{type:Schema.Types.ObjectId,required:true,ref:'Category'},
-  Amount: { type: Number, required: true, },
+  Percentage: { type: Number, required: true, },
   expiryDate:{type :Date, required : true},
   Status: { type: String, required: true},
 });

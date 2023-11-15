@@ -115,32 +115,32 @@
             <form action="/checKoutaddAddress" method="post">
               <div class="mb-3">
                 <label for="firstName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="firstName" name="Name" required>
+                <input type="text" class="form-control" id="firstName" minlength="4" name="Name"  pattern="^\S.*$" title="No white spaces allowed" required>
               </div>
               
               <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                <textarea class="form-control" id="address" name="address" rows="3" pattern="^\S.*$" title="No white spaces allowed" required></textarea>
               </div>
               
               <div class="mb-3">
                 <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city" name="city" required>
+                <input type="text" class="form-control" id="city" name="city" pattern="^\S.*$" title="No white spaces allowed" required>
               </div>
 
               <div class="mb-3">
                 <label for="State" class="form-label">State</label>
-                <input type="text" class="form-control" id="State" name="state" required>
+                <input type="text" class="form-control" id="State" name="state" pattern="^\S.*$" title="No white spaces allowed" required>
               </div>
               
               <div class="mb-3">
                 <label for="zip" class="form-label">Zip Code</label>
-                <input type="text" class="form-control" id="zip" name="zip" required>
+                <input type="text" class="form-control" id="zip" name="zip" pattern="\d{6}" title="Must be 6 digits numeric" required>
               </div>
 
               <div class="mb-3">
                 <label for="mobileNumber" class="form-label">Mobile Number</label>
-                <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" required>
+                <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" pattern="\d{10}" title="Must be 10 digits mobaile number" required>
               </div>
               
               <button type="submit" class="btn btn-primary">Add Address</button>

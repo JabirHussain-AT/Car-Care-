@@ -69,6 +69,9 @@ const ProductSchema = new Schema({
       },
       IsInCategoryOffer :{
         type:Boolean
+      },
+      OfferPercentage : {
+        type : Number
       }
    
     

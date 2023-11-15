@@ -40,6 +40,9 @@
                         <div class="product-info icons">
                             <h2>
                                 <%= product.ProductName %>
+                                <% if(product.IsInCategoryOffer) { %>
+                                    <span class="badge bg-danger text-light"><%= product.OfferPercentage %>% OFF</span>
+                                <% } %>
                             </h2>
                             <h5
                                 style="color: rgb(255, 0, 0); font-size: large; font-family: Verdana, Geneva, Tahoma, sans-serif;">
@@ -78,7 +81,7 @@
                                                 <div class="counter">
                                                     <div class="container mt-5">
                                                         <div class="row">
-                                                            <% if (product.AvailableQuantity> 1){ %>
+                                                            <% if (product.AvailableQuantity > 0){ %>
                                                                 <a href="/addToCart/<%= product._id %>"><button
                                                                         class="btn btn-dark ">Add to Cart</button></a>
                                                                 <% } else { %>

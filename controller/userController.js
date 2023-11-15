@@ -8,6 +8,7 @@ const Wallet = require("../models/walletHistorySchema");
 const Cart = require("../models/cartSchema");
 const Reviews = require('../models/reviewSchema')
 const CouponHistory = require("../models/couponHistorySchema");
+const Coupon = require('../models/couponSchema')
 const bcrypt = require("bcrypt");
 const { log } = require("handlebars");
 const jwt = require("jsonwebtoken");
@@ -35,59 +36,73 @@ module.exports = {
     }
   },
   home: async (req, res) => {
-    try{
+    try {
       const category = await Category.find();
       const bestSeller = await Orders.aggregate([
         {
-            $unwind: "$Products",
+          $unwind: "$Products",
         },
         {
-            $group: {
-                _id: "$Products.ProductId",
-                totalCount: { $sum: "$Products.Quantity" },
-            },
+          $group: {
+            _id: "$Products.ProductId",
+            totalCount: { $sum: "$Products.Quantity" },
+          },
         },
         {
-            $sort: {
-                totalCount: -1,
-            },
+          $sort: {
+            totalCount: -1,
+          },
         },
         {
-            $limit: 4,
+          $limit: 4,
         },
         {
-            $lookup: {
-                from: "products",
-                localField: "_id",
-                foreignField: "_id",
-                as: "productDetails",
-            },
+          $lookup: {
+            from: "products",
+            localField: "_id",
+            foreignField: "_id",
+            as: "productDetails",
+          },
         },
         {
-            $unwind: "$productDetails",
+          $unwind: "$productDetails",
         },
-    ]);
+      ]);
       const user = req.session.user;
       const banner = await Banner.findOne({ Status: "Enabled" });
-      res.render("user/home", { user: user, Banner: banner ,bestSeller});
-    }catch(err){
+      res.render("user/home", { user: user, Banner: banner, bestSeller });
+    } catch (err) {
       throw err
     }
   },
   profile: async (req, res) => {
-    try{
+    try {
+      // Retrieve available coupons not used by the user
       const userid = req.session.user.user;
+      const coupons = await Coupon.find({
+        Status: 'Active',
+        Users: { $ne: userid },
+        CouponExpiryDate: { $gte: moment(new Date()).format('lll') }, 
+         // Coupons not assigned to the user
+      });
+      const unusedCoupons = await CouponHistory.find({
+        UserId: userid,
+        Status: 'Not Used'
+      });
+      console.log(coupons,"jjfsajflk")
       const user = await Users.findOne({ _id: userid });
       const wallet = await Wallet.findOne({ UserId: userid });
       const ReferalAmount = await ReferalOffer.find()
       res.render("user/profile", {
-      user: user,
-      message: req.flash(),
-      Wallet: wallet,
-      ReferalAmount
-    });
-    }catch(err){
-      console.log(err,"error in the catch of profile")
+        user: user,
+        message: req.flash(),
+        Wallet: wallet,
+        ReferalAmount,
+        coupons,
+        unusedCoupons
+      });
+    } catch (err) {
+      console.log(err, "error in the catch of profile")
     }
   },
   postProfile: async (req, res) => {
@@ -109,7 +124,7 @@ module.exports = {
   getproduct: async (req, res) => {
     const _id = req.params.id;
     const product = await Products.findOne({ _id }).populate('variants');
-    const reviews = await Reviews.find({ProductId:_id}).populate('UserId')
+    const reviews = await Reviews.find({ ProductId: _id }).populate('UserId')
     const userOrderHistory = await Orders.find({
       UserId: req.session.user.user,
       'Products.ProductId': _id,
@@ -126,10 +141,11 @@ module.exports = {
     const isInOrderHistory = userOrderHistory.length > 0;
     const user = req.session.user;
     res.render("user/productPage", {
-       product: product,
-        user: user,Reviews : reviews ,
-        moment,
-        isUserHaveRight:isInOrderHistory });
+      product: product,
+      user: user, Reviews: reviews,
+      moment,
+      isUserHaveRight: isInOrderHistory
+    });
   },
   login: (req, res) => {
     const user = req.session.user;
@@ -151,9 +167,9 @@ module.exports = {
         const email = req.query.email;
         req.session.email = email;
         otpToBeSent = otpFunctions.generateOTP();
-        if(req.params.id){
-          const result = otpFunctions.sendOTP(req, res, email, otpToBeSent,req.params.id);
-        }else{
+        if (req.params.id) {
+          const result = otpFunctions.sendOTP(req, res, email, otpToBeSent, req.params.id);
+        } else {
           const result = otpFunctions.sendOTP(req, res, email, otpToBeSent);
         }
       }
@@ -169,7 +185,9 @@ module.exports = {
       const matchedOTPrecord = await OTP.findOne({ email: req.session.email });
 
       if (!matchedOTPrecord) {
-        throw new Error("No OTP records found for the provided email.");
+        req.flash("error","The OTP code has expired. Please verify a new one.")
+        res.redirect('/signup')
+        // throw new Error("No OTP records found for the provided email.");
       }
 
       const { expiresAt } = matchedOTPrecord;
@@ -177,7 +195,9 @@ module.exports = {
       // Checking for expired codes
       if (expiresAt < Date.now()) {
         await OTP.deleteOne({ email: req.session.email });
-        throw new Error("The OTP code has expired. Please request a new one.");
+        req.flash("error","The OTP code has expired. Please verify a new one.")
+        res.redirect('/signup')
+        // throw new Error("The OTP code has expired. Please request a new one.");
       }
 
       // Compare the hashed OTP from the database with the provided OTP
@@ -186,9 +206,9 @@ module.exports = {
       if (otp == dbOTP) {
         // Redirect to the landing page upon successful OTP validation
         req.session.OtpValid = true;
-        if(req.params.id){
-        res.redirect(`/signup/${req.params.id}`);
-        }else{
+        if (req.params.id) {
+          res.redirect(`/signup/${req.params.id}`);
+        } else {
 
           res.redirect("/signup");
         }
@@ -197,7 +217,7 @@ module.exports = {
         req.session.error = "The OTP is invalid.";
         req.flash("error", "OTP IS INVALID");
         res.render("user/emailverification", {
-          error: req.session.error,
+          message: req.flash(),
           user: req.session.user,
         });
       }
@@ -223,9 +243,9 @@ module.exports = {
             expiresAt: Date.now() + duration * 360 * 1000,
           }
         );
-        if(req.params.id){
-          const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent,req.params.id);
-        }else{
+        if (req.params.id) {
+          const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent, req.params.id);
+        } else {
 
           const sent = otpFunctions.resendOTP(req, res, email, otpToBeSent);
         }
@@ -240,19 +260,19 @@ module.exports = {
   shop: async (req, res) => {
     const user = req.session.user;
     const category = await Category.find();
-    let products; 
+    let products;
 
     // pagination
-    
+
     const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
     const perPage = 15; // Number of items per page
     const skip = (page - 1) * perPage;
-    const totalCount = await Products.countDocuments({Display:"Active"});
+    const totalCount = await Products.countDocuments({ Display: "Active" });
     // pagination ends
 
     // If there's a search query, filter products based on it
     if (req.query.search) {
-        products = await Products.find({
+      products = await Products.find({
         Display: "Active",
         ProductName: { $regex: new RegExp(req.query.search, "i") }, // Case-insensitive search
       }).skip(skip).limit(perPage);
@@ -262,25 +282,25 @@ module.exports = {
     }
 
 
-  // here the sort goes
-     const {search, sort } = req.query
-     if (sort === 'price-asc') {
-     products.sort((a, b) => a.DiscountAmount - b.DiscountAmount);
-     } else if (sort === 'price-desc') {
-     products.sort((a, b) => b.DiscountAmount - a.DiscountAmount);
-     }
-  // ends
+    // here the sort goes
+    const { search, sort } = req.query
+    if (sort === 'price-asc') {
+      products.sort((a, b) => a.DiscountAmount - b.DiscountAmount);
+    } else if (sort === 'price-desc') {
+      products.sort((a, b) => b.DiscountAmount - a.DiscountAmount);
+    }
+    // ends
 
 
-        res.render('user/shop',{
-            products,
-            user,
-            category,
-            currentPage: page,
-            perPage,
-            totalCount,
-            totalPages: Math.ceil(totalCount / perPage),
-        });
+    res.render('user/shop', {
+      products,
+      user,
+      category,
+      currentPage: page,
+      perPage,
+      totalCount,
+      totalPages: Math.ceil(totalCount / perPage),
+    });
   },
   categoryBased: async (req, res) => {
     const categoryId = req.params.id;
@@ -291,7 +311,7 @@ module.exports = {
     const page = parseInt(req.query.page) || 1; // Get the page number from query parameters
     const perPage = 15; // Number of items per page
     const skip = (page - 1) * perPage;
-    const totalCount = await Products.countDocuments({Display:"Active"});
+    const totalCount = await Products.countDocuments({ Display: "Active" });
     // 
     const category = await Category.find();
     const products = await Products.find({
@@ -313,40 +333,40 @@ module.exports = {
     try {
       // const Email = req.body.email
       const userData = await Users.findOne({ Email: req.body.email });
-      if(userData !== null ){
-      if (userData.Status === "Active") {
-        if (userData !== null) {
-          const bcryptPass = await bcrypt.compare(
-            req.body.password,
-            userData.Password
-          );
-          if (bcryptPass) {
-            const accessToken = jwt.sign(
-              { user: userData._id },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: 60 * 60 }
+      if (userData !== null) {
+        if (userData.Status === "Active") {
+          if (userData !== null) {
+            const bcryptPass = await bcrypt.compare(
+              req.body.password,
+              userData.Password
             );
-            res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
-            req.session.user = userData.id;
-            // res.render('user/home', { user: true })
-            res.redirect("/home");
+            if (bcryptPass) {
+              const accessToken = jwt.sign(
+                { user: userData._id },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: 60 * 60 }
+              );
+              res.cookie("userJwt", accessToken, { maxAge: 60 * 1000 * 60 });
+              req.session.user = userData.id;
+              // res.render('user/home', { user: true })
+              res.redirect("/home");
+            } else {
+              req.flash("notMatching", " password not matching");
+              res.redirect("/login");
+            }
           } else {
-            req.flash("notMatching", " password not matching");
+            req.flash("error", "invalid email");
             res.redirect("/login");
           }
         } else {
-          req.flash("error", "invalid email");
+          req.flash("banned", "you are Banned");
           res.redirect("/login");
         }
       } else {
-        req.flash("banned", "you are Banned");
-        res.redirect("/login");
-      }
-    }else{
         req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
         res.redirect("/login");
 
-    }
+      }
     } catch (error) {
       req.flash("dontHaveAnaccount", "Dont have an account in this email please signup");
       res.redirect("/login");
@@ -361,31 +381,31 @@ module.exports = {
     if (req.params.id) {
       // Pass the parameter to the client-side by rendering it in the HTML
       res.render("user/signup", {
-          message: req.flash(),
-          email: req.session.email,
-          user: user,
-          referedUser: req.params.id,  // Pass the parameter to the template
+        message: req.flash(),
+        email: req.session.email,
+        user: user,
+        referedUser: req.params.id,  // Pass the parameter to the template
       });
-  } else {
+    } else {
       res.render("user/signup", {
-          message: req.flash(),
-          email: req.session.email,
-          user: user,
+        message: req.flash(),
+        email: req.session.email,
+        user: user,
       });
     }
   },
   postSignup: async (req, res) => {
-    if(req.params.id){
+    if (req.params.id) {
       const userId = new mongoose.Types.ObjectId(req.params.id)
       const referedUser = await Users.findOne(userId)
-      if(referedUser){
+      if (referedUser) {
         const ReferalAmount = await ReferalOffer.findOne()
         await Users.updateOne({ _id: userId }, { $inc: { Wallet: ReferalAmount.Amount } }).exec();
       }
     }
     req.body.Email = req.session.email;
-    console.log(req.session.email , "lets check that ")
-    if(req.session.email === undefined){
+    console.log(req.session.email, "lets check that ")
+    if (req.session.email === undefined) {
       req.flash("error", "please verify your email first");
       res.redirect('/signup')
     }
@@ -411,8 +431,8 @@ module.exports = {
           });
           await couponAdd.save();
 
-         res.redirect('/home')
-        } 
+          res.redirect('/home')
+        }
       } catch (error) {
         console.log(error);
         if (error.code === 11000) {
@@ -439,16 +459,17 @@ module.exports = {
         req.session.forgetPassEmail = email.Email;
         res.redirect("/forgetOtp");
       } else {
-        req.flash("Nouser", "No Existing Account");
-        redirect("/forgetPass");
+        req.flash("error", "No Existing Account");
+        res.redirect("/forgetPass");
       }
-    } catch (error) {}
+    } catch (error) { 
+      console.log(error)
+    }
   },
   forgetOtp: async (req, res) => {
     try {
       const email = req.session.forgetPassEmail;
       otpToBeSent = otpFunctions.generateOTP();
-      console.log("fogotp");
       req.session.otp = otpToBeSent;
       console.log(req.session.otp);
       otpFunctions.forgetOtp(req, res, email, otpToBeSent);
@@ -462,8 +483,8 @@ module.exports = {
       if (req.body.otp == req.session.otp) {
         res.redirect(`/setNewPass/${email}`);
       } else {
-        req.flash("forgetOtp", "not valid");
-        res.redirect("/forgetOtp");
+        req.flash("error", "entered otp is not valid . please try again");
+        res.redirect("/forgetPass");
       }
     } catch (error) {
       throw error;
@@ -524,20 +545,20 @@ module.exports = {
       res.render("user/addAddress");
     } catch (error) {
       throw error;
-    
+
     }
   },
   checkout: async (req, res) => {
     const userid = req.session.user.user;
     const userId = new mongoose.Types.ObjectId(userid);
-    const cart  = await Cart.findOne({UserId:userId})
+    const cart = await Cart.findOne({ UserId: userId })
     try {
-      if(cart === null){
+      if (cart === null) {
         res.redirect('/cart')
       }
       const user = await Users.findOne({ _id: userId });
-      const wallet = await Wallet.findOne({UserId:userid})
-      res.render("user/checkOut", { user: user ,Wallet:wallet});
+      const wallet = await Wallet.findOne({ UserId: userid })
+      res.render("user/checkOut", { user: user, Wallet: wallet });
     } catch (error) {
       throw error;
     }
@@ -711,7 +732,7 @@ module.exports = {
       const newOrder = {
         UserId: userId,
         Products: ProductsInCart.Products, // Assign the products directly
-        OrderedDate:new Date(), // Set the order date to the current date
+        OrderedDate: new Date(), // Set the order date to the current date
         ExpectedDeliveryDate: new Date(),
         ShippedAddress: {
           Name: selectedAddress.name,
@@ -727,64 +748,64 @@ module.exports = {
         // Add other properties as needed
       };
       const createdOrder = await Orders.create(newOrder);
-          const user = await Users.findOne({ _id: req.session.user.user });
-        // }
-        if (req.body.paymentMethod === "COD") {
-          const user = await Users.findOne({ _id: req.session.user.user });
-          const content =
-            "Successfully placed your Order. It will be shipped within 1 working day. For more queries, connect with our team at 9007972782.";
-          const result = otpFunctions.sendMail(req, res, user.Email, content);
-          const orderid = createdOrder._id
-          return res.json({ cod: true,orderid }); // Use return here
-        } else if (req.body.paymentMethod === "online") {
-          const amount = TotalAmount
-          const response = await razorpay.onlinePayment(
-            amount,
-            createdOrder._id
-          );
-          let paymentDetials = {
-            response: response,
-            order: createdOrder,
-            user: userId,
-          };
-          res.json({ paymentDetials }); // Use return here
-        } else {
-          // console.log(req.body.paymentMethod,"wallet is working")
-          const user = await Users.findOne({ _id: req.session.user.user });
-          const amount =TotalAmount
-          const wallet = await Wallet.findOne({ UserId: user._id });
-          const orderId = new mongoose.Types.ObjectId(createdOrder._id);
-          if(wallet!==null){
-            if (wallet.WalletAmount < amount) {
-              console.log("wallet not have enough money to purchase");
-              res.json({ message: "wallet dont have enough money" });
-            } else {
-              const orderId = new mongoose.Types.ObjectId(createdOrder._id);
-              await wallet.updateOne({
-                WalletAmount: wallet.WalletAmount - amount,
-                $push: {
-                  Transactions: {
-                    Amount: amount,
-                    State: "Out",
-                    Date: new Date(),
-                    Order: orderId,
-                  },
-                },
-              });
-            const newUPdated = await Wallet.findOne({ UserId: user._id })
-              await user.updateOne({
-                Wallet: newUPdated.WalletAmount,
-              });
-              const orderid= createdOrder._id
-              const walletPurchase = true;
-              res.json({ walletPurchase,orderid});
-            }
-        }else{
+      const user = await Users.findOne({ _id: req.session.user.user });
+      // }
+      if (req.body.paymentMethod === "COD") {
+        const user = await Users.findOne({ _id: req.session.user.user });
+        const content =
+          "Successfully placed your Order. It will be shipped within 1 working day. For more queries, connect with our team at 9007972782.";
+        const result = otpFunctions.sendMail(req, res, user.Email, content);
+        const orderid = createdOrder._id
+        return res.json({ cod: true, orderid }); // Use return here
+      } else if (req.body.paymentMethod === "online") {
+        const amount = TotalAmount
+        const response = await razorpay.onlinePayment(
+          amount,
+          createdOrder._id
+        );
+        let paymentDetials = {
+          response: response,
+          order: createdOrder,
+          user: userId,
+        };
+        res.json({ paymentDetials }); // Use return here
+      } else {
+        // console.log(req.body.paymentMethod,"wallet is working")
+        const user = await Users.findOne({ _id: req.session.user.user });
+        const amount = TotalAmount
+        const wallet = await Wallet.findOne({ UserId: user._id });
+        const orderId = new mongoose.Types.ObjectId(createdOrder._id);
+        if (wallet !== null) {
+          if (wallet.WalletAmount < amount) {
             console.log("wallet not have enough money to purchase");
-              res.json({ message: "wallet dont have enough money" });
-        }
+            res.json({ message: "wallet dont have enough money" });
+          } else {
+            const orderId = new mongoose.Types.ObjectId(createdOrder._id);
+            await wallet.updateOne({
+              WalletAmount: wallet.WalletAmount - amount,
+              $push: {
+                Transactions: {
+                  Amount: amount,
+                  State: "Out",
+                  Date: new Date(),
+                  Order: orderId,
+                },
+              },
+            });
+            const newUPdated = await Wallet.findOne({ UserId: user._id })
+            await user.updateOne({
+              Wallet: newUPdated.WalletAmount,
+            });
+            const orderid = createdOrder._id
+            const walletPurchase = true;
+            res.json({ walletPurchase, orderid });
           }
-        
+        } else {
+          console.log("wallet not have enough money to purchase");
+          res.json({ message: "wallet dont have enough money" });
+        }
+      }
+
       // }
       //   res.redirect('/orderPlaced')
     } catch (error) {

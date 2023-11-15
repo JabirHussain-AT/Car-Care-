@@ -1,4 +1,5 @@
 <%- include('../layout/user/layout') %>
+    <link rel="stylesheet" href="/stylesheet/userProfile.css">
     <%- include('../partials/user-header') %>
         <div class="container-fluid bg-secondery" style="background: linear-gradient(234deg,white,rgb(147, 184, 209));">
             <% if(message.nomatch) { %>
@@ -43,7 +44,9 @@
                                                                                 <form action="/profile" method="post">
                                                                                     <input type="text" required
                                                                                         class="form-control" name="Name"
-                                                                                        value="<%= user.Name %>"  pattern="^\S.*$" title="No white spaces allowed">
+                                                                                        value="<%= user.Name %>"
+                                                                                        pattern="^\S.*$"
+                                                                                        title="No white spaces allowed">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -53,7 +56,9 @@
                                                                             <div class="col-sm-9 text-secondary">
                                                                                 <input type="tel" class="form-control"
                                                                                     name="MobNo"
-                                                                                    value="<%= user.MobNo %>"  pattern="\d{10}" title="Mobile number must contain exactly 10 digits">
+                                                                                    value="<%= user.MobNo %>"
+                                                                                    pattern="\d{10}"
+                                                                                    title="Mobile number must contain exactly 10 digits">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
@@ -107,25 +112,27 @@
                                                                 </div>
                                                             </div>
                                                             <a class="btn text-dark d-flex-column  border-0">
-                                                                <% if (ReferalAmount && ReferalAmount.length > 0) {%>
-                                                                <div class="wallet-header">
-                                                                    Refer to your friends and earn
-                                                                    <%=ReferalAmount[0].Amount %> in each.
-                                                                </div>
-                                                                <% } %>
-                                                                <div>
-                                                                    <h6>Your referral link : </h6>
-                                                                    <h6 class="text-primary mt-4" id="referral-link">
-                                                                        caarcare.shop/signup/<%=user._id%>
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="p-4">
-                                                                    <button id="copyButton"
-                                                                        class="fa fa-copy fa-xl  border-0"></button>
-                                                                </div>
-                                                                <span id="copySuccessMessage"
-                                                                    class="d-none fw-bold text-success"> Text copied to
-                                                                    clipboard! </span>
+                                                                <% if (ReferalAmount && ReferalAmount.length> 0) {%>
+                                                                    <div class="wallet-header">
+                                                                        Refer to your friends and earn
+                                                                        <%=ReferalAmount[0].Amount %> in each.
+                                                                    </div>
+                                                                    <% } %>
+                                                                        <div>
+                                                                            <h6>Your referral link : </h6>
+                                                                            <h6 class="text-primary mt-4"
+                                                                                id="referral-link">
+                                                                                caarcare.shop/signup/<%=user._id%>
+                                                                            </h6>
+                                                                        </div>
+                                                                        <div class="p-4">
+                                                                            <button id="copyButton"
+                                                                                class="fa fa-copy fa-xl  border-0"></button>
+                                                                        </div>
+                                                                        <span id="copySuccessMessage"
+                                                                            class="d-none fw-bold text-success"> Text
+                                                                            copied to
+                                                                            clipboard! </span>
                                                             </a>
                                                         </div>
 
@@ -154,15 +161,15 @@
                                                             </p>
                                                         </a>
                                                     </div>
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6  m-2"
+                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6 m-2"
                                                         style="border: 2px groove black;">
-                                                        <a href="">
+                                                        <button type="button" class="btn btn-link"
+                                                            data-bs-toggle="modal" data-bs-target="#couponsModal">
                                                             <p class="p-1 pt-3"
                                                                 style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                                                                 Coupons
                                                             </p>
-                                                        </a>
-
+                                                        </button>
                                                     </div>
 
                                                 </div>
@@ -269,7 +276,65 @@
                 </div>
             </div>
         </div>
-      
+        //coupons modal
+        <!-- Modal -->
+        <div class="modal fade" id="couponsModal" tabindex="-1" aria-labelledby="couponsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="couponsModalLabel">Coupons</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> X </button>
+                    </div>
+                    <div class="modal-body">
+                        <h1 class="text-center tickerTimes">My Coupons</h1>
+                        <div class="container">
+                            <% if (coupons) {%>
+                            <%coupons.forEach(function(coupon){%>
+                                <div class="coupon-card mt-3">
+                                    <h3>
+                                        <%=coupon.CouponName%>
+                                    </h3>
+                                    <div class="coupon-row">
+                                        <span id="cpnCode">
+                                            <%=coupon.CouponCode%>
+                                        </span>
+                                        <span id="cpnBtn">Copy Code</span>
+                                    </div>
+                                    <p>Valid Till:<%= coupon.CouponExpiryDate %>
+                                    </p>
+                                    <div class="circle1"></div>
+                                    <div class="circle2"></div>
+                                </div>
+                                <%})%>
+                                <% } %>
+                               <% if (unusedCoupons && unusedCoupons.length > 0) {%>
+                                    <% unusedCoupons.forEach(function(coupon){%>
+                                    <div class="coupon-card mt-3">
+                                        <h3>
+                                           New User Coupon
+                                        </h3>
+                                        <div class="coupon-row">
+                                            <span id="cpnCode1">
+                                                <%=coupon.CouponCode%>
+                                            </span>
+                                            <span id="cpnBtn1">Copy Code</span>
+                                        </div>
+                                        <div class="circle1"></div>
+                                        <div class="circle2"></div>
+                                    </div>
+                                    <%})%>
+                                <% } %>
+                        </div>
+                        <!-- Customize this section based on your coupon data -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / -->
+
         <style>
             .card {
 
@@ -340,6 +405,26 @@
                 }, 3000);
             });
         </script>
+        <script>
+            var cpnBtn = document.getElementById("cpnBtn");
+            var cpnBtn1 = document.getElementById("cpnBtn1");
+            var cpnCode = document.getElementById("cpnCode");
+            var cpnCode1 = document.getElementById("cpnCode1");
 
+            cpnBtn.onclick = function () {
+                navigator.clipboard.writeText(cpnCode.innerHTML);
+                cpnBtn.innerHTML = "COPIED";
+                setTimeout(function () {
+                    cpnBtn.innerHTML = "COPY CODE";
+                }, 5000);
+            }
+            cpnBtn1.onclick = function () {
+                navigator.clipboard.writeText(cpnCode1.innerHTML);
+                cpnBtn1.innerHTML = "COPIED";
+                setTimeout(function () {
+                    cpnBtn.innerHTML = "COPY CODE";
+                }, 5000);
+            }
+        </script>
 
         <%- include('../layout/user/footer') %>

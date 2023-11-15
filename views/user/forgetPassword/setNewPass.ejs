@@ -51,7 +51,9 @@
 
 <div class="card">
     <h2>Password Reset</h2>
-
+    <% if(message) {%>
+        <div class="bg-danger text-dark text-align"><%= message.notMatching %></div>
+        <% } %>
     <form action="/setNewPass/<%= email %>" method="post">
         <div class="form-group">
             <input type="password" class="form-control" name="newPass" placeholder="New Password" required />

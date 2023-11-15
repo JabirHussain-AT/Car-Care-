@@ -152,6 +152,12 @@
                                 <% }); %>
                         </tbody>
                     </table>
+                    <% if(message.existing) {%>
+                        <div class="text-light rounded bg-danger p-2 d-flex justify-content-center"><%= message.existing %></div>
+                        <% } %>
+                    <% if(message.error) {%>
+                        <div class="text-light rounded bg-danger d-flex justify-content-center p-2"><%= message.error %></div>
+                        <% } %>
                     <div class="table-responsive">
 
                         <div class="d-flex justify-content-between align-items-center">
@@ -164,7 +170,7 @@
                                 <tr>
                                     <th class="border text-center-in-table">Category Name</th>
                                     <th class="border text-center-in-table">Expiry date</th>
-                                    <th class="border text-center-in-table">Discount Amount</th>
+                                    <th class="border text-center-in-table">Discount</th>
                                     <th class="border text-center-in-table">EDIT</th>
                                     <th class="border text-center-in-table">Action</th>
                                 </tr>
@@ -179,7 +185,7 @@
                                             <%=offer.expiryDate%>
                                         </td>
                                         <td class="border text-center-in-table">
-                                            ₹<%=offer.Amount%>
+                                            <%=offer.Percentage%> %
                                         </td>
                                         <td class="border text-center-in-table">
                                             <a href="#" data-toggle="modal"
@@ -228,8 +234,7 @@
                                                                 <% categories.forEach(function(category) { %>
                                                                     <option value="<%= category._id %>"
                                                                         <%=(category._id===offer.CategoryName._id)
-                                                                        ? 'selected' : '' %>><%= category.Name
-                                                                            %>
+                                                                        ? 'selected' : '' %>><%= category.Name %>
                                                                     </option>
                                                                     <% }); %>
                                                             </select>
@@ -243,13 +248,14 @@
 
                                                         </div>
 
+
                                                         <div class="mb-3">
-                                                            <label for="editOfferPrice" class="form-label">Discount
-                                                                Amount</label>
+                                                            <label for="offerPercentage" class="form-label">Discount
+                                                                Percentage</label>
                                                             <input type="number" class="form-control"
-                                                                id="editOfferPrice" name="Amount"
-                                                                value="<%= offer.Amount %>"
-                                                                placeholder="Enter discount amount" required />
+                                                                id="offerPercentage" name="Percentage"
+                                                                placeholder="Enter discount percentage" required min="1"
+                                                                max="100" />
                                                         </div>
 
                                                         <button type="submit" class="btn btn-primary">Save
@@ -345,10 +351,12 @@
                                         required />
                                 </div>
 
+
+
                                 <div class="mb-3">
-                                    <label for="offerPrice" class="form-label">Discount Amount</label>
-                                    <input type="number" class="form-control" id="offerPrice" name="Amount"
-                                        placeholder="Enter discount amount" required />
+                                    <label for="offerPercentage" class="form-label">Discount Percentage</label>
+                                    <input type="number" class="form-control" id="offerPercentage" name="Percentage"
+                                        placeholder="Enter discount percentage" required min="1" max="100" />
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Submit</button>

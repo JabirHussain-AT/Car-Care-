@@ -68,12 +68,19 @@
                         <div class="col-md-3 mb-4">
                             <div class="card" style="border: none;">
                                 <a href="/product/<%= product._id %>">
+                                    <% if(product.IsInCategoryOffer) { %>
+                                        <span class="badge bg-danger ml-3 position-absolute top-2 start-0 text-light" ><%=product.OfferPercentage %> %  OFF</span>
+                                      <% } %>
+                                    <% if(product.AvailableQuantity === 0) { %>
+                                        <span class="badge bg-danger ml-3 position-absolute top-2 start-0 text-light" >Out of Stock</span>
+                                      <% } %>
                                     <img src="/uploads/<%= product.images[0] %>" style="height: 30vh;"
                                         class="card-img-top" alt="">
                                 </a>
                                 <div class="card-body">
-                                    <h5 class="card-title">
+                                    <h5 class="card-title truncate-name">
                                         <%= product.ProductName %>
+                                        
                                     </h5>
                                     <p class="card-text">Price: <span
                                             style="color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-weight: 600;">

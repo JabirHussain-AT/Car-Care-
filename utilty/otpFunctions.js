@@ -25,11 +25,15 @@ module.exports = {
             email: email,
             otp: otpToBeSent,
             createdAt: Date.now(),
-            expiresAt: Date.now() + duration * 300 * 1000, // Convert hours to milliseconds
+            expiresAt: Date.now() + 60 * 1000, // 1 minute in milliseconds // Convert hours to milliseconds
         });
 
         // Save the OTP record to the database
         const createdOTPRecord = await newOTP.save();
+        setTimeout(async () => {
+            // Delete the OTP record from the database
+            await OTP.deleteOne({ _id: createdOTPRecord._id });
+        }, 60 * 1000); // 1 minute in milliseconds
 
         // Mail data
         const message = "OTP IS THIS";
@@ -37,7 +41,7 @@ module.exports = {
             from: 'carcareecom@gmail.com',
             to: email,
             subject: 'OTP FROM CAR CARE',
-            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} hour(s)</b>.</p>`,
+            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} minute(s)</b>.</p>`,
         }
 
         // Sending mail
@@ -48,10 +52,10 @@ module.exports = {
             console.log('Success');
         });
         if(referalId){
-            res.render('user/emailverification',{error:req.session.error,user:req.session.user,referedUser:referalId});
+            res.render('user/emailverification',{error:req.session.error,message:req.flash(),user:req.session.user,referedUser:referalId});
         }else{
 
-            res.render('user/emailverification',{error:req.session.error,user:req.session.user});
+            res.render('user/emailverification',{error:req.session.error,user:req.session.user,message:req.flash()});
         }
     }catch (error) {
         console.error(error);
@@ -135,7 +139,7 @@ module.exports = {
             from: 'carcareecom@gmail.com',
             to: email,
             subject: 'OTP FROM CAR CARE',
-            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} hour(s)</b>.</p>`,
+            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} minute(s)</b>.</p>`,
         }
 
         // Sending mail
@@ -179,7 +183,7 @@ module.exports = {
             from: 'carcareecom@gmail.com',
             to: email,
             subject: 'OTP FROM CAR CARE',
-            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} hour(s)</b>.</p>`,
+            html: `<p>${message}</p> <p style="color: tomato; font-size: 25px; letter-spacing: 2px;"><b>${otpToBeSent}</b></p><p>This Code <b>expires in ${duration} minute(s)</b>.</p>`,
         }
 
         // Sending mail
