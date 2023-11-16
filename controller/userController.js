@@ -10,6 +10,7 @@ const Reviews = require('../models/reviewSchema')
 const CouponHistory = require("../models/couponHistorySchema");
 const Coupon = require('../models/couponSchema')
 const bcrypt = require("bcrypt");
+const cropImage = require("../utilty/imageCrop")
 const { log } = require("handlebars");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -89,7 +90,6 @@ module.exports = {
         UserId: userid,
         Status: 'Not Used'
       });
-      console.log(coupons,"jjfsajflk")
       const user = await Users.findOne({ _id: userid });
       const wallet = await Wallet.findOne({ UserId: userid });
       const ReferalAmount = await ReferalOffer.find()
@@ -205,7 +205,7 @@ module.exports = {
       const dbOTP = matchedOTPrecord.otp;
       if (otp == dbOTP) {
         // Redirect to the landing page upon successful OTP validation
-        req.session.OtpValid = true;
+        req.session.OtpValidated = true;
         if (req.params.id) {
           res.redirect(`/signup/${req.params.id}`);
         } else {
@@ -254,6 +254,22 @@ module.exports = {
     } catch (error) {
       throw error;
       res.status(500).send("Error in resendOtp");
+    }
+  },
+  about : (req,res)=>{
+    try{
+      res.render('user/aboutUs')
+
+    }catch(err){
+      console.log(err)
+    }
+  },
+  Contact: (req,res)=>{
+    try{
+      res.render('user/contactUs')
+
+    }catch(err){
+      console.log(err)
     }
   },
 
@@ -395,6 +411,16 @@ module.exports = {
     }
   },
   postSignup: async (req, res) => {
+    if(!req.session.OtpValidated && !req.params.id){
+      await OTP.deleteOne({ email: req.session.email });
+      req.flash("error","Please verify your Email first ")
+      return res.redirect('/signup')
+    }else if(!req.session.OtpValidated && req.params.id){
+      await OTP.deleteOne({ email: req.session.email });
+      req.flash("error","Please verify your Email first ")
+      return res.redirect(`/signup/${req.params.id}`)
+    }
+
     if (req.params.id) {
       const userId = new mongoose.Types.ObjectId(req.params.id)
       const referedUser = await Users.findOne(userId)

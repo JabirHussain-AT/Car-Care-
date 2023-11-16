@@ -25,9 +25,7 @@ $(document).ready(function(){
 $(".img-thumbnail").click(function (){
     console.log("clicked");
     var selectedImageSrc = $(this).attr("src")
-    if (window.imageZoomInstance) {
-        window.imageZoomInstance.destroy();
-    }
+   
     $("#selectedImage").attr("src",selectedImageSrc);
     var options = {
         zoomType: 'lens',

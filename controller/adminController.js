@@ -3,6 +3,7 @@ const excel = require('exceljs');
 const PDFDocument = require('pdfkit');
 const pdf = require('html-pdf');
 const fs = require('fs');
+const cropImage = require("../utilty/imageCrop")
 const VariantConnector = require('../utilty/variantConnector')
 const Admin = require('../models/adminSchema')
 const Orders = require('../models/orderSchema')
@@ -129,6 +130,7 @@ module.exports = {
             const totalCount = await Orders.countDocuments();
 
             res.render('admin/dashboard', {
+                message:req.flash(),
                 bestSeller,
                 orders,
                 currentPage: page,
@@ -143,7 +145,13 @@ module.exports = {
     salesReport: async (req, res) => {
         const startDate = req.query.startDate;
         const endDate = req.query.endDate;
-
+        if(new Date(startDate) > new Date()){
+            req.flash('error',"please select a past date for generating Sales Report")
+            return res.redirect('/admin/dashboard')
+        }else if(new Date(endDate) > new Date()){
+            req.flash('error',"please select a past date for generating Sales Report")
+            return res.redirect('/admin/dashboard')
+        }
 
         const generateSalesData = async () => {
             try {
@@ -356,6 +364,7 @@ module.exports = {
     },
     postAddProduct: async (req, res) => {
         try {
+            console.log(req.body)
 
             if (req.body.Variation1 === '') {
                 req.body.Variation = req.body.Variation2
@@ -363,12 +372,14 @@ module.exports = {
                 req.body.Variation = req.body.Variation1
             }
             req.body.images = req.files.map(val => val.filename)
+            console.log(req.body.images)
             req.body.Display = "Active"
             req.body.Status = "in Stock"
             req.body.Price = Math.abs(req.body.Price)
             req.body.DiscountAmount = Math.abs(req.body.DiscountAmount)
             req.body.UpdatedOn = new Date()
             const uploaded = await Product.create(req.body)
+            cropImage( req.body.images)
             res.redirect('/admin/productView')
 
         }
@@ -864,6 +875,13 @@ module.exports = {
     salesReportPdf: async (req, res) => {
         try {
             const { startDate, endDate } = req.query;
+            if(new Date(startDate) > new Date()){
+                req.flash('error',"please select a past date for generating Sales Report")
+                return res.redirect('/admin/dashboard')
+            }else if(new Date(endDate) > new Date()){
+                req.flash('error',"please select a past date for generating Sales Report")
+                return res.redirect('/admin/dashboard')
+            }
             // Specify the start and end dates in JavaScript Date objects
             const orders = await Orders.find({
                 DeliveredDate: { $exists: true },

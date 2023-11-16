@@ -9,11 +9,11 @@
                     <div class=" col-sm-4  d-flex ">
                         <div class="product-images  col-sm-4 side-img" style="padding: 2.4vw;">
                             <!-- <ul class="exzoom_img_ul"> -->
-                            <img src="/uploads/<%= product.images[0] %>" alt="Product Image 1" id="defulatZoomingImg"
+                            <img src="/uploads/cropped_images/<%= product.images[0] %>" alt="Product Image 1" id="defulatZoomingImg"
                                 class="img-thumbnail mb-2">
-                            <img src="/uploads/<%= product.images[1] %>" alt="Product Image 2"
+                            <img src="/uploads/cropped_images/<%= product.images[1] %>" alt="Product Image 2"
                                 class="img-thumbnail mb-2">
-                            <img src="/uploads/<%= product.images[2] %>" alt="Product Image 3"
+                            <img src="/uploads/cropped_images/<%= product.images[2] %>" alt="Product Image 3"
                                 class="img-thumbnail mb-2">
                             <!-- </ul> -->
 
@@ -21,19 +21,11 @@
                         <div class="product-cover col-sm-8 rounded mx-auto d-block" style="margin-top: 5vh;">
                             <div id="img-container">
 
-                                <img src="/uploads/<%= product.images[0] %>" id="selectedImage" alt="Cover Image"
+                                <img src="/uploads/cropped_images/<%= product.images[0] %>" id="selectedImage" alt="Cover Image"
                                     class=" img-fluid " style="border: 1px solid black;">
                             </div>
                         </div>
                     </div>
-
-                    <!-- <a href="https://www.jqueryscript.net/tags.php?/Thumbnail/">Thumbnail</a> Nav-->
-                    <!-- <div class="exzoom_nav"></div> -->
-                    <!-- Nav Buttons -->
-                    <!-- <p class="exzoom_btn">
-      <a href="javascript:void(0);" class="exzoom_prev_btn"> < </a>
-      <a href="javascript:void(0);" class="exzoom_next_btn"> > </a>
-  </p> -->
 
                     <!-- Product Info -->
                     <div class=" col-sm-8 col-md-6">
@@ -129,17 +121,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12" style="margin-top: 10vh;">
-                                <p id="descriptionText" style="text-align: center;">The Mirage AT MR-172 265/65 R17 is
-                                    a multipurpose all-terrain light truck tyre. It has been
-                                    engineered to deliver high mileage. Mirage MR AT-172 Performs
-                                    best in on road and off road driving conditions. The Mirage
-                                    AT MR-172 265/65 R17 has an aggressive tread design. Its aggressive
-                                    tread delivers excellent wet and dry traction. It also offers even
-                                    tread wear hence longer tread life is achieved.stable tread block
-                                    design provides better traction and improves cornering and braking in all weather
-                                    conditions.
-                                    Mirage AT MR-172 265/65 R17 Lateral sipes
-                                    also help in improving mud snow and wet qualities.</p>
+                                <p id="descriptionText" style="text-align: center;"><%= product.Description %></p>
                                 <div id="additionalInfoText" style="display: none;">
                                     <!-- Include your additional information content here -->
                                     <div class="container mt-2">

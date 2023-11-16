@@ -117,7 +117,19 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update tax amount cell
       taxAmountCell.textContent = `Rs ${taxAmount.toFixed(2)}`;
     }
-
+    function throttle(func, delay) {
+      let timeoutId;
+      return function (...args) {
+        if (!timeoutId) {
+          timeoutId = setTimeout(() => {
+            func(...args);
+            timeoutId = null;
+          }, delay);
+        }
+      };
+    }
+    
+    const throttledUpdateQuantity = throttle(updateQuantity, 200);
     async function updateQuantity(productId, change) {
       try {
         const response = await fetch("/updateQuantity", {
@@ -167,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     decreaseButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const productId = button.getAttribute("data-product-id");
-        updateQuantity(productId, -1);
+        throttledUpdateQuantity(productId, -1);
       });
     });
 
@@ -182,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (enteredQuantity < maxQuantity) {
-          updateQuantity(productId, 1);
+          throttledUpdateQuantity(productId, 1);
         } else {
           const stockMessage = document.getElementById(`stockMessage_${productId}`);
           if (stockMessage) {

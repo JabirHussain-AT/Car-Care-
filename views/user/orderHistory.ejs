@@ -3,7 +3,7 @@
   <%- include('../partials/user-header') %>
     <style>
       body {
-        background-color: rgb(233, 227, 227);
+        background-color: rgb(255, 255, 255);
       }
 
       .progress-bar.order-placed {
@@ -239,10 +239,18 @@
           </div>
         </div>
         <% }); %>
-          <% } else { %>
-            <p class="container">No order history available.</p>
-            <% } %>
-
+          <% } %>
+          <% if (orderHistory.length > 0) { %>
+            <!-- Your existing order history rendering logic -->
+        <% } else { %>
+            <div class="container text-center mt-5">
+                <p class="lead mb-4" style="color: #555;">No order history available.</p>
+                <p style="font-size: 3em; color: #ccc;">😢</p>
+                <p style="font-size: 1.5em; color: #888;">Don't worry! Start shopping now.</p>
+                <a href="/shop" class="btn btn-primary m-3">Explore Products</a>
+            </div>
+        <% } %>
+        
             
               <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
               <script>

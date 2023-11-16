@@ -13,7 +13,11 @@
         <dt>We received your purchase request;<br /> <br />we'll be in touch with you shortly!</dt>
         <br>
         <div >
-          <a href="/orderHistory" class="btn btn-success px-5 vw-80">Track Order</a>
+          <% if(orderId) {%>
+          <a href="/order/<%=orderId %>" class="btn btn-success px-5 vw-80">Track Order</a>
+          <% } else {%>
+            <a href="/orderHistory" class="btn btn-success px-5 vw-80">Track Order</a>
+            <% } %>
         </div>
         <br>
           <a href="/shop" class="text-dark fw-bold text-decoration-none">Go To Shop</a>

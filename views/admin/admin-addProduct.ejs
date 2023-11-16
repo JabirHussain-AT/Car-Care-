@@ -24,16 +24,16 @@
                                 <br>
                                 <div class="form-group">
                                     <label for="productSpecification">Product Specification:</label>
-                                    <textarea class="form-control bg-light"  pattern="^\S.*$" title="No white spaces allowed" name="" id="productSpecification1"
+                                    <textarea class="form-control bg-light"  pattern="^\S.*$" title="No white spaces allowed" name="Specification1" id="productSpecification1"
                                         placeholder="Enter product Specification" required></textarea>
                                     <label for="productSpecification2">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="" id="productSpecification"
+                                    <textarea class="form-control bg-light" name="Specification2" id="productSpecification"
                                         placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification3">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="" id="productSpecification"
+                                    <textarea class="form-control bg-light" name="Specification3" id="productSpecification"
                                         placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification4">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="" id="productSpecification"
+                                    <textarea class="form-control bg-light" name="Specification4" id="productSpecification"
                                         placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                 </div>
                                 <br>
@@ -44,7 +44,7 @@
                                         <label for="productImage">Drag and drop or click to upload an image:</label>
                                         <br><br><br><br>
                                         <input type="file" name="images" class="form-control-file" id="productImage"
-                                            accept="image/*" multiple style="display: none;" required />
+                                        accept="image/jpeg, image/png, image/webp" onchange="validateImage()" multiple style="display: none;" required />
                                     </div>
                                     <!-- uploaded images -->
                                     <div class="row">
@@ -90,29 +90,6 @@
                                             id="discountAmount" placeholder="Enter discount amount" required />
                                     </div>
                                 </div>
-
-                                <!-- 
-                        <div class="border p-3 mb-3">
-                            <h2>Variations</h2>
-                            <div>
-                                <input type="radio" name="productType" id="watchesRadio" value="Tyre"> Tyre
-                                <input type="radio" name="productType" id="perfumesRadio" value="Oil"> Oils
-                            </div>
-                            <div id="watchColorInput" style="display: none;">
-                                <label for="watchColors">Enter Tyre size:</label>
-                                <input type="text"  name="Tyre" id="watchColors">
-                            </div>
-                            <div id="perfumeQuantityDropdown" style="display: none;">
-                                <label for="perfumeQuantity">Select The Size:</label>
-                                <select id="perfumeQuantity" name="Oil">
-                                    <option value="50 ML">1L</option>
-                                    <option value="100 ML">1.2L</option>
-                                    <option value="150 ML">1.5L</option>
-                                   
-                                </select>
-                            </div>
-                        </div> -->
-
 
 
                                 <div class="border p-3 mb-3">
@@ -172,7 +149,10 @@
                                             <option value="MRF">MRF</option>
                                             <option value="CEAT">CEAT</option>
                                             <option value="3m">3M</option>
-                                            <option value="CarCare">CarCare</option>
+                                            <option value="CarCare">Apollow</option>
+                                            <option value="CarCare">JSW</option>
+                                            <option value="CarCare">Shell</option>
+                                            <option value="CarCare">Auto Pearl</option>
 
                                         </select>
                                     </div><br>
@@ -216,5 +196,22 @@
             crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="/js/script.js"></script>
+        <script>function validateImage() {
+            const imageInput = document.getElementById('imageInput');
+            const selectedFile = imageInput.files[0];
+          
+            if (selectedFile) {
+              const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+          
+              if (!allowedTypes.includes(selectedFile.type)) {
+                alert('Invalid image type. Supported types: JPEG, PNG, WebP');
+                // Clear the input to prevent submitting invalid files
+                imageInput.value = '';
+              } else {
+                // You can handle additional validation or display a success message
+                console.log('Valid image selected');
+              }
+            }
+          }</script>
 
         </html>

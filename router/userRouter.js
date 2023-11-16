@@ -89,6 +89,8 @@ router.post('/addAddress',auth.userTokenAuth,userController.postaddAddress)
 //checkout time address creation post 
 router.post('/checKoutaddAddress',auth.userTokenAuth,userController.postCheckAddAddress)
 
+router.get('/about',userController.about)
+router.get('/Contact',userController.Contact)
 
 //edit Address
 router.get('/Address',auth.userTokenAuth,userController.editAddress)

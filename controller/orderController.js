@@ -84,7 +84,7 @@ module.exports = {
       }
       // await Cart.updateOne({ UserId: userId }, { $set: { Products: [] } });
       await Cart.findOneAndDelete({ UserId: userId })
-      res.render("user/orderSuccess");
+      res.render("user/orderSuccess",{orderId :req.params.id });
     } catch (err) {
       console.log(err, "error in the order Success ")
     }

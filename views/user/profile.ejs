@@ -140,76 +140,34 @@
                                                 </div>
 
                                             </div>
-                                            <div class="row">
-                                                <div
-                                                    class="rounded-0 col-md-12 col-sm-6 d-flex justify-content-center align-items-center">
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6 m-2"
-                                                        style="border: 2px groove black;">
-                                                        <a class="text-decoration-none" href="/Address">
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Address
-                                                        </a>
-                                                        </p>
-                                                    </div>
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6 m-2"
-                                                        style="border: 2px groove black;">
-                                                        <a href="/orderHistory" style="text-decoration: none;">
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Orders
-                                                            </p>
-                                                        </a>
-                                                    </div>
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6 m-2"
-                                                        style="border: 2px groove black;">
-                                                        <button type="button" class="btn btn-link"
-                                                            data-bs-toggle="modal" data-bs-target="#couponsModal">
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Coupons
-                                                            </p>
-                                                        </button>
-                                                    </div>
-
+                                            <div class="card rounded-0">
+                                                <div class="card-header bg-dark text-white">
+                                                    More Options
                                                 </div>
-                                            </div>
-                                            <div class="row">
-                                                <div
-                                                    class="rounded-0 col-md-12 col-sm-6 d-flex justify-content-center align-items-center">
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6  m-2"
-                                                        style="border: 2px groove black;">
-                                                        <a href="/wishlist" style="text-decoration: none;"
-                                                            class="text-decoration-none">
-
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Wishlist
-                                                            </p>
-                                                        </a>
+                                                <div class="card-body row justify-content-between">
+                                                    <div class="col-md-4 mb-2">
+                                                        <a href="/Address" class="btn btn-outline-primary btn-block">Address</a>
                                                     </div>
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6  m-2"
-                                                        style="border: 2px groove black;">
-                                                        <a href="/c">
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Cart
-                                                            </p>
-                                                        </a>
-
+                                                    <div class="col-md-4 mb-2">
+                                                        <a href="/orderHistory" class="btn btn-outline-primary btn-block">Orders</a>
                                                     </div>
-                                                    <div class="bg-warning text-center rounded col-md-4 col-sm-6  m-2"
-                                                        style="border: 2px groove black;">
-                                                        <a href="">
-
-                                                            <p class="p-1 pt-3"
-                                                                style="font-size: medium; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                                                Contact
-                                                            </p>
-                                                        </a>
+                                                    <div class="col-md-4 mb-2">
+                                                        <button type="button" class="btn btn-outline-primary btn-block" data-bs-toggle="modal" data-bs-target="#couponsModal">Coupons</button>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <a href="/wishlist" class="btn btn-outline-primary btn-block">Wishlist</a>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <a href="/cart" class="btn btn-outline-primary btn-block">Cart</a>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <a href="/contact" class="btn btn-outline-primary btn-block">Contact</a>
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+        </div>
+        </div>
         </div>
         </div>
         </div>
@@ -276,7 +234,7 @@
                 </div>
             </div>
         </div>
-        //coupons modal
+        <!-- //coupons modal -->
         <!-- Modal -->
         <div class="modal fade" id="couponsModal" tabindex="-1" aria-labelledby="couponsModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -289,41 +247,41 @@
                         <h1 class="text-center tickerTimes">My Coupons</h1>
                         <div class="container">
                             <% if (coupons) {%>
-                            <%coupons.forEach(function(coupon){%>
-                                <div class="coupon-card mt-3">
-                                    <h3>
-                                        <%=coupon.CouponName%>
-                                    </h3>
-                                    <div class="coupon-row">
-                                        <span id="cpnCode">
-                                            <%=coupon.CouponCode%>
-                                        </span>
-                                        <span id="cpnBtn">Copy Code</span>
-                                    </div>
-                                    <p>Valid Till:<%= coupon.CouponExpiryDate %>
-                                    </p>
-                                    <div class="circle1"></div>
-                                    <div class="circle2"></div>
-                                </div>
-                                <%})%>
-                                <% } %>
-                               <% if (unusedCoupons && unusedCoupons.length > 0) {%>
-                                    <% unusedCoupons.forEach(function(coupon){%>
+                                <%coupons.forEach(function(coupon){%>
                                     <div class="coupon-card mt-3">
                                         <h3>
-                                           New User Coupon
+                                            <%=coupon.CouponName%>
                                         </h3>
                                         <div class="coupon-row">
-                                            <span id="cpnCode1">
+                                            <span id="cpnCode">
                                                 <%=coupon.CouponCode%>
                                             </span>
-                                            <span id="cpnBtn1">Copy Code</span>
+                                            <span id="cpnBtn">Copy Code</span>
                                         </div>
+                                        <p>Valid Till:<%= coupon.CouponExpiryDate %>
+                                        </p>
                                         <div class="circle1"></div>
                                         <div class="circle2"></div>
                                     </div>
                                     <%})%>
-                                <% } %>
+                                        <% } %>
+                                            <% if (unusedCoupons && unusedCoupons.length> 0) {%>
+                                                <% unusedCoupons.forEach(function(coupon){%>
+                                                    <div class="coupon-card mt-3">
+                                                        <h3>
+                                                            New User Coupon
+                                                        </h3>
+                                                        <div class="coupon-row">
+                                                            <span id="cpnCode1">
+                                                                <%=coupon.CouponCode%>
+                                                            </span>
+                                                            <span id="cpnBtn1">Copy Code</span>
+                                                        </div>
+                                                        <div class="circle1"></div>
+                                                        <div class="circle2"></div>
+                                                    </div>
+                                                    <%})%>
+                                                        <% } %>
                         </div>
                         <!-- Customize this section based on your coupon data -->
                     </div>

@@ -22,6 +22,10 @@ module.exports = {
     },
     postaddCoupons: async (req, res) => {
         try{
+            if(req.body.CouponExpiryDate && new Date(req.body.CouponExpiryDate) <= new Date){
+                req.flash('uniqueErr',"Please Select A Future Date")
+                return res.redirect('/admin/addCoupon');
+            }
 
             const exist = await Coupon.findOne({CouponName :req.body.CouponName })
             if(exist !== null){
