@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if(response.success){
             console.log(order,"order reached success stage of the razor pay");
             // alert("Payment Successfull")
-            location.href = `/orderPlaced/${order._id}`
+            window.location.href = `/orderPlaced/${order._id}`
           }else{
             alert("Payment Failed")
           }

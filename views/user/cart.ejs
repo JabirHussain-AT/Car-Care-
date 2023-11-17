@@ -79,11 +79,13 @@ AvailableQuantity %>" />
                       <div
                         class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
                         <div class="float-md-end mt-2">
-                          <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
-                              class="fas fa-heart fa-lg px-1 text-secondary"></i></a>
-                          <a href="/deleteItem/<%= cartProducts.ProductId._id %>"
-                            class="btn btn-light border text-danger icon-hover-danger">
-                            Remove</a>
+                          <!-- <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i
+                              class="fas fa-heart fa-lg px-1 text-secondary"></i></a> -->
+                              <a href="#" class="btn btn-light border mt-3 px-2 icon-hover-primary"
+                              onclick="confirmRemove('<%= cartProducts.ProductId._id %>')">
+                              <i class="fa fa-trash fa-lg px-1 mt-3 text-secondary g-2"></i>
+                           </a>
+                           
 
                           <div id="outOfStock_<%= cartProducts.ProductId._id %>" class="text-danger"
                             style="display: none;">Out of Stock</div>
@@ -232,4 +234,22 @@ AvailableQuantity %>" />
               </div>
               </div>
               <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+              <script>
+                function confirmRemove(productId) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, remove it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // If the user clicks "Yes", redirect to remove endpoint
+                            window.location.href = `/deleteItem/${productId}`;
+                        }
+                    });
+                }
+             </script>             
               <script src="/js/cart.js"> </script>

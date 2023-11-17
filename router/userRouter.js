@@ -12,7 +12,7 @@ const reviewController = require('../controller/reviewController')
 const wishlistController = require('../controller/wishlistController')
 
 //landing page
-router.get('/',auth.userTokenAuth,userController.landingPage)
+router.get('/',auth.userExist,userController.landingPage)
 
 //home page
 router.get('/home',auth.userTokenAuth,userController.home)

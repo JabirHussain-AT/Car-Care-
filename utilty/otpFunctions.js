@@ -21,6 +21,10 @@ module.exports = {
             });
 
         const duration = 1; // Set the OTP expiration duration in hours
+        const existing = await OTP.findOne({email:email})
+        if(existing){
+            await OTP.findOneAndDelete({email:email})
+        }
         const newOTP = new OTP({
             email: email,
             otp: otpToBeSent,

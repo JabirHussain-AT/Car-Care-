@@ -31,7 +31,37 @@ module.exports = {
     try {
       const user = req.session.user;
       const banner = await Banner.findOne({ Status: "Enabled" });
-      res.render("user/landingPage", { Banner: banner });
+      const bestSeller = await Orders.aggregate([
+        {
+          $unwind: "$Products",
+        },
+        {
+          $group: {
+            _id: "$Products.ProductId",
+            totalCount: { $sum: "$Products.Quantity" },
+          },
+        },
+        {
+          $sort: {
+            totalCount: -1,
+          },
+        },
+        {
+          $limit: 4,
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "_id",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+        {
+          $unwind: "$productDetails",
+        },
+      ]);
+      res.render("user/landingPage", { Banner: banner,bestSeller });
     } catch (err) {
       throw err;
     }

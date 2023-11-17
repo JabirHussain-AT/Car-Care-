@@ -100,26 +100,16 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="category">Category:</label>
-                                                <select class="form-select bg-light" id="category" name="Category"
-                                                    required>
-                                                    <!-- <option value="" selected disabled>Select a category</option> -->
-                                                    <option value="Lubricants" <%=product.Category==="Lubricants"
-                                                        ? 'selected' : "" %>
-                                                        >Lubricants</option>
-                                                    <option value="Tyres" <%=product.Category==="Tyres" ? 'selected'
-                                                        : "" %> >Tyres
-                                                    </option>
-                                                    <option value="Paints" <%=product.Category==="Paints" ? 'selected'
-                                                        : "" %> >Paints
-                                                    </option>
-                                                    <option value="Brakes" <%=product.Category==="Brakes" ? 'selected'
-                                                        : "" %> >Brakes
-                                                    </option>
-                                                    <option value="Headlights" <%=product.Category==="Headlights"
-                                                        ? 'selected' : "" %>
-                                                        >Headlights</option>
+                                                <select class="form-select bg-light" id="category" name="Category" required onchange="toggleVariationFields()">
+                                                    <option value="" selected disabled>Select a category</option>
+                                                    <% if (categories && categories.length > 0 ) {%>
+                                                        <% categories.forEach((category) => { %>
+                                                            <option value="<%= category.Name %>" <%= product.Category === category.Name ? 'selected' : '' %>><%= category.Name %></option>
+                                                        <% }) %>
+                                                    <% } %>
                                                 </select>
                                             </div>
+                                            
                                             <br>
                                             <!--  -->
                                             <div id="variationFields" style="<%= product.Category !== 'Lubricants' ? 'display:block;' : 'display:none' %>">
@@ -131,23 +121,19 @@
                                             </div>
                     
                                             <!-- Size Dropdown -->
-                                            <div id="sizeDropdown" style="<%= product.Category === 'Lubricants' ? 'display: block;' : 'display:none;' %>">
+                                            <div id="sizeDropdown" style= "<%= product.Category === 'Lubricants' ? 'display: block;' : 'display:none;' %>">
                                                 <div class="form-group">
                                                     <label for="size">Select Size:</label>
                                                     <select class="form-select bg-light" id="size" name="Variation2">
-                                                        <option value="0.8 L" <%= product.Variation === '0.8 L' ? 'selected' : '' %>>0.8
-                                                            L</option>
-                                                        <option value="1 L" <%= product.Variation === '1 L' ? 'selected' : '' %>>1 L
-                                                        </option>
-                                                        <option value="1.5 L" <%= product.Variation === '1.5 L' ? 'selected' : '' %>>1.5
-                                                            L</option>
-                                                        <option value="5 L" <%= product.Variation === '5 L' ? 'selected' : '' %>>5 L
-                                                        </option>
-                                                        <option value="10 L" <%= product.Variation === '10 L' ? 'selected' : '' %>>10
-                                                            L</option>
+                                                        <option value="0.8 L" <%= product.Variation === '0.8 L' ? 'selected' : '' %>>0.8 L</option>
+                                                        <option value="1 L" <%= product.Variation === '1 L' ? 'selected' : '' %>>1 L</option>
+                                                        <option value="1.5 L" <%= product.Variation === '1.5 L' ? 'selected' : '' %>>1.5 L</option>
+                                                        <option value="5 L" <%= product.Variation === '5 L' ? 'selected' : '' %>>5 L</option>
+                                                        <option value="10 L" <%= product.Variation === '10 L' ? 'selected' : '' %>>10 L</option>
                                                     </select>
                                                 </div>
                                             </div>
+                                            
                     
                                             <!--  -->
                                             <div class="form-group">
@@ -188,6 +174,24 @@
         </div>
         </body>
         <script>
+             function toggleVariationFields() {
+                var category = document.getElementById('category').value.trim();
+                var sizeDropdown = document.getElementById('sizeDropdown');
+                var variationFields = document.getElementById('variationFields');
+
+                console.log("Selected Category:", JSON.stringify(category));
+                // Add this line to log the selected category
+
+                if (category === 'Lubricants') {
+                    // console.log("Inside if condition for Lubricants");  // Add this line to log when it's inside the if condition
+                    sizeDropdown.style.display = 'block';
+                    variationFields.style.display = 'none';
+                } else {
+                    // console.log("Inside else condition");  // Add this line to log when it's inside the else condition
+                    sizeDropdown.style.display = 'none';
+                    variationFields.style.display = 'block';
+                }
+            }
             function previewImage(inputId, previewId) {
                 const input = document.getElementById(inputId);
                 const preview = document.getElementById(previewId);

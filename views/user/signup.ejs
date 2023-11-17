@@ -22,13 +22,13 @@
                                             <%= message.banned %>
                                         </div>
                                         <% } %>
-                                            <div class=" ml-5 " style="margin-right: -40px;">
+                                            <div class=" ml-5 " style="margin-right: -0px;">
                                                 <h2>Register</h2>
                                                 <p style="font-size: small;">Already have an account? <a
                                                         href="/login"><u>LOG IN</u></a></p>
-                                                <div class="container-fluid d-flex justify-content-center">
+                                                <div class="container-fluid d-flex ">
                                                     <div class="row justify-content-center" style="height: 100%;">
-                                                        <div class="col-md-6 ml-3 pl-4 ">
+                                                        <div class="col-md-6  ">
                                                             <% if (locals.referedUser) {%>
                                                                 <form action="/verifyEmail/<%=referedUser %>"
                                                                     method="get" style="margin-left: -9vw;">

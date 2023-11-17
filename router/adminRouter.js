@@ -48,7 +48,7 @@ router.post('/editCategoryOfferStatus/:id',auth.adminTokenAuth,offerController.e
 
 
 router.get('/editCategory/:id',auth.adminTokenAuth,adminController.editCategory)
-router.post('/editCategory/:id',upload.single('Images',1),adminController.postEditCategory)
+router.post('/editCategory/:id',upload.single('images',1),adminController.postEditCategory)
 
 router.get('/viewCategory',auth.adminTokenAuth,adminController.viewCategory)
 router.get('/viewCategory/:id',adminController.postViewCategory)

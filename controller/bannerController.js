@@ -63,12 +63,12 @@ module.exports = {
             // Find the existing enabled banner
             const existingBanner = await Banner.findOne({ Status: "Enabled" });
             const bannerId = new mongoose.Types.ObjectId(req.params.bannerID)
-            if (existingBanner._id == bannerId) {
-                req.flash("existing", "Its the current Status")
-                res.redirect('/admin/banner')
-            }
             if (existingBanner) {
                 // Change the status of the existing banner to "Disabled"
+                if (existingBanner._id == bannerId) {
+                    req.flash("existing", "Its the current Status")
+                    res.redirect('/admin/banner')
+                }
                 existingBanner.Status = "Disabled";
                 await existingBanner.save();
             }

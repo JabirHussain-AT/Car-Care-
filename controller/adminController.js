@@ -359,8 +359,9 @@ module.exports = {
             res.redirect('/admin/addAdmin')
         }
     },
-    getAddProduct: (req, res) => {
-        res.render('admin/admin-addProduct')
+    getAddProduct: async (req, res) => {
+        const categories = await Category.find()
+        res.render('admin/admin-addProduct',{categories})
     },
     postAddProduct: async (req, res) => {
         try {
@@ -391,7 +392,8 @@ module.exports = {
     editProduct: async (req, res) => {
         const id = req.params.id
         const product = await Product.findOne({ _id: id })
-        res.render('admin/admin-editProduct', { product: product })
+        const categories = await Category.find()
+        res.render('admin/admin-editProduct', { product: product ,categories})
     },
     postEditProduct: async (req, res) => {
 

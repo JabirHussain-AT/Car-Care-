@@ -13,28 +13,34 @@
                                 <div class="form-group">
                                     <label for="productName">Product Name:</label>
                                     <input type="text" name="ProductName" class="form-control bg-light" id="productName"
-                                        placeholder="Enter product name" pattern="^\S.*$" title="No white spaces allowed" required />
+                                        placeholder="Enter product name" pattern="^\S.*$"
+                                        title="No white spaces allowed" required />
                                 </div><br>
 
                                 <div class="form-group">
                                     <label for="productDescription">Product Description:</label>
                                     <textarea class="form-control bg-light" name="Description" id="productDescription"
-                                        rows="4" placeholder="Enter product description" pattern="^\S.*$" title="No white spaces allowed" required></textarea>
+                                        rows="4" placeholder="Enter product description" pattern="^\S.*$"
+                                        title="No white spaces allowed" required></textarea>
                                 </div>
                                 <br>
                                 <div class="form-group">
                                     <label for="productSpecification">Product Specification:</label>
-                                    <textarea class="form-control bg-light"  pattern="^\S.*$" title="No white spaces allowed" name="Specification1" id="productSpecification1"
+                                    <textarea class="form-control bg-light" pattern="^\S.*$"
+                                        title="No white spaces allowed" name="Specification1" id="productSpecification1"
                                         placeholder="Enter product Specification" required></textarea>
                                     <label for="productSpecification2">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="Specification2" id="productSpecification"
-                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
+                                    <textarea class="form-control bg-light" name="Specification2"
+                                        id="productSpecification" placeholder="Enter product Specification"
+                                        pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification3">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="Specification3" id="productSpecification"
-                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
+                                    <textarea class="form-control bg-light" name="Specification3"
+                                        id="productSpecification" placeholder="Enter product Specification"
+                                        pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                     <label for="productSpecification4">Product Specification:</label>
-                                    <textarea class="form-control bg-light" name="Specification4" id="productSpecification"
-                                        placeholder="Enter product Specification"  pattern="^\S.*$" title="No white spaces allowed" required></textarea>
+                                    <textarea class="form-control bg-light" name="Specification4"
+                                        id="productSpecification" placeholder="Enter product Specification"
+                                        pattern="^\S.*$" title="No white spaces allowed" required></textarea>
                                 </div>
                                 <br>
 
@@ -44,7 +50,8 @@
                                         <label for="productImage">Drag and drop or click to upload an image:</label>
                                         <br><br><br><br>
                                         <input type="file" name="images" class="form-control-file" id="productImage"
-                                        accept="image/jpeg, image/png, image/webp" onchange="validateImage()" multiple style="display: none;" required />
+                                            accept="image/jpeg, image/png, image/webp" onchange="validateImage()"
+                                            multiple style="display: none;" required />
                                     </div>
                                     <!-- uploaded images -->
                                     <div class="row">
@@ -98,7 +105,8 @@
                                     <div class="form-group">
                                         <label for="quantity">Quantity:</label>
                                         <input type="number" name="AvailableQuantity" class="form-control bg-light"
-                                            id="quantity" placeholder="Enter quantity"  pattern="^\S.*$" title="No white spaces allowed" required />
+                                            id="quantity" placeholder="Enter quantity" pattern="^\S.*$"
+                                            title="No white spaces allowed" required />
                                     </div>
                                 </div>
 
@@ -107,13 +115,16 @@
                                     <div class="form-group">
                                         <br>
                                         <label for="category">Category:</label>
-                                        <select class="form-select bg-light" id="category" name="Category" required onchange="toggleVariationFields()">
+                                        <select class="form-select bg-light" id="category" name="Category" required
+                                            onchange="toggleVariationFields()">
                                             <option value="" selected disabled>Select a category</option>
-                                            <option value="Lubricants">Lubricants</option>
-                                            <option value="Tyres">Tyres</option>
-                                            <option value="Paints">Paints</option>
-                                            <option value="Brakes">Brakes</option>
-                                            <option value="Headlights">Headlights</option>
+                                            <% if (categories && categories.length> 0 ) {%>
+                                                <% categories.forEach((category)=>{ %>
+                                                    <option value="<%=category.Name %> ">
+                                                        <%=category.Name %>
+                                                    </option>
+                                                    <% }) %>
+                                                        <% } %>
                                         </select>
                                     </div><br>
                                     <!--  -->
@@ -121,7 +132,7 @@
                                         <div class="form-group">
                                             <label for="variation">Variation:</label>
                                             <input type="text" class="form-control bg-light" name="Variation1"
-                                                id="variation" placeholder="Enter variation"  />
+                                                id="variation" placeholder="Enter variation" />
                                         </div>
                                     </div>
                                     <!--  -->
@@ -135,7 +146,7 @@
                                                 <option value="1.5 L">1.5 L</option>
                                                 <option value="5 L">5 L</option>
                                                 <option value="10 L">10 L</option>
-                                                
+
                                                 <!-- Add more options as needed -->
                                             </select>
                                         </div>
@@ -174,22 +185,28 @@
         </div>
         </body>
         <script>
-     function toggleVariationFields() {
-        var category = document.getElementById('category').value;
-        var sizeDropdown = document.getElementById('sizeDropdown');
-        var variationFields = document.getElementById('variationFields');
+            function toggleVariationFields() {
+                var category = document.getElementById('category').value.trim();
+                var sizeDropdown = document.getElementById('sizeDropdown');
+                var variationFields = document.getElementById('variationFields');
 
-        if (category === 'Lubricants') {
-            sizeDropdown.style.display = 'block';
-            variationFields.style.display = 'none';
-        } else {
-            sizeDropdown.style.display = 'none';
-            variationFields.style.display = 'block';
-        }
-    }
+                console.log("Selected Category:", JSON.stringify(category));
+                // Add this line to log the selected category
 
-    // Trigger the function on page load
-    toggleVariationFields();
+                if (category === 'Lubricants') {
+                    // console.log("Inside if condition for Lubricants");  // Add this line to log when it's inside the if condition
+                    sizeDropdown.style.display = 'block';
+                    variationFields.style.display = 'none';
+                } else {
+                    // console.log("Inside else condition");  // Add this line to log when it's inside the else condition
+                    sizeDropdown.style.display = 'none';
+                    variationFields.style.display = 'block';
+                }
+            }
+
+
+            // Trigger the function on page load
+            toggleVariationFields();
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
@@ -197,21 +214,21 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="/js/script.js"></script>
         <script>function validateImage() {
-            const imageInput = document.getElementById('imageInput');
-            const selectedFile = imageInput.files[0];
-          
-            if (selectedFile) {
-              const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-          
-              if (!allowedTypes.includes(selectedFile.type)) {
-                alert('Invalid image type. Supported types: JPEG, PNG, WebP');
-                // Clear the input to prevent submitting invalid files
-                imageInput.value = '';
-              } else {
-                // You can handle additional validation or display a success message
-                console.log('Valid image selected');
-              }
-            }
-          }</script>
+                const imageInput = document.getElementById('imageInput');
+                const selectedFile = imageInput.files[0];
+
+                if (selectedFile) {
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+                    if (!allowedTypes.includes(selectedFile.type)) {
+                        alert('Invalid image type. Supported types: JPEG, PNG, WebP');
+                        // Clear the input to prevent submitting invalid files
+                        imageInput.value = '';
+                    } else {
+                        // You can handle additional validation or display a success message
+                        console.log('Valid image selected');
+                    }
+                }
+            }</script>
 
         </html>
