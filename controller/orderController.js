@@ -22,6 +22,7 @@ const { Mongoose } = require("../config/dbconnection");
 const { getDefaultHighWaterMark } = require("nodemailer/lib/xoauth2");
 const onlinePayment = require("../utilty/onlinePayment");
 const invoice = require("../utilty/invoiceCreater");
+const path = require('path')
 
 module.exports = {
   // USER CONTROLLS
@@ -136,7 +137,7 @@ module.exports = {
   },
   downloadfile: (req, res) => {
     const id = req.params.id;
-    const filePath = `D:/E_COMMERCE_project/public/pdf/${id}.pdf`;
+    const filePath = path.join(__dirname, '..', 'public', 'pdf', `${id}.pdf`);
     res.download(filePath, `invoice.pdf`);
   },
   returnOrder: async (req, res) => {
